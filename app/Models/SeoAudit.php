@@ -8,6 +8,7 @@ class SeoAudit extends Model
 {
     protected $fillable = [
         'user_id',
+        'email',
         'url',
         'response_data',
     ];

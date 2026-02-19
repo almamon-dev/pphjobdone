@@ -23,6 +23,41 @@ class Helper
     }
 
     /**
+     * Save a base64 encoded image string to the disk
+     */
+    public static function saveBase64Image(string $folderName, string $base64Data, string $prefix = 'img'): ?string
+    {
+        try {
+            // Check if it's a data URI and extract base64 data
+            if (preg_match('/^data:image\/(\w+);base64,/', $base64Data, $type)) {
+                $data = substr($base64Data, strpos($base64Data, ',') + 1);
+                $extension = strtolower($type[1]);
+            } else {
+                $data = $base64Data;
+                $extension = 'png';
+            }
+
+            $decodedData = base64_decode($data);
+            if (! $decodedData) {
+                return null;
+            }
+
+            $fileName = $prefix.'_'.time().'_'.Str::random(8).'.'.$extension;
+            $uploadPath = public_path('uploads/'.$folderName);
+
+            if (! file_exists($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+
+            file_put_contents($uploadPath.'/'.$fileName, $decodedData);
+
+            return 'uploads/'.$folderName.'/'.$fileName;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
      * Delete a file from public/uploads
      */
     public static function deleteFile(?string $filePath): bool
@@ -55,5 +90,13 @@ class Helper
         }
 
         return null;
+    }
+
+    /**
+     * Generate public URLs for an array of file paths
+     */
+    public static function generateURLArray(array $filePaths): array
+    {
+        return array_map(fn ($path) => self::generateURL($path), $filePaths);
     }
 }

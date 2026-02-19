@@ -139,6 +139,24 @@
             <strong>Analyzed URL:</strong> {{ $data['website_url'] ?? 'N/A' }}
         </div>
 
+        @if(isset($data['screenshots']) && count($data['screenshots']) > 0)
+        <div style="margin-bottom: 30px;">
+            <h2 style="font-size: 18px; border-left: 4px solid #673ab7; padding-left: 12px; margin-bottom: 20px;">Website Previews</h2>
+            <div style="overflow: hidden;">
+                @foreach($data['screenshots'] as $index => $imgUrl)
+                <div style="float: left; width: 48%; margin-right: {{ $index % 2 == 0 ? '4%' : '0' }}; margin-bottom: 20px;">
+                    <a href="{{ $data['website_url'] }}" target="_blank" style="text-decoration: none;">
+                        <img src="{{ $imgUrl }}" style="width: 100%; border: 1px solid #e3e4e8; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <div style="font-size: 10px; color: #727586; text-align: center; margin-top: 5px;">
+                            {{ str_contains($imgUrl, 'mobile') ? 'Mobile View' : 'Desktop View' }} (Click to Preview)
+                        </div>
+                    </a>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
         <div class="score-grid">
             <div class="score-card">
                 <div class="score-value">{{ $data['overall_score'] ?? 0 }}%</div>
@@ -157,6 +175,33 @@
                 <div class="score-label">Content</div>
             </div>
         </div>
+        
+        @if(isset($data['pagespeed']))
+        <div class="summary-box">
+            <h2>PageSpeed Insights ({{ $data['pagespeed']['scores']['performance'] ?? 0 }}%)</h2>
+            <div class="score-grid" style="margin-top: 15px;">
+                <div class="score-card" style="width: 21%; padding: 10px;">
+                    <div class="score-value" style="font-size: 16px;">{{ $data['pagespeed']['metrics']['first_contentful_paint'] ?? 'N/A' }}</div>
+                    <div class="score-label" style="font-size: 9px;">FCP</div>
+                </div>
+                <div class="score-card" style="width: 21%; padding: 10px;">
+                    <div class="score-value" style="font-size: 16px;">{{ $data['pagespeed']['metrics']['largest_contentful_paint'] ?? 'N/A' }}</div>
+                    <div class="score-label" style="font-size: 9px;">LCP</div>
+                </div>
+                <div class="score-card" style="width: 21%; padding: 10px;">
+                    <div class="score-value" style="font-size: 16px;">{{ $data['pagespeed']['metrics']['total_blocking_time'] ?? 'N/A' }}</div>
+                    <div class="score-label" style="font-size: 9px;">TBT</div>
+                </div>
+                <div class="score-card" style="width: 21%; padding: 10px;">
+                    <div class="score-value" style="font-size: 16px;">{{ $data['pagespeed']['metrics']['cumulative_layout_shift'] ?? 'N/A' }}</div>
+                    <div class="score-label" style="font-size: 9px;">CLS</div>
+                </div>
+            </div>
+            <div style="font-size: 12px; color: #727586; margin-top: -20px;">
+                <strong>Performance Strategy:</strong> Mobile | <strong>Experience:</strong> {{ $data['pagespeed']['loading_experience'] ?? 'UNKNOWN' }}
+            </div>
+        </div>
+        @endif
 
         <div class="summary-box">
             <h2>Executive Summary</h2>

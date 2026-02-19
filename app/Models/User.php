@@ -71,4 +71,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Favorite::class);
     }
+
+    public function seoAudits()
+    {
+        return $this->hasMany(SeoAudit::class);
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
 }

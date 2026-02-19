@@ -38,6 +38,11 @@ class AuthApiController extends Controller
                 'password' => Hash::make($request->password),
             ]);
 
+            // Sync guest SEO audits
+            \App\Models\SeoAudit::where('email', $user->email)
+                ->whereNull('user_id')
+                ->update(['user_id' => $user->id]);
+
             // Step 3: Send OTP safely
             try {
                 $otp = $this->sendOtp($user, 'Verify Your Email Address');

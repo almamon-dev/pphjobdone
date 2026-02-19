@@ -14,24 +14,28 @@ class OverviewController extends Controller
         $usersCount = User::count();
         $servicesCount = \App\Models\Service::count();
 
-        return Inertia::render('Admin/Dashboard', [
-            'stats' => [
-                'users' => [
-                    'count' => $usersCount,
-                    'status' => '+MEMBERS',
-                ],
+        if (auth()->user()->email === 'admin@softvence.agency') {
+            return Inertia::render('Admin/Dashboard', [
+                'stats' => [
+                    'users' => [
+                        'count' => $usersCount,
+                        'status' => '+MEMBERS',
+                    ],
 
-                'services' => [
-                    'count' => $servicesCount,
-                    'status' => '+SERVICES',
+                    'services' => [
+                        'count' => $servicesCount,
+                        'status' => '+SERVICES',
+                    ],
                 ],
-            ],
-            'portfolioHealth' => [
-                'completion' => 100,
-                'activeExperiences' => 'High',
-                'verifiedSkills' => 'Active',
-            ],
-            'openai_api_key' => env('OPENAI_API_KEY'),
-        ]);
+                'portfolioHealth' => [
+                    'completion' => 100,
+                    'activeExperiences' => 'High',
+                    'verifiedSkills' => 'Active',
+                ],
+                'openai_api_key' => env('OPENAI_API_KEY'),
+            ]);
+        }
+
+        return Inertia::render('Dashboard');
     }
 }

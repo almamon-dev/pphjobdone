@@ -13,6 +13,7 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+Route::get('/services/{slug}', [\App\Http\Controllers\ServiceController::class, 'show'])->name('services.show');
 
 use App\Http\Controllers\Admin\Dashboard\OverviewController;
 

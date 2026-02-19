@@ -73,11 +73,71 @@ class WebsiteService
                 'image_count' => $imageCount,
                 'link_count' => $linkCount,
                 'status_code' => $response->status(),
+                'html' => $html, // Keep HTML for link extraction
             ];
         } catch (\Exception $e) {
             Log::error('Website Fetch Error: ['.$url.'] '.$e->getMessage());
 
             return ['error' => 'Failed to fetch website content: '.$e->getMessage()];
         }
+    }
+
+    /**
+     * Extract internal links from a page
+     */
+    public function getInternalLinks(string $baseUrl, string $html): array
+    {
+        $links = [];
+        $domain = parse_url($baseUrl, PHP_URL_HOST);
+        $scheme = parse_url($baseUrl, PHP_URL_SCHEME);
+
+        // Match both href="url" and href='url'
+        preg_match_all('/href=["\']([^"\']+)["\']/i', $html, $matches);
+
+        if (! empty($matches[1])) {
+            foreach ($matches[1] as $url) {
+                // 1. Basic cleanup & skip common assets
+                if (str_starts_with($url, '#') || str_starts_with($url, 'javascript:') ||
+                    str_contains($url, 'mailto:') || str_contains($url, 'tel:') ||
+                    preg_match('/\.(js|css|png|jpg|jpeg|gif|svg|pdf|woff|woff2|json)$/i', $url)) {
+                    continue;
+                }
+
+                // 2. Handle relative URLs
+                if (str_starts_with($url, '/')) {
+                    $url = $scheme.'://'.$domain.$url;
+                } elseif (! str_starts_with($url, 'http')) {
+                    $url = rtrim($baseUrl, '/').'/'.$url;
+                }
+
+                // 3. Normalize URL (Remove query strings)
+                $url = rtrim(explode('?', $url)[0], '/');
+
+                // 4. Check if it's the same domain
+                $urlHost = parse_url($url, PHP_URL_HOST);
+                if ($urlHost === $domain) {
+                    $links[] = $url;
+                }
+            }
+        }
+
+        $uniqueLinks = array_values(array_unique($links));
+
+        // Prioritize common pages: About, Skills, Projects, etc.
+        usort($uniqueLinks, function ($a, $b) {
+            $keywords = ['about', 'skills', 'projects', 'service', 'contact', 'portfolio'];
+            foreach ($keywords as $word) {
+                if (str_contains(strtolower($a), $word)) {
+                    return -1;
+                }
+                if (str_contains(strtolower($b), $word)) {
+                    return 1;
+                }
+            }
+
+            return 0;
+        });
+
+        return array_slice($uniqueLinks, 0, 6);
     }
 }

@@ -42,6 +42,11 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        // Sync guest SEO audits
+        \App\Models\SeoAudit::where('email', $user->email)
+            ->whereNull('user_id')
+            ->update(['user_id' => $user->id]);
+
         event(new Registered($user));
 
         Auth::login($user);
