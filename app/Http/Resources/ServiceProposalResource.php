@@ -28,6 +28,7 @@ class ServiceProposalResource extends JsonResource
                     'tasks' => $phase['items'] ?? [],
                 ];
             }),
+            'pricing' => \App\Http\Resources\PricingPlanResource::collection(\App\Models\PricingPlan::where('status', true)->get()),
         ];
     }
 }

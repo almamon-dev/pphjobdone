@@ -28,17 +28,7 @@ class ServiceResource extends JsonResource
             ],
 
             // Pricing Plans
-            'pricing' => collect($this->pricing_plans)->map(function ($plan) {
-                return [
-                    'name' => $plan['name'] ?? null,
-                    'price' => $plan['price'] ?? '0',
-                    'subtitle' => $plan['subtitle'] ?? null,
-                    'is_popular' => $plan['is_popular'] ?? false,
-                    'features' => $plan['features'] ?? [],
-                    'button_text' => $plan['button_text'] ?? 'Get Started',
-                    'button_url' => $plan['button_url'] ?? '#',
-                ];
-            }),
+            'pricing' => \App\Http\Resources\PricingPlanResource::collection(\App\Models\PricingPlan::where('status', true)->get()),
 
             // What's Included
             'what_include' => collect($this->benefits)->map(function ($benefit) {
