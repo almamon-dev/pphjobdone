@@ -14,7 +14,7 @@ class OverviewController extends Controller
         $usersCount = User::count();
         $servicesCount = \App\Models\Service::count();
 
-        if (auth()->user()->email === 'admin@softvence.agency') {
+        if (auth()->user()->is_admin) {
             return Inertia::render('Admin/Dashboard', [
                 'stats' => [
                     'users' => [

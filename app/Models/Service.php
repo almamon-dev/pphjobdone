@@ -16,7 +16,6 @@ class Service extends Model
         'video_file',
         'thumbnail',
         'features',
-        'pricing_plans',
         'faqs',
         'process_steps',
         'section_one',
@@ -29,7 +28,6 @@ class Service extends Model
 
     protected $casts = [
         'features' => 'array',
-        'pricing_plans' => 'array',
         'faqs' => 'array',
         'process_steps' => 'array',
         'section_one' => 'array',
@@ -39,6 +37,7 @@ class Service extends Model
         'expect_results' => 'array',
         'status' => 'boolean',
     ];
+
 
     public function bookings()
     {

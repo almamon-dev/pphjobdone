@@ -12,41 +12,49 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // admin dashboard
-        \App\Models\User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@gmail.com',
-            'password' => bcrypt('password'),
-            'profile_setup' => true,
-            'is_verified' => true,
-            'email_verified_at' => now(),
-            'verified_at' => now(),
-            'phone' => '0123456789',
-            'gender' => 'male',
-        ]);
+        \App\Models\User::updateOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'Admin User',
+                'password' => bcrypt('password'),
+                'profile_setup' => true,
+                'is_admin' => true,
+                'is_verified' => true,
+                'email_verified_at' => now(),
+                'verified_at' => now(),
+                'phone' => '0123456789',
+                'gender' => 'male',
+            ]
+        );
+
+        // user two
+        \App\Models\User::updateOrCreate(
+            ['email' => 'user@gmail.com'],
+            [
+                'name' => 'User Two',
+                'password' => bcrypt('password'),
+                'profile_setup' => false,
+                'is_verified' => true,
+                'email_verified_at' => now(),
+                'verified_at' => now(),
+                'phone' => '0123456788',
+                'gender' => 'female',
+            ]
+        );
 
         // user three
-        \App\Models\User::create([
-             'name' => 'User Two',
-             'email' => 'user@gmail.com',
-             'password' => bcrypt('password'),
-             'profile_setup' => false,
-             'is_verified' => true,
-             'email_verified_at' => now(),
-             'verified_at' => now(),
-             'phone' => '0123456788',
-             'gender' => 'female',
-        ]);
-
-        \App\Models\User::create([
-             'name' => 'User Three',
-             'email' => 'user2@gmail.com',
-             'password' => bcrypt('password'),
-             'profile_setup' => true,
-             'is_verified' => true,
-             'email_verified_at' => now(),
-             'verified_at' => now(),
-             'phone' => '0123456787',
-             'gender' => 'male',
-        ]);
+        \App\Models\User::updateOrCreate(
+            ['email' => 'user2@gmail.com'],
+            [
+                'name' => 'User Three',
+                'password' => bcrypt('password'),
+                'profile_setup' => true,
+                'is_verified' => true,
+                'email_verified_at' => now(),
+                'verified_at' => now(),
+                'phone' => '0123456787',
+                'gender' => 'male',
+            ]
+        );
     }
 }

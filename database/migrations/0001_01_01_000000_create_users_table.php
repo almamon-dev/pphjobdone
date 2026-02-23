@@ -20,6 +20,7 @@ return new class extends Migration
             $t->string('avatar')->nullable();
             $t->timestamp('email_verified_at')->nullable();
             $t->string('password');
+            $t->boolean('is_admin')->default(false);
 
             $t->boolean('is_verified')->default(false);
             $t->timestamp('verified_at')->nullable();

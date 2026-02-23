@@ -10,11 +10,11 @@ import {
     ChevronDown,
     ChevronLeft,
     ChevronRight,
-    Utensils,
-    Clock,
+    DollarSign,
+    ExternalLink,
 } from "lucide-react";
 
-export default function Index({ recipes, filters = {} }) {
+export default function Index({ pricing_plans, filters = {} }) {
     const [search, setSearch] = useState(filters.search || "");
 
     const handleSearch = (value) => {
@@ -24,7 +24,7 @@ export default function Index({ recipes, filters = {} }) {
 
     const updateFilters = (newFilters) => {
         router.get(
-            route("admin.recipes.index"),
+            route("admin.pricing-plans.index"),
             { ...filters, ...newFilters },
             { preserveState: true, replace: true },
         );
@@ -39,34 +39,34 @@ export default function Index({ recipes, filters = {} }) {
     };
 
     const handleDelete = (id) => {
-        if (confirm("Are you sure you want to delete this recipe?")) {
-            router.delete(route("admin.recipes.destroy", id));
+        if (confirm("Are you sure you want to delete this pricing plan?")) {
+            router.delete(route("admin.pricing-plans.destroy", id));
         }
     };
 
     return (
         <AdminLayout>
-            <Head title="Recipe Management" />
+            <Head title="Pricing Plans" />
 
             <div className="space-y-6 max-w-[1240px] mx-auto pb-20">
                 {/* Top Header */}
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <h1 className="text-[24px] font-bold text-[#2f3344] tracking-tight">
-                            Recipe Management
+                            Pricing Plans
                         </h1>
                         <div className="flex items-center gap-2 text-[13px] text-[#727586] mt-1">
                             <Home size={16} className="text-[#727586]" />
                             <span className="text-[#c3c4ca]">-</span>
-                            <span>Recipes</span>
+                            <span>Pricing Plans</span>
                         </div>
                     </div>
                     <Link
-                        href={route("admin.recipes.create")}
+                        href={route("admin.pricing-plans.create")}
                         className="bg-[#673ab7] text-white px-6 py-2 rounded-lg text-[13px] font-bold hover:bg-[#5e35b1] transition-all flex items-center gap-2 shadow-lg shadow-[#673ab7]/10"
                     >
                         <Plus size={18} strokeWidth={3} />
-                        Add Recipe
+                        Add Plan
                     </Link>
                 </div>
 
@@ -82,7 +82,7 @@ export default function Index({ recipes, filters = {} }) {
                                 type="text"
                                 value={search}
                                 onChange={(e) => handleSearch(e.target.value)}
-                                placeholder="Search recipes by title or slug..."
+                                placeholder="Search plans by name..."
                                 className="w-full h-[52px] pl-14 pr-6 bg-white border border-[#e3e4e8] rounded-[8px] text-[15px] focus:outline-none focus:border-[#673ab7] focus:ring-1 focus:ring-[#673ab7] transition-all"
                             />
                         </div>
@@ -94,13 +94,13 @@ export default function Index({ recipes, filters = {} }) {
                             <thead>
                                 <tr className="border-b border-[#e3e4e8]">
                                     <th className="text-left px-7 py-4 text-[13px] font-bold text-[#2f3344] uppercase tracking-wider">
-                                        Recipe
+                                        Plan Name
                                     </th>
                                     <th className="text-left px-5 py-4 text-[13px] font-bold text-[#2f3344] uppercase tracking-wider">
-                                        Category
+                                        Price
                                     </th>
                                     <th className="text-left px-5 py-4 text-[13px] font-bold text-[#2f3344] uppercase tracking-wider">
-                                        Prep Time
+                                        Popular
                                     </th>
                                     <th className="text-left px-5 py-4 text-[13px] font-bold text-[#2f3344] uppercase tracking-wider">
                                         Status
@@ -111,59 +111,54 @@ export default function Index({ recipes, filters = {} }) {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-[#f1f2f4]">
-                                {recipes.data.length > 0 ? (
-                                    recipes.data.map((recipe) => (
+                                {pricing_plans.data.length > 0 ? (
+                                    pricing_plans.data.map((plan) => (
                                         <tr
-                                            key={recipe.id}
+                                            key={plan.id}
                                             className="hover:bg-[#fafbfc] transition-colors group"
                                         >
                                             <td className="px-7 py-5">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-12 h-12 rounded-lg bg-[#f4f0ff] flex items-center justify-center text-[#673ab7] border border-[#e9e3ff] overflow-hidden">
-                                                        {recipe.image ? (
-                                                            <img
-                                                                src={`/${recipe.image}`}
-                                                                alt={
-                                                                    recipe.title
-                                                                }
-                                                                className="w-full h-full object-cover"
-                                                            />
-                                                        ) : (
-                                                            <Utensils
-                                                                size={24}
-                                                            />
-                                                        )}
+                                                    <div className="w-10 h-10 rounded-lg bg-[#f4f0ff] flex items-center justify-center text-[#673ab7] border border-[#e9e3ff]">
+                                                        <DollarSign size={20} />
                                                     </div>
                                                     <div>
                                                         <p className="text-[14px] font-bold text-[#2f3344] group-hover:text-[#673ab7] transition-colors">
-                                                            {recipe.title}
+                                                            {plan.name}
                                                         </p>
-                                                        <p className="text-[12px] text-[#727586]">
-                                                            /{recipe.slug}
-                                                        </p>
+                                                        {plan.subtitle && (
+                                                            <p className="text-[12px] text-[#727586]">
+                                                                {plan.subtitle}
+                                                            </p>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="px-5 py-5">
-                                                <span className="px-2.5 py-1 rounded-full bg-[#f4f0ff] text-[#673ab7] text-[11px] font-bold border border-[#e9e3ff]">
-                                                    {recipe.category?.name}
+                                                <span className="text-[14px] font-bold text-[#2f3344]">
+                                                    {plan.price}
                                                 </span>
                                             </td>
                                             <td className="px-5 py-5">
-                                                <div className="flex items-center gap-1.5 text-[13px] text-[#727586]">
-                                                    <Clock size={14} />
-                                                    {recipe.prep_time || "N/A"}
-                                                </div>
+                                                {plan.is_popular ? (
+                                                    <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 text-[10px] font-black uppercase tracking-wider">
+                                                        Popular
+                                                    </span>
+                                                ) : (
+                                                    <span className="text-[12px] text-[#c3c4ca]">
+                                                        -
+                                                    </span>
+                                                )}
                                             </td>
                                             <td className="px-5 py-5">
                                                 <span
                                                     className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${
-                                                        recipe.status
+                                                        plan.status
                                                             ? "bg-green-100 text-green-700"
                                                             : "bg-gray-100 text-gray-700"
                                                     }`}
                                                 >
-                                                    {recipe.status
+                                                    {plan.status
                                                         ? "Active"
                                                         : "Draft"}
                                                 </span>
@@ -172,22 +167,22 @@ export default function Index({ recipes, filters = {} }) {
                                                 <div className="flex items-center justify-end gap-2">
                                                     <Link
                                                         href={route(
-                                                            "admin.recipes.edit",
-                                                            recipe.id,
+                                                            "admin.pricing-plans.edit",
+                                                            plan.id,
                                                         )}
                                                         className="w-[32px] h-[32px] flex items-center justify-center rounded-[6px] text-[#673ab7] bg-[#f4f0ff]/50 hover:bg-[#673ab7] hover:text-white transition-all shadow-sm border border-transparent hover:border-[#673ab7]"
-                                                        title="Edit Recipe"
+                                                        title="Edit Plan"
                                                     >
                                                         <Edit size={16} />
                                                     </Link>
                                                     <button
                                                         onClick={() =>
                                                             handleDelete(
-                                                                recipe.id,
+                                                                plan.id,
                                                             )
                                                         }
                                                         className="w-[32px] h-[32px] flex items-center justify-center rounded-[6px] text-[#ef4444] bg-[#fee2e2]/50 hover:bg-[#ef4444] hover:text-white transition-all shadow-sm border border-transparent hover:border-[#ef4444]"
-                                                        title="Delete Recipe"
+                                                        title="Delete Plan"
                                                     >
                                                         <Trash2 size={16} />
                                                     </button>
@@ -198,23 +193,28 @@ export default function Index({ recipes, filters = {} }) {
                                 ) : (
                                     <tr>
                                         <td
-                                            colSpan="5"
+                                            colSpan="6"
                                             className="px-7 py-20 text-center"
                                         >
                                             <div className="flex flex-col items-center gap-3 text-[#727586]">
                                                 <div className="w-16 h-16 bg-[#f8f9fa] rounded-full flex items-center justify-center mb-2">
-                                                    <Utensils
+                                                    <DollarSign
                                                         size={30}
                                                         className="text-[#c3c4ca]"
                                                     />
                                                 </div>
                                                 <p className="text-[16px] font-bold text-[#2f3344]">
-                                                    No recipes found
+                                                    No pricing plans found
                                                 </p>
-                                                <p className="text-[14px]">
-                                                    Add your first recipe to get
-                                                    started.
-                                                </p>
+                                                <Link
+                                                    href={route(
+                                                        "admin.pricing-plans.create",
+                                                    )}
+                                                    className="text-[#673ab7] font-bold hover:underline"
+                                                >
+                                                    Create your first pricing
+                                                    plan
+                                                </Link>
                                             </div>
                                         </td>
                                     </tr>
@@ -249,24 +249,29 @@ export default function Index({ recipes, filters = {} }) {
 
                         <div className="flex items-center gap-6">
                             <span className="text-[13px] text-[#2f3344] font-medium">
-                                {recipes.from || 0} - {recipes.to || 0} of{" "}
-                                {recipes.total || 0}
+                                {pricing_plans.from || 0} -{" "}
+                                {pricing_plans.to || 0} of{" "}
+                                {pricing_plans.total || 0}
                             </span>
                             <div className="flex gap-2">
                                 <button
                                     onClick={() =>
-                                        handlePageChange(recipes.prev_page_url)
+                                        handlePageChange(
+                                            pricing_plans.prev_page_url,
+                                        )
                                     }
-                                    disabled={!recipes.prev_page_url}
+                                    disabled={!pricing_plans.prev_page_url}
                                     className="w-[34px] h-[34px] flex items-center justify-center rounded-full text-[#673ab7] hover:bg-[#673ab7]/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                                 >
                                     <ChevronLeft size={20} />
                                 </button>
                                 <button
                                     onClick={() =>
-                                        handlePageChange(recipes.next_page_url)
+                                        handlePageChange(
+                                            pricing_plans.next_page_url,
+                                        )
                                     }
-                                    disabled={!recipes.next_page_url}
+                                    disabled={!pricing_plans.next_page_url}
                                     className="w-[34px] h-[34px] flex items-center justify-center rounded-full text-[#673ab7] hover:bg-[#673ab7]/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                                 >
                                     <ChevronRight size={20} />

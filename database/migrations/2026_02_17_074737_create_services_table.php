@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('icon')->nullable();
             $table->text('description')->nullable();
             $table->json('features')->nullable(); // List of features/highlights
-            $table->json('pricing_plans')->nullable(); // JSON object for pricing tier
             $table->json('faqs')->nullable(); // JSON object for FAQs
             $table->json('process_steps')->nullable();
             $table->json('section_one')->nullable(); // Title, Subtitle, Image

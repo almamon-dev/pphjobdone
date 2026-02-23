@@ -24,7 +24,6 @@ export default function Create() {
         video_url: "",
         video_file: null,
         thumbnail: null,
-        pricing_plans: [{ name: "", price: "", features: [""] }],
         faqs: [{ question: "", answer: "" }],
         benefits: [{ title: "", points: [""], icon: null }],
         process_steps: [{ title: "", subtitle: "", icon: null }],
@@ -154,44 +153,6 @@ export default function Create() {
         const newBenefits = [...data.benefits];
         newBenefits[benefitIndex].points[pointIndex] = value;
         setData("benefits", newBenefits);
-    };
-
-    const addPlan = () => {
-        setData("pricing_plans", [
-            ...data.pricing_plans,
-            { name: "", price: "", features: [""] },
-        ]);
-    };
-
-    const removePlan = (index) => {
-        const newPlans = data.pricing_plans.filter((_, i) => i !== index);
-        setData("pricing_plans", newPlans);
-    };
-
-    const updatePlan = (index, field, value) => {
-        const newPlans = [...data.pricing_plans];
-        newPlans[index][field] = value;
-        setData("pricing_plans", newPlans);
-    };
-
-    const addPlanFeature = (planIndex) => {
-        const newPlans = [...data.pricing_plans];
-        newPlans[planIndex].features.push("");
-        setData("pricing_plans", newPlans);
-    };
-
-    const updatePlanFeature = (planIndex, featureIndex, value) => {
-        const newPlans = [...data.pricing_plans];
-        newPlans[planIndex].features[featureIndex] = value;
-        setData("pricing_plans", newPlans);
-    };
-
-    const removePlanFeature = (planIndex, featureIndex) => {
-        const newPlans = [...data.pricing_plans];
-        newPlans[planIndex].features = newPlans[planIndex].features.filter(
-            (_, i) => i !== featureIndex,
-        );
-        setData("pricing_plans", newPlans);
     };
 
     const addFaq = () => {
@@ -351,146 +312,6 @@ export default function Create() {
                                         className="w-full h-[44px] px-4 border border-[#e3e4e8] rounded-[8px] focus:ring-1 focus:ring-[#673ab7] outline-none text-[14px]"
                                     />
                                 </div>
-                            </div>
-                        </div>
-
-                        {/* Pricing Section */}
-                        <div className="bg-white rounded-[10px] border border-[#e3e4e8] shadow-sm p-5">
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="flex items-center gap-2.5">
-                                    <Plus
-                                        size={20}
-                                        className="text-[#673ab7]"
-                                    />
-                                    <h2 className="text-[16px] font-bold text-[#2f3344]">
-                                        Pricing Plans
-                                    </h2>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={addPlan}
-                                    className="text-[#673ab7] text-[13px] font-bold hover:underline flex items-center gap-1"
-                                >
-                                    <Plus size={16} /> Add Plan
-                                </button>
-                            </div>
-
-                            <div className="space-y-6">
-                                {data.pricing_plans.map((plan, pIndex) => (
-                                    <div
-                                        key={pIndex}
-                                        className="p-6 bg-[#f8f9fc] rounded-xl border border-[#e3e4e8] space-y-4"
-                                    >
-                                        <div className="flex justify-between items-start">
-                                            <h3 className="text-[14px] font-bold text-[#673ab7]">
-                                                Plan {pIndex + 1}
-                                            </h3>
-                                            {data.pricing_plans.length > 1 && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        removePlan(pIndex)
-                                                    }
-                                                    className="text-red-500 hover:text-red-700"
-                                                >
-                                                    <Trash2 size={16} />
-                                                </button>
-                                            )}
-                                        </div>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="space-y-1">
-                                                <label className="text-[12px] font-bold text-[#727586]">
-                                                    Plan Name
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    value={plan.name}
-                                                    onChange={(e) =>
-                                                        updatePlan(
-                                                            pIndex,
-                                                            "name",
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                    className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg outline-none"
-                                                />
-                                            </div>
-                                            <div className="space-y-1">
-                                                <label className="text-[12px] font-bold text-[#727586]">
-                                                    Price
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    value={plan.price}
-                                                    onChange={(e) =>
-                                                        updatePlan(
-                                                            pIndex,
-                                                            "price",
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                    placeholder="$"
-                                                    className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg outline-none"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <div className="flex justify-between items-center">
-                                                <label className="text-[12px] font-bold text-[#727586]">
-                                                    Plan Features
-                                                </label>
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        addPlanFeature(pIndex)
-                                                    }
-                                                    className="text-[#673ab7] text-[11px] font-bold"
-                                                >
-                                                    + Feature
-                                                </button>
-                                            </div>
-                                            {plan.features.map(
-                                                (pf, pfIndex) => (
-                                                    <div
-                                                        key={pfIndex}
-                                                        className="flex gap-2"
-                                                    >
-                                                        <input
-                                                            type="text"
-                                                            value={pf}
-                                                            onChange={(e) =>
-                                                                updatePlanFeature(
-                                                                    pIndex,
-                                                                    pfIndex,
-                                                                    e.target
-                                                                        .value,
-                                                                )
-                                                            }
-                                                            className="flex-1 h-[36px] px-3 bg-white border border-[#e3e4e8] rounded-lg text-[13px] outline-none"
-                                                        />
-                                                        {plan.features.length >
-                                                            1 && (
-                                                            <button
-                                                                type="button"
-                                                                onClick={() =>
-                                                                    removePlanFeature(
-                                                                        pIndex,
-                                                                        pfIndex,
-                                                                    )
-                                                                }
-                                                                className="text-red-400"
-                                                            >
-                                                                <MinusCircle
-                                                                    size={16}
-                                                                />
-                                                            </button>
-                                                        )}
-                                                    </div>
-                                                ),
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
                             </div>
                         </div>
 

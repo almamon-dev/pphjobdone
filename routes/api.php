@@ -19,6 +19,7 @@ Route::post('seo-audit/download', [\App\Http\Controllers\API\SeoAuditController:
 
 // Services
 Route::get('services', [\App\Http\Controllers\API\ServiceApiController::class, 'index']);
+Route::get('services/{slug}', [\App\Http\Controllers\API\ServiceApiController::class, 'show']); // Add this
 Route::get('services/details/{slug}', [\App\Http\Controllers\API\ServiceApiController::class, 'show']);
 Route::get('services/proposal/{slug}', [\App\Http\Controllers\API\ServiceApiController::class, 'proposal']);
 

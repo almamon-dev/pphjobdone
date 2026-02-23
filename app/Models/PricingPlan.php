@@ -13,7 +13,6 @@ class PricingPlan extends Model
         'is_popular',
         'features',
         'button_text',
-        'button_url',
         'status',
     ];
 

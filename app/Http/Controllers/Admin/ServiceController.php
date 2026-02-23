@@ -39,7 +39,6 @@ class ServiceController extends Controller
             'video_url' => 'nullable|string|max:500',
             'video_file' => 'nullable|mimes:mp4,mov,ogg,qt|max:20000',
             'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'pricing_plans' => 'nullable|array',
             'faqs' => 'nullable|array',
             'process_steps' => 'nullable|array',
             'section_one' => 'nullable|array',
@@ -99,7 +98,7 @@ class ServiceController extends Controller
     public function edit(Service $service)
     {
         return Inertia::render('Admin/Services/Edit', [
-            'service' => $service,
+            'service' => $service->load('pricingPlans'),
         ]);
     }
 
@@ -110,7 +109,6 @@ class ServiceController extends Controller
             'subtitle' => 'nullable|string|max:255',
             'video_url' => 'nullable|string|max:500',
             'video_file' => 'nullable|mimes:mp4,mov,ogg,qt|max:20000',
-            'pricing_plans' => 'nullable|array',
             'faqs' => 'nullable|array',
             'process_steps' => 'nullable|array',
             'section_one' => 'nullable|array',
@@ -203,8 +201,6 @@ class ServiceController extends Controller
             }
             $validated['benefits'] = $benefits;
         }
-
-        $validated['slug'] = Str::slug($validated['title']);
 
         $service->update($validated);
 

@@ -19,7 +19,6 @@ return new class extends Migration
             $table->boolean('is_popular')->default(false);
             $table->json('features')->nullable();
             $table->string('button_text')->default('Get Started');
-            $table->string('button_url')->default('#');
             $table->boolean('status')->default(true);
             $table->timestamps();
         });

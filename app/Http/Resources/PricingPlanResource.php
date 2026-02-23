@@ -22,7 +22,6 @@ class PricingPlanResource extends JsonResource
             'is_popular' => (bool) $this->is_popular,
             'features' => $this->features ?? [],
             'button_text' => $this->button_text,
-            'button_url' => $this->button_url,
         ];
     }
 }
