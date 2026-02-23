@@ -20,7 +20,6 @@ class PricingPlanSeeder extends Seeder
                 'is_popular' => false,
                 'features' => ['5 Keywords', 'On-Page Optimization', 'Monthly Report'],
                 'button_text' => 'Get Started',
-                'button_url' => '#',
             ],
             [
                 'name' => 'Growth SEO',
@@ -29,7 +28,6 @@ class PricingPlanSeeder extends Seeder
                 'is_popular' => true,
                 'features' => ['15 Keywords', 'Content Creation', 'Backlink Building', 'Quarterly Strategy'],
                 'button_text' => 'Get Started',
-                'button_url' => '#',
             ],
             [
                 'name' => 'Enterprise SEO',
@@ -38,7 +36,6 @@ class PricingPlanSeeder extends Seeder
                 'is_popular' => false,
                 'features' => ['Unlimited Keywords', 'Technical Audit', 'Competitor Analysis', 'Dedicated Manager'],
                 'button_text' => 'Get Started',
-                'button_url' => '#',
             ],
         ];
 

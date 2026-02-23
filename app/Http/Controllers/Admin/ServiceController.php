@@ -98,7 +98,7 @@ class ServiceController extends Controller
     public function edit(Service $service)
     {
         return Inertia::render('Admin/Services/Edit', [
-            'service' => $service->load('pricingPlans'),
+            'service' => $service,
         ]);
     }
 

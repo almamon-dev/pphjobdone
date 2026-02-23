@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('seo_audits', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('cascade');
+            $table->string('email')->nullable();
             $table->string('url');
             $table->json('response_data');
             $table->timestamps();

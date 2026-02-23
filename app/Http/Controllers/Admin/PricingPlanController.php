@@ -57,7 +57,6 @@ class PricingPlanController extends Controller
     public function update(Request $request, PricingPlan $pricingPlan)
     {
         $validated = $request->validate([
-            'service_id' => 'nullable|exists:services,id',
             'name' => 'required|string|max:255',
             'price' => 'required|string|max:255',
             'subtitle' => 'nullable|string|max:255',

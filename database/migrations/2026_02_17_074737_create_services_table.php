@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('video_url')->nullable();
             $table->json('timeline')->nullable();
             $table->json('expect_results')->nullable();
+            $table->string('thumbnail')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();
         });

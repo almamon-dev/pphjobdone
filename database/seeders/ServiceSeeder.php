@@ -21,23 +21,7 @@ class ServiceSeeder extends Seeder
                 'subtitle' => 'Comprehensive monthly SEO management to climb the search rankings.',
                 'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', // Sample Video Link
                 'status' => true,
-                'pricing_plans' => [
-                    [
-                        'name' => 'Starter SEO',
-                        'price' => '499',
-                        'features' => ['5 Keywords', 'On-Page Optimization', 'Monthly Report'],
-                    ],
-                    [
-                        'name' => 'Growth SEO',
-                        'price' => '899',
-                        'features' => ['15 Keywords', 'Content Creation', 'Backlink Building'],
-                    ],
-                    [
-                        'name' => 'Enterprise SEO',
-                        'price' => '1499',
-                        'features' => ['Unlimited Keywords', 'Technical Audit', 'Competitor Analysis'],
-                    ],
-                ],
+
                 'faqs' => [
                     [
                         'question' => 'How long does it take to see results?',
@@ -105,18 +89,7 @@ class ServiceSeeder extends Seeder
                 'subtitle' => 'Dominate your local market and attract customers in your area.',
                 'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
                 'status' => true,
-                'pricing_plans' => [
-                    [
-                        'name' => 'Local Starter',
-                        'price' => '299',
-                        'features' => ['GMB Optimization', '5 Local Citations', 'Review Management'],
-                    ],
-                    [
-                        'name' => 'Local Dominator',
-                        'price' => '599',
-                        'features' => ['Map Pack Ranking', '20 Local Citations', 'Local Content Strategy'],
-                    ],
-                ],
+
                 'faqs' => [
                     [
                         'question' => 'What is GMB?',
@@ -172,18 +145,7 @@ class ServiceSeeder extends Seeder
                 'subtitle' => 'Instant traffic and sales through targeted advertising.',
                 'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
                 'status' => true,
-                'pricing_plans' => [
-                    [
-                        'name' => 'Search Ads',
-                        'price' => '399',
-                        'features' => ['Google Ads Setup', 'Keyword Research', 'Ad Copywriting'],
-                    ],
-                    [
-                        'name' => 'Full Funnel PPC',
-                        'price' => '999',
-                        'features' => ['Remarketing', 'Display Ads', 'Strategy Optimization'],
-                    ],
-                ],
+
                 'faqs' => [
                     [
                         'question' => 'How much ad spend do I need?',
@@ -239,18 +201,6 @@ class ServiceSeeder extends Seeder
                 'subtitle' => 'High-quality, SEO-optimized content that resonates with your audience.',
                 'video_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
                 'status' => true,
-                'pricing_plans' => [
-                    [
-                        'name' => 'Blog Pack',
-                        'price' => '199',
-                        'features' => ['4 Blog Posts', 'Keyword Integration', 'Grammarly Checked'],
-                    ],
-                    [
-                        'name' => 'Premium Content',
-                        'price' => '499',
-                        'features' => ['10 Articles', 'Plagiarism Report', 'Formatting included'],
-                    ],
-                ],
                 'faqs' => [
                     [
                         'question' => 'Who writes the content?',

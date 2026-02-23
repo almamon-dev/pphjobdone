@@ -645,7 +645,7 @@ export default function Create() {
                                             )}
                                         </div>
 
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-1 gap-4">
                                             <div className="space-y-1">
                                                 <label className="text-[12px] font-bold text-[#727586] flex items-center gap-1">
                                                     <Clock size={12} />{" "}
@@ -662,25 +662,6 @@ export default function Create() {
                                                         )
                                                     }
                                                     placeholder="e.g., Week 1-2"
-                                                    className="w-full h-[38px] px-3 bg-white border border-[#e3e4e8] rounded-lg outline-none text-[13px]"
-                                                />
-                                            </div>
-                                            <div className="space-y-1">
-                                                <label className="text-[12px] font-bold text-[#727586] flex items-center gap-1">
-                                                    <DollarSign size={12} />{" "}
-                                                    Investment
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    value={phase.price}
-                                                    onChange={(e) =>
-                                                        updateTimelinePhase(
-                                                            pIdx,
-                                                            "price",
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                    placeholder="e.g., $1,500"
                                                     className="w-full h-[38px] px-3 bg-white border border-[#e3e4e8] rounded-lg outline-none text-[13px]"
                                                 />
                                             </div>

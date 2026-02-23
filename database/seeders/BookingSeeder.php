@@ -17,20 +17,21 @@ class BookingSeeder extends Seeder
     {
         $users = User::where('email', '!=', 'admin@gmail.com')->get();
         $services = Service::all();
+        $pricingPlans = \App\Models\PricingPlan::all();
 
-        if ($users->isEmpty() || $services->isEmpty()) {
+        if ($users->isEmpty() || $services->isEmpty() || $pricingPlans->isEmpty()) {
             return;
         }
 
         foreach ($users as $user) {
             foreach ($services->random(2) as $service) {
-                $plan = $service->pricing_plans[array_rand($service->pricing_plans)];
+                $plan = $pricingPlans->random();
 
                 $booking = Booking::create([
                     'user_id' => $user->id,
                     'service_id' => $service->id,
-                    'plan_name' => $plan['name'],
-                    'price' => $plan['price'],
+                    'plan_name' => $plan->name,
+                    'price' => $plan->price,
                     'status' => 'ongoing',
                     'payment_status' => 'paid',
                 ]);
@@ -38,7 +39,7 @@ class BookingSeeder extends Seeder
                 Payment::create([
                     'booking_id' => $booking->id,
                     'transaction_id' => 'SEED_'.uniqid(),
-                    'amount' => $plan['price'],
+                    'amount' => $plan->price,
                     'currency' => 'USD',
                     'payment_method' => 'Stripe',
                     'status' => 'paid',
@@ -48,13 +49,13 @@ class BookingSeeder extends Seeder
 
             // Create one failed/pending booking
             $service = $services->random();
-            $plan = $service->pricing_plans[array_rand($service->pricing_plans)];
+            $plan = $pricingPlans->random();
 
             Booking::create([
                 'user_id' => $user->id,
                 'service_id' => $service->id,
-                'plan_name' => $plan['name'],
-                'price' => $plan['price'],
+                'plan_name' => $plan->name,
+                'price' => $plan->price,
                 'status' => 'pending',
                 'payment_status' => 'pending',
             ]);
@@ -63,14 +64,14 @@ class BookingSeeder extends Seeder
             \App\Models\SeoAudit::create([
                 'user_id' => $user->id,
                 'url' => 'https://example.com',
-                'status' => 'completed',
+                'response_data' => ['score' => 85, 'details' => 'Good SEO'],
                 'created_at' => now()->subDays(rand(1, 30)),
             ]);
 
             \App\Models\SeoAudit::create([
                 'user_id' => $user->id,
                 'url' => 'https://mysite.io',
-                'status' => 'completed',
+                'response_data' => ['score' => 92, 'details' => 'Excellent SEO'],
                 'created_at' => now()->subDays(rand(31, 60)),
             ]);
         }
