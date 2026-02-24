@@ -19,9 +19,10 @@ class PricingPlanResource extends JsonResource
             'name' => $this->name,
             'price' => $this->price,
             'subtitle' => $this->subtitle,
-            'is_popular' => (bool) $this->is_popular,
-            'features' => $this->features ?? [],
+            'is_popular' => $this->is_popular,
+            'features' => $this->features,
             'button_text' => $this->button_text,
+            'status' => $this->status,
         ];
     }
 }

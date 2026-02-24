@@ -9,6 +9,8 @@ use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Stripe\Stripe;
+use Stripe\PaymentIntent;
 
 class BookingApiController extends Controller
 {
@@ -19,7 +21,7 @@ class BookingApiController extends Controller
      */
     public function index()
     {
-        $bookings = Booking::with(['service', 'payments'])
+        $bookings = Booking::with(['pricingPlan', 'payments'])
             ->where('user_id', Auth::id())
             ->latest()
             ->get();
@@ -33,14 +35,14 @@ class BookingApiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'service_id' => 'required|exists:services,id',
+            'pricing_plan_id' => 'required|exists:pricing_plans,id',
             'plan_name' => 'required|string',
             'price' => 'required|numeric',
         ]);
 
         $booking = Booking::create([
             'user_id' => Auth::id(),
-            'service_id' => $request->service_id,
+            'pricing_plan_id' => $request->pricing_plan_id,
             'plan_name' => $request->plan_name,
             'price' => $request->price,
             'status' => 'pending',
@@ -55,11 +57,52 @@ class BookingApiController extends Controller
      */
     public function show($id)
     {
-        $booking = Booking::with(['service', 'payments'])
+        $booking = Booking::with(['pricingPlan', 'payments'])
             ->where('user_id', Auth::id())
             ->findOrFail($id);
 
         return $this->sendResponse($booking, 'Booking details retrieved.');
+    }
+
+    /**
+     * Create a Stripe PaymentIntent for a booking
+     */
+    public function createPaymentIntent(Request $request)
+    {
+        $request->validate([
+            'booking_id' => 'required|exists:bookings,id',
+        ]);
+
+        $booking = Booking::where('user_id', Auth::id())->findOrFail($request->booking_id);
+
+        // Check if already paid
+        if ($booking->payment_status === 'paid') {
+            return $this->sendError('This booking is already paid.');
+        }
+
+        try {
+            Stripe::setApiKey(config('services.stripe.secret') ?? env('STRIPE_SECRET'));
+
+            $intent = PaymentIntent::create([
+                'amount' => (int) ($booking->price * 100), // Amount in cents
+                'currency' => 'usd',
+                'metadata' => [
+                    'booking_id' => $booking->id,
+                    'user_id' => Auth::id(),
+                ],
+                'automatic_payment_methods' => [
+                    'enabled' => true,
+                ],
+            ]);
+
+            return $this->sendResponse([
+                'client_secret' => $intent->client_secret,
+                'payment_intent_id' => $intent->id,
+            ], 'Payment intent created successfully.');
+        } catch (\Exception $e) {
+            Log::error('Stripe PaymentIntent Error: ' . $e->getMessage());
+            return $this->sendError('Failed to create payment intent: ' . $e->getMessage());
+        }
     }
 
     public function webhook(Request $request)

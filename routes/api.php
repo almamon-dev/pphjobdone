@@ -22,9 +22,11 @@ Route::get('services', [\App\Http\Controllers\API\ServiceApiController::class, '
 Route::get('services/{slug}', [\App\Http\Controllers\API\ServiceApiController::class, 'show']); // Add this
 Route::get('services/details/{slug}', [\App\Http\Controllers\API\ServiceApiController::class, 'show']);
 Route::get('services/proposal/{slug}', [\App\Http\Controllers\API\ServiceApiController::class, 'proposal']);
+Route::get('pricing-plans', [\App\Http\Controllers\API\PricingPlanApiController::class, 'index']);
 
 // Bookings & Payments
 Route::post('bookings/create', [\App\Http\Controllers\API\BookingApiController::class, 'store'])->middleware('auth:sanctum');
+Route::post('payments/create-intent', [\App\Http\Controllers\API\BookingApiController::class, 'createPaymentIntent'])->middleware('auth:sanctum');
 Route::any('payments/webhook', [\App\Http\Controllers\API\BookingApiController::class, 'webhook']);
 
 Route::middleware(['auth:sanctum'])->group(function () {

@@ -8,7 +8,7 @@ class Booking extends Model
 {
     protected $fillable = [
         'user_id',
-        'service_id',
+        'pricing_plan_id',
         'plan_name',
         'price',
         'status',
@@ -24,8 +24,8 @@ class Booking extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function service()
+    public function pricingPlan()
     {
-        return $this->belongsTo(Service::class);
+        return $this->belongsTo(PricingPlan::class);
     }
 }

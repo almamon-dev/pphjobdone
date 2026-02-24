@@ -24,12 +24,10 @@ class BookingSeeder extends Seeder
         }
 
         foreach ($users as $user) {
-            foreach ($services->random(2) as $service) {
-                $plan = $pricingPlans->random();
-
+            foreach ($pricingPlans->random(2) as $plan) {
                 $booking = Booking::create([
                     'user_id' => $user->id,
-                    'service_id' => $service->id,
+                    'pricing_plan_id' => $plan->id,
                     'plan_name' => $plan->name,
                     'price' => $plan->price,
                     'status' => 'ongoing',
@@ -48,12 +46,11 @@ class BookingSeeder extends Seeder
             }
 
             // Create one failed/pending booking
-            $service = $services->random();
             $plan = $pricingPlans->random();
 
             Booking::create([
                 'user_id' => $user->id,
-                'service_id' => $service->id,
+                'pricing_plan_id' => $plan->id,
                 'plan_name' => $plan->name,
                 'price' => $plan->price,
                 'status' => 'pending',
