@@ -69,11 +69,6 @@ class User extends Authenticatable
         return $this->hasMany(Otp::class);
     }
 
-    public function favorites()
-    {
-        return $this->hasMany(Favorite::class);
-    }
-
     public function seoAudits()
     {
         return $this->hasMany(SeoAudit::class);

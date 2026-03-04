@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Helpers\Helper;
 use App\Http\Controllers\Controller;
+use App\Services\OpenAiService;
 use App\Services\PageSpeedService;
 use App\Services\WebsiteService;
 use App\Traits\ApiResponse;
@@ -19,12 +20,16 @@ class SeoAuditController extends Controller
 
     protected PageSpeedService $pageSpeedService;
 
+    protected OpenAiService $openAiService;
+
     public function __construct(
         WebsiteService $websiteService,
-        PageSpeedService $pageSpeedService
+        PageSpeedService $pageSpeedService,
+        OpenAiService $openAiService
     ) {
         $this->websiteService = $websiteService;
         $this->pageSpeedService = $pageSpeedService;
+        $this->openAiService = $openAiService;
     }
 
     /**
@@ -99,9 +104,14 @@ class SeoAuditController extends Controller
             ];
         }
 
-        // 4. Generate Main Manual SEO Analysis
+        // 4. Generate AI SEO Analysis
         $mainSpeedData = $auditResults[0]['metrics'] ?? [];
-        $audit = $this->generateManualAudit($siteData, $mainSpeedData);
+        $audit = $this->openAiService->generateSeoRecommendations($siteData, $mainSpeedData);
+
+        // Fallback to manual if AI fails
+        if (isset($audit['error'])) {
+            $audit = $this->generateManualAudit($siteData, $mainSpeedData);
+        }
 
         // Add multi-page data and full-page screenshots
         $audit['screenshots_paths'] = $screenshots;

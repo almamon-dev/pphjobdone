@@ -12,8 +12,9 @@ import {
     Settings,
 } from "lucide-react";
 
-export default function Edit({ pricing_plan }) {
+export default function Edit({ pricing_plan, services }) {
     const { data, setData, put, processing, errors } = useForm({
+        service_ids: pricing_plan.services.map((s) => s.id) || [],
         name: pricing_plan.name || "",
         price: pricing_plan.price || "",
         subtitle: pricing_plan.subtitle || "",
@@ -36,6 +37,18 @@ export default function Edit({ pricing_plan }) {
         const newFeatures = [...data.features];
         newFeatures[index] = value;
         setData("features", newFeatures);
+    };
+
+    const handleServiceToggle = (id) => {
+        const currentIds = [...data.service_ids];
+        if (currentIds.includes(id)) {
+            setData(
+                "service_ids",
+                currentIds.filter((i) => i !== id),
+            );
+        } else {
+            setData("service_ids", [...currentIds, id]);
+        }
     };
 
     const handleSubmit = (e) => {
@@ -86,6 +99,42 @@ export default function Edit({ pricing_plan }) {
                             </div>
 
                             <div className="space-y-4">
+                                <div className="space-y-1.5">
+                                    <label className="block text-[13px] font-bold text-[#2f3344]">
+                                        Select Services{" "}
+                                        <span className="text-red-500">*</span>
+                                    </label>
+                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border border-[#e3e4e8] rounded-lg bg-[#fcfcfd]">
+                                        {services.map((service) => (
+                                            <label
+                                                key={service.id}
+                                                className="flex items-center gap-2 cursor-pointer group"
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    checked={data.service_ids.includes(
+                                                        service.id,
+                                                    )}
+                                                    onChange={() =>
+                                                        handleServiceToggle(
+                                                            service.id,
+                                                        )
+                                                    }
+                                                    className="w-4 h-4 rounded border-gray-300 text-[#673ab7] focus:ring-[#673ab7]"
+                                                />
+                                                <span className="text-[13px] text-[#2f3344] group-hover:text-[#673ab7] transition-colors">
+                                                    {service.title}
+                                                </span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                    {errors.service_ids && (
+                                        <p className="text-red-500 text-[11px] mt-1">
+                                            {errors.service_ids}
+                                        </p>
+                                    )}
+                                </div>
+
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-1.5">
                                         <label className="block text-[13px] font-bold text-[#2f3344]">

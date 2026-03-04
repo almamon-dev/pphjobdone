@@ -12,7 +12,7 @@ class PricingPlanController extends Controller
 {
     public function index(Request $request)
     {
-        $query = PricingPlan::query();
+        $query = PricingPlan::query()->with('services');
 
         if ($request->search) {
             $query->where('name', 'like', "%{$request->search}%")
@@ -27,12 +27,16 @@ class PricingPlanController extends Controller
 
     public function create()
     {
-        return Inertia::render('Admin/PricingPlans/Create');
+        return Inertia::render('Admin/PricingPlans/Create', [
+            'services' => Service::select('id', 'title')->get()
+        ]);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'service_ids' => 'required|array',
+            'service_ids.*' => 'exists:services,id',
             'name' => 'required|string|max:255',
             'price' => 'required|string|max:255',
             'subtitle' => 'nullable|string|max:255',
@@ -42,7 +46,8 @@ class PricingPlanController extends Controller
             'status' => 'required|boolean',
         ]);
 
-        PricingPlan::create($validated);
+        $plan = PricingPlan::create($validated);
+        $plan->services()->sync($request->service_ids);
 
         return redirect()->route('admin.pricing-plans.index')->with('success', 'Pricing plan created successfully.');
     }
@@ -50,13 +55,16 @@ class PricingPlanController extends Controller
     public function edit(PricingPlan $pricingPlan)
     {
         return Inertia::render('Admin/PricingPlans/Edit', [
-            'pricing_plan' => $pricingPlan,
+            'pricing_plan' => $pricingPlan->load('services'),
+            'services' => Service::select('id', 'title')->get()
         ]);
     }
 
     public function update(Request $request, PricingPlan $pricingPlan)
     {
         $validated = $request->validate([
+            'service_ids' => 'required|array',
+            'service_ids.*' => 'exists:services,id',
             'name' => 'required|string|max:255',
             'price' => 'required|string|max:255',
             'subtitle' => 'nullable|string|max:255',
@@ -67,6 +75,7 @@ class PricingPlanController extends Controller
         ]);
 
         $pricingPlan->update($validated);
+        $pricingPlan->services()->sync($request->service_ids);
 
         return redirect()->route('admin.pricing-plans.index')->with('success', 'Pricing plan updated successfully.');
     }

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
-use Illuminate\Http\Request;
 
 class UserTasksApiController extends Controller
 {
@@ -20,27 +19,44 @@ class UserTasksApiController extends Controller
         $tasks = $bookings->map(function ($booking) {
             // Generating some mock tasks based on the service title
             return [
-                'service_title' => $booking->service->title ?? 'Marketing Service',
+                'service_title' => $booking->service->title ?? ($booking->plan_name ?: 'Marketing Service'),
                 'items' => [
                     [
-                        'title' => 'Initial Strategy Setup',
-                        'description' => 'Planning and goal setting for ' . ($booking->service->title ?? 'service'),
+                        'title' => 'Project Kickoff & Onboarding',
+                        'description' => 'Initial discovery meeting and setup for '.($booking->service->title ?? 'service'),
                         'progress' => 100,
                         'status' => 'Completed',
+                        'date' => $booking->created_at->format('M d'),
                     ],
                     [
-                        'title' => 'Performance Analysis',
-                        'description' => 'Bi-weekly check on campaign performance.',
+                        'title' => 'Technical Infrastructure Setup',
+                        'description' => 'Configuring accounts, tools, and tracking for '.($booking->service->title ?? 'the campaign'),
+                        'progress' => 85,
+                        'status' => 'In Progress',
+                        'date' => $booking->created_at->addDays(2)->format('M d'),
+                    ],
+                    [
+                        'title' => 'Strategy & Implementation Planning',
+                        'description' => 'Comprehensive roadmap for the next 4 weeks of '.($booking->service->title ?? 'service'),
                         'progress' => 45,
                         'status' => 'In Progress',
+                        'date' => $booking->created_at->addDays(5)->format('M d'),
                     ],
                     [
-                        'title' => 'Monthly Optimization',
-                        'description' => 'Refining tags and content based on data.',
-                        'progress' => 10,
-                        'status' => 'In Progress',
+                        'title' => 'First Performance Analysis Report',
+                        'description' => 'Detailed report on initial results and KPIs.',
+                        'progress' => 0,
+                        'status' => 'Planned',
+                        'date' => $booking->created_at->addDays(14)->format('M d'),
                     ],
-                ]
+                    [
+                        'title' => 'Monthly Optimization Review',
+                        'description' => 'Refining tags, content, and strategy based on data.',
+                        'progress' => 0,
+                        'status' => 'Planned',
+                        'date' => $booking->created_at->addDays(30)->format('M d'),
+                    ],
+                ],
             ];
         });
 

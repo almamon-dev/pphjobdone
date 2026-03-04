@@ -126,8 +126,24 @@ export default function Index({ pricing_plans, filters = {} }) {
                                                         <p className="text-[14px] font-bold text-[#2f3344] group-hover:text-[#673ab7] transition-colors">
                                                             {plan.name}
                                                         </p>
+                                                        <div className="flex flex-wrap gap-1 mt-1">
+                                                            {plan.services.map(
+                                                                (service) => (
+                                                                    <span
+                                                                        key={
+                                                                            service.id
+                                                                        }
+                                                                        className="text-[10px] bg-[#f0f1f5] text-[#727586] px-1.5 py-0.5 rounded border border-[#e3e4e8]"
+                                                                    >
+                                                                        {
+                                                                            service.title
+                                                                        }
+                                                                    </span>
+                                                                ),
+                                                            )}
+                                                        </div>
                                                         {plan.subtitle && (
-                                                            <p className="text-[12px] text-[#727586]">
+                                                            <p className="text-[12px] text-[#727586] mt-1">
                                                                 {plan.subtitle}
                                                             </p>
                                                         )}

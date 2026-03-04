@@ -8,6 +8,7 @@ class Booking extends Model
 {
     protected $fillable = [
         'user_id',
+        'service_id',
         'pricing_plan_id',
         'plan_name',
         'price',
@@ -24,8 +25,18 @@ class Booking extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
+    }
+
     public function pricingPlan()
     {
         return $this->belongsTo(PricingPlan::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
     }
 }
