@@ -14,6 +14,7 @@ class UserTasksApiController extends Controller
         $bookings = Booking::with('service')
             ->where('user_id', $userId)
             ->where('status', 'ongoing')
+            ->where('payment_status', 'paid')
             ->get();
 
         $tasks = $bookings->map(function ($booking) {

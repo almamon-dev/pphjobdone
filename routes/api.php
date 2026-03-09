@@ -50,4 +50,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('user/tasks', [\App\Http\Controllers\API\UserTasksApiController::class, 'index']);
     Route::get('user/bookings', [\App\Http\Controllers\API\BookingApiController::class, 'index']);
     Route::get('user/bookings/{id}', [\App\Http\Controllers\API\BookingApiController::class, 'show']);
+
+    // Chat Routes
+    Route::get('conversations', [\App\Http\Controllers\API\ChatApiController::class, 'getConversations']);
+    Route::get('conversations/{id}/messages', [\App\Http\Controllers\API\ChatApiController::class, 'getMessages']);
+    Route::post('messages/send', [\App\Http\Controllers\API\ChatApiController::class, 'sendMessage']);
 });

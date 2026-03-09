@@ -14,6 +14,9 @@ Route::get('/', function () {
     ]);
 });
 Route::get('/services/{slug}', [\App\Http\Controllers\ServiceController::class, 'show'])->name('services.show');
+Route::get('/chat-test', function () {
+    return Inertia::render('ChatTest');
+});
 
 use App\Http\Controllers\Admin\Dashboard\OverviewController;
 

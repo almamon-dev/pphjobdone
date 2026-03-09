@@ -17,6 +17,7 @@ class UserDashboardApiController extends Controller
         // 1. Stats Calculation
         $activeServicesCount = \App\Models\Booking::where('user_id', $userId)
             ->where('status', 'ongoing')
+            ->where('payment_status', 'paid')
             ->count();
 
         $latestAudit = \App\Models\SeoAudit::where('user_id', $userId)->latest()->first();
