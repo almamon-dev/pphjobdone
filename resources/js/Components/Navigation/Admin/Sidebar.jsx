@@ -140,12 +140,6 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
             icon: <Briefcase size={18} />,
             route: "admin.services.*",
         },
-        {
-            label: "Pricing Plans",
-            path: "/admin/pricing-plans",
-            icon: <DollarSign size={18} />,
-            route: "admin.pricing-plans.*",
-        },
     ];
 
     const hasPermission = (permission) => {

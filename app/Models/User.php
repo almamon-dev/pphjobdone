@@ -33,6 +33,7 @@ class User extends Authenticatable
         'reset_password_token_expire_at',
         'profile_setup',
         'is_admin',
+        'is_subscribed',
     ];
 
     /**
@@ -61,6 +62,7 @@ class User extends Authenticatable
             'is_online' => 'boolean',
             'profile_setup' => 'boolean',
             'is_admin' => 'boolean',
+            'is_subscribed' => 'boolean',
         ];
     }
 

@@ -39,8 +39,10 @@ class PricingPlanSeeder extends Seeder
             ],
         ];
 
+        $services = \App\Models\Service::all();
         foreach ($plans as $plan) {
-            \App\Models\PricingPlan::create($plan);
+            $createdPlan = \App\Models\PricingPlan::create($plan);
+            $createdPlan->services()->sync($services->pluck('id'));
         }
     }
 }

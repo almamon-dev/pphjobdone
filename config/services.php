@@ -23,4 +23,8 @@ return [
         'key' => env('PAGESPEED_API_KEY'),
     ],
 
+    'openai' => [
+        'key' => env('OPENAI_API_KEY'),
+    ],
+
 ];

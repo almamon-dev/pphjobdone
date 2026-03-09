@@ -24,6 +24,7 @@ Route::get('/dashboard', [OverviewController::class, 'index'])
 use App\Http\Controllers\Admin\Settings\SystemSettingsController;
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -36,8 +37,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->only(['index', 'destroy']);
         // Services
         Route::resource('services', \App\Http\Controllers\Admin\ServiceController::class);
-        // Pricing Plans
-        Route::resource('pricing-plans', \App\Http\Controllers\Admin\PricingPlanController::class);
     });
 });
 

@@ -17,22 +17,10 @@ class OverviewController extends Controller
         if (auth()->user()->is_admin) {
             return Inertia::render('Admin/Dashboard', [
                 'stats' => [
-                    'users' => [
-                        'count' => $usersCount,
-                        'status' => '+MEMBERS',
-                    ],
-
-                    'services' => [
-                        'count' => $servicesCount,
-                        'status' => '+SERVICES',
-                    ],
-                ],
-                'portfolioHealth' => [
-                    'completion' => 100,
-                    'activeExperiences' => 'High',
-                    'verifiedSkills' => 'Active',
-                ],
-                'openai_api_key' => env('OPENAI_API_KEY'),
+                    'users' => $usersCount,
+                    'services' => $servicesCount,
+                    'bookings' => \App\Models\Booking::count(),
+                ]
             ]);
         }
 
