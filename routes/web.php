@@ -14,9 +14,6 @@ Route::get('/', function () {
     ]);
 });
 Route::get('/services/{slug}', [\App\Http\Controllers\ServiceController::class, 'show'])->name('services.show');
-Route::get('/chat-test', function () {
-    return Inertia::render('ChatTest');
-});
 
 use App\Http\Controllers\Admin\Dashboard\OverviewController;
 
@@ -27,7 +24,7 @@ Route::get('/dashboard', [OverviewController::class, 'index'])
 use App\Http\Controllers\Admin\Settings\SystemSettingsController;
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

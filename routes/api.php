@@ -25,16 +25,15 @@ Route::get('services/proposal/{slug}', [\App\Http\Controllers\API\ServiceApiCont
 Route::get('pricing-plans', [\App\Http\Controllers\API\PricingPlanApiController::class, 'index']);
 
 // Bookings & Payments
-Route::post('bookings/create', [\App\Http\Controllers\API\BookingApiController::class, 'store'])->middleware('auth:sanctum');
 Route::any('payments/webhook', [\App\Http\Controllers\API\BookingApiController::class, 'webhook']);
 
-// Consolidated Payments in BookingApiController
-Route::prefix('payments')->middleware('auth:sanctum')->group(function () {
-    Route::post('create-intent', [\App\Http\Controllers\API\BookingApiController::class, 'createPaymentIntent']);
-    Route::post('verify', [\App\Http\Controllers\API\BookingApiController::class, 'verifyPayment']);
-    Route::get('list', [\App\Http\Controllers\API\BookingApiController::class, 'paymentList']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('bookings/create', [\App\Http\Controllers\API\BookingApiController::class, 'store']);
+    Route::prefix('payments')->group(function () {
+        Route::post('verify', [\App\Http\Controllers\API\BookingApiController::class, 'verifyPayment']);
+        Route::get('list', [\App\Http\Controllers\API\BookingApiController::class, 'paymentList']);
+    });
 });
-
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('auth/logout', [\App\Http\Controllers\API\Auth\AuthApiController::class, 'logoutApi']);
     // Profile Actions

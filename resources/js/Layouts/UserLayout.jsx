@@ -22,7 +22,6 @@ export default function UserLayout({ children }) {
             icon: LayoutDashboard,
             active: route().current("dashboard"),
         },
-        // Add more user-specific routes here
     ];
 
     return (

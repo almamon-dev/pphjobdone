@@ -60,7 +60,7 @@ class UserDashboardApiController extends Controller
 
         if ($activities->isEmpty()) {
             $activities = collect([[
-                'title' => 'Welcome to Gajura',
+                'title' => 'Welcome to PPHJobDone',
                 'description' => 'Start by exploring our services or creating an audit.',
                 'time' => 'Just now',
                 'color' => 'bg-blue-500',

@@ -58,8 +58,15 @@ class BookingApiController extends Controller
 
         // 2. Generate Stripe Client Secret immediately if price > 0
         if ($booking->price > 0) {
+            $stripeSecret = config('services.stripe.secret');
+            
+            if (empty($stripeSecret)) {
+                Log::error('Stripe Secret Key is missing in configuration.');
+                return $this->sendError('Payment system configuration error. Please contact admin.');
+            }
+
             try {
-                Stripe::setApiKey(config('services.stripe.secret') ?? env('STRIPE_SECRET'));
+                Stripe::setApiKey($stripeSecret);
 
                 $intent = PaymentIntent::create([
                     'amount' => (int) ($booking->price * 100),
@@ -76,7 +83,7 @@ class BookingApiController extends Controller
                 $responseData['client_secret'] = $intent->client_secret;
             } catch (\Exception $e) {
                 Log::error('Stripe Intent Error: '.$e->getMessage());
-                // Intent fail holeo booking return korchi jate dashboard theke retry kora jay
+                return $this->sendError('Stripe Error: '.$e->getMessage());
             }
         }
 
