@@ -27,23 +27,9 @@ class UserSeeder extends Seeder
             ]
         );
 
-        // user two
-        \App\Models\User::updateOrCreate(
-            ['email' => 'user1@gmail.com'],
-            [
-                'name' => 'User One',
-                'password' => bcrypt('password'),
-                'profile_setup' => false,
-                'is_verified' => true,
-                'email_verified_at' => now(),
-                'verified_at' => now(), 
-                'phone' => '0123456788',
-                'gender' => 'female',
-            ]
-        );
-
         // user three to ten
         $usersData = [
+            ['name' => 'User One', 'email' => 'user1@gmail.com'],
             ['name' => 'User Two', 'email' => 'user2@gmail.com'],
             ['name' => 'User Three', 'email' => 'user3@gmail.com'],
             ['name' => 'User Four', 'email' => 'user4@gmail.com'],
