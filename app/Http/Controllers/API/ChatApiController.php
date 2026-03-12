@@ -26,13 +26,25 @@ class ChatApiController extends Controller
             ->orderBy('last_message_at', 'desc')
             ->get();
 
-        // Map conversations to identify the "other" user clearly
+        // Map conversations to identify the "other" user clearly and clean up the response
         $conversations = $conversations->map(function ($convo) use ($user) {
-            $otherUser = $convo->sender_id === $user->id ? $convo->receiver : $convo->sender;
+            $other = $convo->sender_id === $user->id ? $convo->receiver : $convo->sender;
+            
             return [
                 'id' => $convo->id,
-                'other_user' => $otherUser,
-                'last_message' => $convo->messages->first(),
+                'other_user' => [
+                    'id' => $other->id,
+                    'name' => $other->name,
+                    'avatar' => $other->avatar,
+                    'is_online' => $other->is_online,
+                    'is_admin' => $other->is_admin,
+                ],
+                'last_message' => $convo->messages->first() ? [
+                    'id' => $convo->messages->first()->id,
+                    'message' => $convo->messages->first()->message,
+                    'type' => $convo->messages->first()->type,
+                    'created_at' => $convo->messages->first()->created_at,
+                ] : null,
                 'last_message_at' => $convo->last_message_at,
                 'unread_count' => Message::where('conversation_id', $convo->id)
                     ->where('receiver_id', $user->id)
@@ -47,18 +59,17 @@ class ChatApiController extends Controller
             ->unique()
             ->toArray();
 
-        // Get all other users (Admins and regular Users) EXCLUDING those who are already in recent chats
+        // Get all other regular users (EXCLUDING Admins and those who are already in recent chats)
         $allUsers = \App\Models\User::where('id', '!=', $user->id)
+            ->where('is_admin', false) // Exclude admins
             ->whereNotIn('id', $existingConversationUserIds)
-            ->select('id', 'name', 'email', 'avatar', 'is_admin', 'is_online')
+            ->select('id', 'name', 'avatar', 'is_online')
             ->get();
 
         return response()->json([
             'status' => 'success',
-            'data' => [
-                'conversations' => $conversations,
-                'users' => $allUsers
-            ]
+            'data' => $conversations,
+            'all_users' => $allUsers
         ]);
     }
 
