@@ -26,9 +26,39 @@ class ChatApiController extends Controller
             ->orderBy('last_message_at', 'desc')
             ->get();
 
+        // Map conversations to identify the "other" user clearly
+        $conversations = $conversations->map(function ($convo) use ($user) {
+            $otherUser = $convo->sender_id === $user->id ? $convo->receiver : $convo->sender;
+            return [
+                'id' => $convo->id,
+                'other_user' => $otherUser,
+                'last_message' => $convo->messages->first(),
+                'last_message_at' => $convo->last_message_at,
+                'unread_count' => Message::where('conversation_id', $convo->id)
+                    ->where('receiver_id', $user->id)
+                    ->where('is_read', false)
+                    ->count(),
+            ];
+        });
+
+        // Get IDs of users who already have a conversation with the current user
+        $existingConversationUserIds = Conversation::where('sender_id', $user->id)->pluck('receiver_id')
+            ->merge(Conversation::where('receiver_id', $user->id)->pluck('sender_id'))
+            ->unique()
+            ->toArray();
+
+        // Get all other users (Admins and regular Users) EXCLUDING those who are already in recent chats
+        $allUsers = \App\Models\User::where('id', '!=', $user->id)
+            ->whereNotIn('id', $existingConversationUserIds)
+            ->select('id', 'name', 'email', 'avatar', 'is_admin', 'is_online')
+            ->get();
+
         return response()->json([
             'status' => 'success',
-            'data' => $conversations
+            'data' => [
+                'conversations' => $conversations,
+                'users' => $allUsers
+            ]
         ]);
     }
 
