@@ -50,7 +50,7 @@ class UserSeeder extends Seeder
                     'profile_setup' => true,
                     'is_verified' => true,
                     'email_verified_at' => now(),
-                    'verified_at' => now(), // Added verified_at
+                    'verified_at' => now(),
                     'phone' => '0123456787',
                     'gender' => 'male',
                 ]

@@ -152,9 +152,14 @@ class ChatApiController extends Controller
         $conversation->update(['last_message_at' => now()]);
 
         try {
+            \Illuminate\Support\Facades\Log::info('Broadcasting MessageSent event', [
+                'message_id' => $message->id,
+                'conversation_id' => $conversation->id
+            ]);
             broadcast(new MessageSent($message))->toOthers();
+            \Illuminate\Support\Facades\Log::info('MessageSent event broadcasted successfully');
         } catch (\Exception $e) {
-            // Log or handle error if pusher settings are not complete
+            \Illuminate\Support\Facades\Log::error('Broadcasting failed: ' . $e->getMessage());
         }
 
         return response()->json([

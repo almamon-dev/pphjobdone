@@ -23,6 +23,7 @@ class MessageSent implements ShouldBroadcast
     public function __construct(Message $message)
     {
         $this->message = $message->load(['sender', 'receiver']);
+        \Illuminate\Support\Facades\Log::info('MessageSent Event Initialized', ['message_id' => $message->id]);
     }
 
     /**

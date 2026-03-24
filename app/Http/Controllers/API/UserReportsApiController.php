@@ -10,9 +10,12 @@ class UserReportsApiController extends Controller
 {
     public function index()
     {
-        $userId = auth()->id();
+        $user = auth()->user();
+        $userId = $user->id;
+        $userEmail = $user->email;
 
         $reports = SeoAudit::where('user_id', $userId)
+            ->orWhereRaw('LOWER(email) = ?', [strtolower($userEmail)])
             ->latest()
             ->get()
             ->map(function ($audit) {
@@ -22,7 +25,7 @@ class UserReportsApiController extends Controller
                     'subtitle' => 'SEO Monthly • ' . $audit->created_at->format('F d, Y'),
                     'status' => 'Available',
                     'date' => $audit->created_at->format('Y-m-d'),
-                    'download_url' => url("/api/seo-audit/download"), // Placeholder if needed
+                    'download_url' => url("/api/seo-audit/download?audit_id=" . $audit->id),
                 ];
             });
 

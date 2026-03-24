@@ -67,17 +67,29 @@ class SeoAuditController extends Controller
                 'url' => $baseUrl,
             ]
         ];
-        // 4. Storing in Database
-        $user = \Illuminate\Support\Facades\Auth::user();
-        $isSubscribed = true; // Temporary or removing restriction
+        // 5. Determine User ID (link guest email to existing user account if possible)
+        $userId = \Illuminate\Support\Facades\Auth::id();
+        $auditEmail = $request->email;
 
-        // 5. Store in Database
+        if (! $userId && $request->email) {
+            $existingUser = \App\Models\User::where('email', $request->email)->first();
+            if ($existingUser) {
+                $userId = $existingUser->id;
+                $auditEmail = $existingUser->email;
+            }
+        } elseif ($userId) {
+            $auditEmail = \Illuminate\Support\Facades\Auth::user()->email;
+        }
+
+        // 6. Store in Database
         $storedAudit = \App\Models\SeoAudit::create([
-            'user_id' => \Illuminate\Support\Facades\Auth::id(),
-            'email' => \Illuminate\Support\Facades\Auth::check() ? \Illuminate\Support\Facades\Auth::user()->email : $request->email,
+            'user_id' => $userId,
+            'email' => $auditEmail,
             'url' => $baseUrl,
             'response_data' => $audit,
         ]);
+
+        $isSubscribed = true; // Temporary or removing restriction
 
         $audit['audit_id'] = $storedAudit->id;
         $audit['is_subscribed'] = $isSubscribed;
