@@ -140,6 +140,12 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
             icon: <Briefcase size={18} />,
             route: "admin.services.*",
         },
+        {
+            label: "Contacts",
+            path: "/admin/contacts",
+            icon: <Mail size={18} />,
+            route: "admin.contacts.*",
+        },
     ];
 
     const hasPermission = (permission) => {

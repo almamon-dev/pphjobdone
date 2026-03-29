@@ -37,6 +37,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->only(['index', 'destroy']);
         // Services
         Route::resource('services', \App\Http\Controllers\Admin\ServiceController::class);
+        // Contacts
+        Route::resource('contacts', \App\Http\Controllers\Admin\ContactController::class)->only(['index', 'destroy']);
     });
 });
 

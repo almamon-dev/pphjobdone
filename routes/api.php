@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Broadcast;
 
 // Authentication
 Route::prefix('auth')->middleware(['auth.rate.limit'])->group(function () {
@@ -55,3 +56,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('conversations/{id}/messages', [\App\Http\Controllers\API\ChatApiController::class, 'getMessages']);
     Route::post('messages/send', [\App\Http\Controllers\API\ChatApiController::class, 'sendMessage']);
 });
+
+// Contact Message
+Route::post('contact', [\App\Http\Controllers\API\ContactApiController::class, 'store']);
+
+// Broadcasting Auth
+Broadcast::routes(['middleware' => ['auth:sanctum']]);
