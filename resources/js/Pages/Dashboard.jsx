@@ -49,37 +49,40 @@ export default function Dashboard({ dashboard_data }) {
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {stats.map((stat, index) => (
-                        <div
-                            key={index}
-                            className="bg-[#18181B] border border-[#27272A] p-6 rounded-2xl flex flex-col justify-between h-40 group hover:border-[#3F3F46] transition-colors relative overflow-hidden"
-                        >
-                            {/* Background Glow */}
+                    {stats.map((stat, index) => {
+                        const Icon = iconMap[stat.icon] || Briefcase;
+                        return (
                             <div
-                                className={`absolute -right-4 -top-4 w-24 h-24 rounded-full blur-3xl opacity-20 ${stat.color}`}
-                            ></div>
-
-                            <div className="flex justify-between items-start z-10">
-                                <span className="text-gray-400 font-medium text-sm">
-                                    {stat.title}
-                                </span>
+                                key={index}
+                                className="bg-[#18181B] border border-[#27272A] p-6 rounded-2xl flex flex-col justify-between h-40 group hover:border-[#3F3F46] transition-colors relative overflow-hidden"
+                            >
+                                {/* Background Glow */}
                                 <div
-                                    className={`p-2 rounded-lg ${stat.color} bg-opacity-10 text-white`}
-                                >
-                                    <stat.icon size={18} />
+                                    className={`absolute -right-4 -top-4 w-24 h-24 rounded-full blur-3xl opacity-20 ${stat.color}`}
+                                ></div>
+
+                                <div className="flex justify-between items-start z-10">
+                                    <span className="text-gray-400 font-medium text-sm">
+                                        {stat.title}
+                                    </span>
+                                    <div
+                                        className={`p-2 rounded-lg ${stat.color} bg-opacity-10 text-white`}
+                                    >
+                                        <Icon size={18} />
+                                    </div>
+                                </div>
+
+                                <div className="z-10">
+                                    <h3 className="text-3xl font-bold text-white mb-1">
+                                        {stat.value}
+                                    </h3>
+                                    <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
+                                        {stat.subtitle}
+                                    </p>
                                 </div>
                             </div>
-
-                            <div className="z-10">
-                                <h3 className="text-3xl font-bold text-white mb-1">
-                                    {stat.value}
-                                </h3>
-                                <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
-                                    {stat.subtitle}
-                                </p>
-                            </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 {/* Recent Activity */}

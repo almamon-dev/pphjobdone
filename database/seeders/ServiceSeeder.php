@@ -10,8 +10,6 @@ class ServiceSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
     public function run(): void
     {
@@ -310,7 +308,6 @@ class ServiceSeeder extends Seeder
             $serviceData['slug'] = Str::slug($serviceData['title']);
             $serviceData['created_at'] = now();
             $serviceData['updated_at'] = now();
-
             Service::create($serviceData);
         }
     }

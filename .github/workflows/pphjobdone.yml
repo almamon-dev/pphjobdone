@@ -28,7 +28,7 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USER_NAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: public_html/ # আপনার সার্ভারের সঠিক পাথ দিন (যেমন: public_html/ অথবা /)
+          server-dir: public_html/ 
           protocol: ftp
           state-name: .ftp-deploy-sync-state.json
           exclude: |

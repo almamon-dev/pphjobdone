@@ -15,17 +15,31 @@ class UserDashboardApiController extends Controller
         $userId = auth()->id();
 
         // 1. Stats Calculation
-        $activeServicesCount = \App\Models\Booking::where('user_id', $userId)
+        $activeBookings = \App\Models\Booking::where('user_id', $userId)
             ->where('status', 'ongoing')
             ->where('payment_status', 'paid')
-            ->count();
+            ->get();
+        
+        $activeServicesCount = $activeBookings->count();
+
+        // Dynamic Progress Calculation
+        $totalProgress = 0;
+        $taskCount = 0;
+        foreach ($activeBookings as $booking) {
+            $bookingTasks = $booking->tasks;
+            if ($bookingTasks->count() > 0) {
+                $totalProgress += $bookingTasks->avg('progress');
+                $taskCount++;
+            }
+        }
+        $avgProgress = $taskCount > 0 ? round($totalProgress / $taskCount) : 0;
 
         $latestAudit = \App\Models\SeoAudit::where('user_id', $userId)->latest()->first();
         $reportStatus = $latestAudit ? 'Available' : 'Pending';
         $reportSubtitle = $latestAudit ? $latestAudit->created_at->format('F Y') : 'No Reports';
 
-        // Support Messages (Dynamic if table exists, otherwise keep 0)
-        // $supportMessagesCount = \App\Models\Message::where('user_id', $userId)->where('is_read', false)->count();
+        // Support Messages (Dynamic)
+        $supportMessagesCount = \App\Models\Message::where('receiver_id', $userId)->where('is_read', false)->count();
 
         // 2. Activities (Combined from Audits and Payments)
         $auditActivities = \App\Models\SeoAudit::where('user_id', $userId)
@@ -74,14 +88,14 @@ class UserDashboardApiController extends Controller
                     [
                         'title' => 'Active Services',
                         'value' => (string) $activeServicesCount,
-                        'subtitle' => 'All Running Smoothly',
+                        'subtitle' => $activeServicesCount > 0 ? 'All Running Smoothly' : 'No Active Services',
                         'icon' => 'Briefcase',
                         'color' => 'bg-purple-600',
                     ],
                     [
                         'title' => 'Current Month Progress',
-                        'value' => '78', // Dynamic progress logic can be added later
-                        'subtitle' => 'On Track',
+                        'value' => (string) $avgProgress, 
+                        'subtitle' => $avgProgress >= 80 ? 'On Track' : ($avgProgress > 0 ? 'In Progress' : 'Not Started'),
                         'icon' => 'BarChart',
                         'color' => 'bg-indigo-600',
                     ],
@@ -94,8 +108,8 @@ class UserDashboardApiController extends Controller
                     ],
                     [
                         'title' => 'Support Messages',
-                        'value' => '0',
-                        'subtitle' => 'No New Messages',
+                        'value' => (string) $supportMessagesCount,
+                        'subtitle' => $supportMessagesCount > 0 ? "You have $supportMessagesCount new messages" : 'No New Messages',
                         'icon' => 'MessageSquare',
                         'color' => 'bg-pink-600',
                     ],

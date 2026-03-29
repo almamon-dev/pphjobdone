@@ -11,53 +11,34 @@ class UserTasksApiController extends Controller
     {
         $userId = auth()->id();
 
-        $bookings = Booking::with('service')
+        $bookings = Booking::with('service', 'tasks')
             ->where('user_id', $userId)
             ->where('status', 'ongoing')
             ->where('payment_status', 'paid')
             ->get();
 
         $tasks = $bookings->map(function ($booking) {
-            // Generating some mock tasks based on the service title
+            $items = $booking->tasks->map(function ($task) {
+                return [
+                    'id' => $task->id,
+                    'title' => $task->title,
+                    'description' => $task->description,
+                    'progress' => $task->progress,
+                ];
+            });
+
+            $overallProgress = $booking->tasks->count() > 0 
+                ? $booking->tasks->avg('progress') 
+                : 0;
+
             return [
-                'service_title' => $booking->service->title ?? ($booking->plan_name ?: 'Marketing Service'),
-                'items' => [
-                    [
-                        'title' => 'Project Kickoff & Onboarding',
-                        'description' => 'Initial discovery meeting and setup for '.($booking->service->title ?? 'service'),
-                        'progress' => 100,
-                        'status' => 'Completed',
-                        'date' => $booking->created_at->format('M d'),
-                    ],
-                    [
-                        'title' => 'Technical Infrastructure Setup',
-                        'description' => 'Configuring accounts, tools, and tracking for '.($booking->service->title ?? 'the campaign'),
-                        'progress' => 85,
-                        'status' => 'In Progress',
-                        'date' => $booking->created_at->addDays(2)->format('M d'),
-                    ],
-                    [
-                        'title' => 'Strategy & Implementation Planning',
-                        'description' => 'Comprehensive roadmap for the next 4 weeks of '.($booking->service->title ?? 'service'),
-                        'progress' => 45,
-                        'status' => 'In Progress',
-                        'date' => $booking->created_at->addDays(5)->format('M d'),
-                    ],
-                    [
-                        'title' => 'First Performance Analysis Report',
-                        'description' => 'Detailed report on initial results and KPIs.',
-                        'progress' => 0,
-                        'status' => 'Planned',
-                        'date' => $booking->created_at->addDays(14)->format('M d'),
-                    ],
-                    [
-                        'title' => 'Monthly Optimization Review',
-                        'description' => 'Refining tags, content, and strategy based on data.',
-                        'progress' => 0,
-                        'status' => 'Planned',
-                        'date' => $booking->created_at->addDays(30)->format('M d'),
-                    ],
-                ],
+                'booking_id' => $booking->id,
+                'plan_name' => $booking->plan_name,
+                'service_title' => $booking->service?->title ?? ($booking->plan_name . ' Service'),
+                'overall_progress' => (float) round($overallProgress, 2),
+                'status' => ucfirst($booking->status),
+                'payment_status' => ucfirst($booking->payment_status),
+                'items' => $items,
             ];
         });
 

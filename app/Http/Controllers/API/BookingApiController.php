@@ -59,9 +59,10 @@ class BookingApiController extends Controller
         // 2. Generate Stripe Client Secret immediately if price > 0
         if ($booking->price > 0) {
             $stripeSecret = config('services.stripe.secret');
-            
+
             if (empty($stripeSecret)) {
                 Log::error('Stripe Secret Key is missing in configuration.');
+
                 return $this->sendError('Payment system configuration error. Please contact admin.');
             }
 
@@ -83,6 +84,7 @@ class BookingApiController extends Controller
                 $responseData['client_secret'] = $intent->client_secret;
             } catch (\Exception $e) {
                 Log::error('Stripe Intent Error: '.$e->getMessage());
+
                 return $this->sendError('Stripe Error: '.$e->getMessage());
             }
         }
@@ -193,6 +195,20 @@ class BookingApiController extends Controller
                 'payment_status' => 'paid',
                 'status' => 'ongoing',
             ]);
+
+            // Update user subscription status
+            $booking->user->update(['is_subscribed' => true]);
+
+            // Create Initial Welcome/Activation Task
+            $booking->tasks()->firstOrCreate(
+                ['title' => 'Service Plan Activated'],
+                [
+                    'description' => 'Your plan '.$booking->plan_name.' has been activated successfully.',
+                    'progress' => 100,
+                    'status' => 'completed',
+                    'due_date' => now(),
+                ]
+            );
         } else {
             $booking->update(['payment_status' => 'failed']);
         }
@@ -274,6 +290,20 @@ class BookingApiController extends Controller
                 'payment_status' => 'paid',
                 'status' => 'ongoing',
             ]);
+
+            // Update user subscription status
+            $booking->user->update(['is_subscribed' => true]);
+
+            // Create Initial Welcome/Activation Task
+            $booking->tasks()->firstOrCreate(
+                ['title' => 'Service Plan Activated'],
+                [
+                    'description' => 'Your plan '.$booking->plan_name.' has been activated successfully via gateway.',
+                    'progress' => 100,
+                    'status' => 'completed',
+                    'due_date' => now(),
+                ]
+            );
         } else {
             $booking->update(['payment_status' => 'failed']);
         }

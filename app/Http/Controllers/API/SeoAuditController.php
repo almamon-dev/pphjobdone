@@ -67,18 +67,21 @@ class SeoAuditController extends Controller
                 'url' => $baseUrl,
             ]
         ];
-        // 5. Determine User ID (link guest email to existing user account if possible)
+        // 5. Determine User ID and Subscription Status
         $userId = \Illuminate\Support\Facades\Auth::id();
         $auditEmail = $request->email;
+        $isSubscribed = \Illuminate\Support\Facades\Auth::check() ? \Illuminate\Support\Facades\Auth::user()->is_subscribed : false;
 
         if (! $userId && $request->email) {
             $existingUser = \App\Models\User::where('email', $request->email)->first();
             if ($existingUser) {
                 $userId = $existingUser->id;
                 $auditEmail = $existingUser->email;
+                $isSubscribed = $existingUser->is_subscribed;
             }
         } elseif ($userId) {
             $auditEmail = \Illuminate\Support\Facades\Auth::user()->email;
+            $isSubscribed = \Illuminate\Support\Facades\Auth::user()->is_subscribed;
         }
 
         // 6. Store in Database
@@ -89,10 +92,26 @@ class SeoAuditController extends Controller
             'response_data' => $audit,
         ]);
 
-        $isSubscribed = true; // Temporary or removing restriction
-
         $audit['audit_id'] = $storedAudit->id;
         $audit['is_subscribed'] = $isSubscribed;
+
+        // NEW: Link Audit with Booking Tasks
+        if ($userId) {
+            $latestBooking = \App\Models\Booking::where('user_id', $userId)
+                ->where('status', 'ongoing')
+                ->latest()
+                ->first();
+            
+            if ($latestBooking) {
+                $latestBooking->tasks()->create([
+                    'title' => 'SEO Audit Report Generated',
+                    'description' => 'Comprehensive SEO analysis generated for: ' . $baseUrl,
+                    'progress' => 100,
+                    'status' => 'completed',
+                    'due_date' => now(),
+                ]);
+            }
+        }
 
         return $this->sendResponse($audit, $isSubscribed ? 'Chat GPT powered SEO Audit completed.' : 'Audit Preview: Upgrade to see full results.');
     }
@@ -122,7 +141,15 @@ class SeoAuditController extends Controller
             $contentScore = 50;
         }
 
-        $overallScore = round(($techPoints + $contentScore) / 2);
+        // Performance Score logic
+        $loadTime = $siteData['load_time'] ?? 1000;
+        $pageSize = $siteData['page_size'] ?? 100000;
+        
+        $loadScore = max(0, 100 - ($loadTime / 50));
+        $sizeScore = max(0, 100 - ($pageSize / 20000));
+        $perfScore = round(($loadScore + $sizeScore) / 2);
+
+        $overallScore = round(($techPoints + $contentScore + $perfScore) / 3);
 
         $recommendations = [];
         if (empty($siteData['description'])) {
@@ -130,6 +157,9 @@ class SeoAuditController extends Controller
         }
         if (empty($siteData['title'])) {
             $recommendations[] = ['type' => 'critical', 'message' => 'Missing Page Title - this is a high-priority SEO fix.'];
+        }
+        if ($loadTime > 2500) {
+            $recommendations[] = ['type' => 'critical', 'message' => 'Page load time is too slow ('.round($loadTime/1000, 1).'s). Optimize images and scripts.'];
         }
         if (($siteData['link_count'] ?? 0) < 5) {
             $recommendations[] = ['type' => 'info', 'message' => 'Consider adding more internal and external links.'];
@@ -144,13 +174,21 @@ class SeoAuditController extends Controller
             'website_url' => $siteData['url'],
             'overall_score' => $overallScore,
             'technical_seo_score' => $techPoints,
+            'performance_score' => $perfScore,
             'content_score' => round($contentScore),
-            'summary' => "The website has an overall SEO score of {$overallScore}%.Technical SEO and content reach scores of {$techPoints}% and ".round($contentScore).'% respectively.',
+            'summary' => "The website has an overall SEO score of {$overallScore}%. Technical, Content and Performance scores reached {$techPoints}%, ".round($contentScore).'% and '.$perfScore.'% respectively.',
             'recommendations' => array_slice($recommendations, 0, 4),
             'section_analysis' => [
                 ['section' => 'Meta Data', 'status' => ! empty($siteData['title']) ? 'Good' : 'Critical', 'analysis' => 'Page titles and descriptions presence audit.'],
                 ['section' => 'Content Audit', 'status' => $contentScore > 60 ? 'Good' : 'Needs Update', 'analysis' => 'Word count and semantic structure evaluation.'],
+                ['section' => 'Performance', 'status' => $perfScore > 70 ? 'Good' : ($perfScore > 40 ? 'Needs Update' : 'Critical'), 'analysis' => 'Load time and page size optimization check.'],
             ],
+            'performance_metrics' => [
+                'load_time' => $loadTime,
+                'page_size' => $pageSize,
+                'script_count' => $siteData['script_count'] ?? 0,
+                'style_count' => $siteData['style_count'] ?? 0,
+            ]
         ];
     }
 

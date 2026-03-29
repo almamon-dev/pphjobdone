@@ -176,6 +176,30 @@
             </div>
         </div>
         
+        @if(isset($data['performance_metrics']))
+        <div class="summary-box">
+            <h2>Detailed Performance Metrics</h2>
+            <div class="score-grid" style="margin-top: 15px;">
+                <div class="score-card" style="width: 21%; padding: 10px;">
+                    <div class="score-value" style="font-size: 16px;">{{ round(($data['performance_metrics']['load_time'] ?? 0) / 1000, 2) }}s</div>
+                    <div class="score-label" style="font-size: 9px;">Load Time</div>
+                </div>
+                <div class="score-card" style="width: 21%; padding: 10px;">
+                    <div class="score-value" style="font-size: 16px;">{{ round(($data['performance_metrics']['page_size'] ?? 0) / 1024, 1) }}KB</div>
+                    <div class="score-label" style="font-size: 9px;">Page Size</div>
+                </div>
+                <div class="score-card" style="width: 21%; padding: 10px;">
+                    <div class="score-value" style="font-size: 16px;">{{ $data['performance_metrics']['script_count'] ?? 0 }}</div>
+                    <div class="score-label" style="font-size: 9px;">Scripts</div>
+                </div>
+                <div class="score-card" style="width: 21%; padding: 10px;">
+                    <div class="score-value" style="font-size: 16px;">{{ $data['performance_metrics']['style_count'] ?? 0 }}</div>
+                    <div class="score-label" style="font-size: 9px;">Stylesheets</div>
+                </div>
+            </div>
+        </div>
+        @endif
+        
         @if(isset($data['pagespeed']))
         <div class="summary-box">
             <h2>PageSpeed Insights ({{ $data['pagespeed']['scores']['performance'] ?? 0 }}%)</h2>

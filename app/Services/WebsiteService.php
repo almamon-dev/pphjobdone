@@ -13,18 +13,22 @@ class WebsiteService
     public function fetchContent(string $url): array
     {
         try {
+            $startTime = microtime(true);
             $response = Http::withHeaders([
                 'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
             ])
                 ->withoutVerifying() // Disable SSL verification for local/compatibility issues
                 ->timeout(15)
                 ->get($url);
+            $endTime = microtime(true);
+            $loadTime = round(($endTime - $startTime) * 1000); // in ms
 
             if (! $response->successful()) {
                 return ['error' => 'Could not reach the website (Status: '.$response->status().').'];
             }
 
             $html = $response->body();
+            $pageSize = strlen($html);
 
             // Extract Title (Robust Regex)
             $title = '';
@@ -62,6 +66,8 @@ class WebsiteService
             // Image and Link Count
             $imageCount = preg_match_all('/<img/i', $html, $unused);
             $linkCount = preg_match_all('/<a\s+href/i', $html, $unused);
+            $scriptCount = preg_match_all('/<script/i', $html, $unused);
+            $styleCount = preg_match_all('/<link[^>]*rel=["\']stylesheet["\']/i', $html, $unused);
 
             return [
                 'url' => $url,
@@ -72,6 +78,10 @@ class WebsiteService
                 'headings' => implode(', ', array_map(fn ($h) => trim(strip_tags($h)), $headings)),
                 'image_count' => $imageCount,
                 'link_count' => $linkCount,
+                'script_count' => $scriptCount,
+                'style_count' => $styleCount,
+                'load_time' => $loadTime,
+                'page_size' => $pageSize,
                 'status_code' => $response->status(),
                 'html' => $html, // Keep HTML for link extraction
             ];

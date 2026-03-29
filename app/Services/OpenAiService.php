@@ -70,11 +70,16 @@ class OpenAiService
         Content Snippet: {$siteData['content']}
         Image Count: {$siteData['image_count']}
         Internal/External Link Count: {$siteData['link_count']}
+        Load Time: {$siteData['load_time']} ms
+        Page Size: {$siteData['page_size']} bytes
+        Script Count: {$siteData['script_count']}
+        Style Count: {$siteData['style_count']}
         
         Return the response in this JSON format:
         {
             \"overall_score\": (number 0-100),
             \"technical_seo_score\": (number 0-100),
+            \"performance_score\": (number 0-100),
             \"content_score\": (number 0-100),
             \"summary\": \"Brief executive summary of findings\",
             \"recommendations\": [
@@ -83,7 +88,8 @@ class OpenAiService
             ],
             \"section_analysis\": [
                 { \"section\": \"Meta Data\", \"status\": \"Good|Needs Update|Critical\", \"analysis\": \"...\" },
-                { \"section\": \"Content Audit\", \"status\": \"...\", \"analysis\": \"...\" }
+                { \"section\": \"Content Audit\", \"status\": \"...\", \"analysis\": \"...\" },
+                { \"section\": \"Performance\", \"status\": \"Good|Needs Update|Critical\", \"analysis\": \"...\" }
             ]
         }";
     }

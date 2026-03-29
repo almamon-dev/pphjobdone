@@ -27,6 +27,8 @@ class LoginResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'profile_setup' => (bool) $this->profile_setup,
+            'is_subscribed' => (bool) $this->is_subscribed,
+            'is_admin' => (bool) $this->is_admin,
         ];
     }
 }

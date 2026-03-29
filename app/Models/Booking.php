@@ -39,4 +39,9 @@ class Booking extends Model
     {
         return $this->hasMany(Payment::class);
     }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
 }
