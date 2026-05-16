@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ServiceSeeder::class,
             PricingPlanSeeder::class,
+            CampaignSeeder::class,
         ]);
     }
 }

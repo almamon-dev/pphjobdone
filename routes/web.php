@@ -6,12 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return redirect()->route('login');
 });
 Route::get('/services/{slug}', [\App\Http\Controllers\ServiceController::class, 'show'])->name('services.show');
 
@@ -37,6 +32,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->only(['index', 'destroy']);
         // Services
         Route::resource('services', \App\Http\Controllers\Admin\ServiceController::class);
+        // Pricing Plans
+        Route::resource('pricing-plans', \App\Http\Controllers\Admin\PricingPlanController::class);
+        // Campaigns
+        Route::post('campaigns/{campaign}/duplicate', [\App\Http\Controllers\Admin\CampaignController::class, 'duplicate'])->name('campaigns.duplicate');
+        Route::resource('campaigns', \App\Http\Controllers\Admin\CampaignController::class);
         // Contacts
         Route::resource('contacts', \App\Http\Controllers\Admin\ContactController::class)->only(['index', 'destroy']);
     });

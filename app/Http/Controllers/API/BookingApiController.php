@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Payment;
+use App\Models\CampaignTier;
+use App\Models\PricingPlan;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +23,7 @@ class BookingApiController extends Controller
      */
     public function index()
     {
-        $bookings = Booking::with(['service', 'pricingPlan', 'payments'])
+        $bookings = Booking::with(['service', 'pricingPlan', 'campaignTier.campaign', 'payments'])
             ->where('user_id', Auth::id())
             ->latest()
             ->get();
@@ -30,25 +32,47 @@ class BookingApiController extends Controller
     }
 
     /**
-     * Create a new booking and automatically get Payment Intent (Combined Flow)
+     * Create a new booking
      */
     public function store(Request $request)
     {
         $request->validate([
-            'pricing_plan_id' => 'required|exists:pricing_plans,id',
+            'pricing_plan_id' => 'required_without:campaign_tier_id|exists:pricing_plans,id',
+            'campaign_tier_id' => 'required_without:pricing_plan_id|exists:campaign_tiers,id',
+            'campaign_details' => 'nullable|array',
         ]);
 
-        $plan = \App\Models\PricingPlan::with('services')->findOrFail($request->pricing_plan_id);
+        if ($request->campaign_tier_id) {
+            $tier = CampaignTier::with('campaign.service')->findOrFail($request->campaign_tier_id);
+            $service = $tier->campaign->service;
+            $planId = null;
+            $campaignTierId = $tier->id;
+            $planName = $tier->campaign->title . " ($" . $tier->price . ")";
+            $price = $tier->price;
+            $isCampaign = true;
+        } else {
+            $plan = PricingPlan::with('services')->findOrFail($request->pricing_plan_id);
+            $service = $plan->services->first();
+            $planId = $plan->id;
+            $campaignTierId = null;
+            $planName = $plan->name;
+            $price = $plan->price;
+            $isCampaign = false;
+        }
 
         // 1. Create Booking
         $booking = Booking::create([
             'user_id' => Auth::id(),
-            'service_id' => $plan->services->first()?->id, // Fetching the first associated service
-            'pricing_plan_id' => $plan->id,
-            'plan_name' => $plan->name,
-            'price' => $plan->price,
+            'service_id' => $service?->id,
+            'pricing_plan_id' => $planId,
+            'campaign_tier_id' => $campaignTierId,
+            'plan_name' => $planName,
+            'price' => $price,
             'status' => 'pending',
             'payment_status' => 'pending',
+            'is_payment' => false,
+            'is_campaign' => $isCampaign,
+            'campaign_details' => $request->campaign_details,
         ]);
 
         $responseData = [
@@ -56,19 +80,10 @@ class BookingApiController extends Controller
             'client_secret' => null,
         ];
 
-        // 2. Generate Stripe Client Secret immediately if price > 0
+        // 2. Stripe Logic
         if ($booking->price > 0) {
-            $stripeSecret = config('services.stripe.secret');
-
-            if (empty($stripeSecret)) {
-                Log::error('Stripe Secret Key is missing in configuration.');
-
-                return $this->sendError('Payment system configuration error. Please contact admin.');
-            }
-
             try {
-                Stripe::setApiKey($stripeSecret);
-
+                Stripe::setApiKey(config('services.stripe.secret') ?? env('STRIPE_SECRET'));
                 $intent = PaymentIntent::create([
                     'amount' => (int) ($booking->price * 100),
                     'currency' => 'usd',
@@ -76,20 +91,15 @@ class BookingApiController extends Controller
                         'booking_id' => $booking->id,
                         'user_id' => Auth::id(),
                     ],
-                    'automatic_payment_methods' => [
-                        'enabled' => true,
-                    ],
+                    'automatic_payment_methods' => ['enabled' => true],
                 ]);
-
                 $responseData['client_secret'] = $intent->client_secret;
             } catch (\Exception $e) {
-                Log::error('Stripe Intent Error: '.$e->getMessage());
-
-                return $this->sendError('Stripe Error: '.$e->getMessage());
+                Log::error('Stripe Error: '.$e->getMessage());
             }
         }
 
-        return $this->sendResponse($responseData, 'Booking created successfully. Proceed to payment.');
+        return $this->sendResponse($responseData, 'Booking created successfully.');
     }
 
     /**
@@ -97,7 +107,7 @@ class BookingApiController extends Controller
      */
     public function show($id)
     {
-        $booking = Booking::with(['service', 'pricingPlan', 'payments'])
+        $booking = Booking::with(['service', 'pricingPlan', 'campaignTier.campaign', 'payments'])
             ->where('user_id', Auth::id())
             ->findOrFail($id);
 
@@ -105,63 +115,7 @@ class BookingApiController extends Controller
     }
 
     /**
-     * Get all payments for the authenticated user
-     */
-    public function paymentList()
-    {
-        $payments = Payment::whereHas('booking', function ($query) {
-            $query->where('user_id', Auth::id());
-        })
-            ->with('booking')
-            ->latest()
-            ->get();
-
-        return $this->sendResponse($payments, 'Payments retrieved successfully.');
-    }
-
-    /**
-     * Create a Stripe PaymentIntent for a booking
-     */
-    public function createPaymentIntent(Request $request)
-    {
-        $request->validate([
-            'booking_id' => 'required|exists:bookings,id',
-        ]);
-
-        $booking = Booking::where('user_id', Auth::id())->findOrFail($request->booking_id);
-
-        if ($booking->payment_status === 'paid') {
-            return $this->sendError('This booking is already paid.');
-        }
-
-        try {
-            Stripe::setApiKey(config('services.stripe.secret') ?? env('STRIPE_SECRET'));
-
-            $intent = PaymentIntent::create([
-                'amount' => (int) ($booking->price * 100),
-                'currency' => 'usd',
-                'metadata' => [
-                    'booking_id' => $booking->id,
-                    'user_id' => Auth::id(),
-                ],
-                'automatic_payment_methods' => [
-                    'enabled' => true,
-                ],
-            ]);
-
-            return $this->sendResponse([
-                'client_secret' => $intent->client_secret,
-                'payment_intent_id' => $intent->id,
-            ], 'Stripe payment intent created.');
-        } catch (\Exception $e) {
-            Log::error('Stripe Error: '.$e->getMessage());
-
-            return $this->sendError('Stripe Error: '.$e->getMessage());
-        }
-    }
-
-    /**
-     * Record/Verify a payment manually or generically
+     * Verify payment status
      */
     public function verifyPayment(Request $request)
     {
@@ -175,7 +129,6 @@ class BookingApiController extends Controller
 
         $booking = Booking::where('user_id', Auth::id())->findOrFail($request->booking_id);
 
-        // Check if transaction ID is already used
         if (Payment::where('transaction_id', $request->transaction_id)->exists()) {
             return $this->sendError('This transaction ID has already been recorded.');
         }
@@ -193,121 +146,12 @@ class BookingApiController extends Controller
         if (in_array(strtolower($request->status), ['paid', 'success', 'completed', 'succeeded'])) {
             $booking->update([
                 'payment_status' => 'paid',
+                'is_payment' => true,
                 'status' => 'ongoing',
             ]);
-
-            // Update user subscription status
             $booking->user->update(['is_subscribed' => true]);
-
-            // Create Initial Welcome/Activation Task
-            $booking->tasks()->firstOrCreate(
-                ['title' => 'Service Plan Activated'],
-                [
-                    'description' => 'Your plan '.$booking->plan_name.' has been activated successfully.',
-                    'progress' => 100,
-                    'status' => 'completed',
-                    'due_date' => now(),
-                ]
-            );
-        } else {
-            $booking->update(['payment_status' => 'failed']);
         }
 
         return $this->sendResponse($payment, 'Payment recorded and verified.');
-    }
-
-    /**
-     * Unified Webhook endpoint
-     */
-    public function webhook(Request $request)
-    {
-        $payload = $request->all();
-        Log::info('Payment Webhook Received:', $payload);
-
-        $bookingId = null;
-        $transactionId = null;
-        $amount = null;
-        $status = 'failed';
-        $currency = 'USD';
-        $gateway = 'Gateway';
-
-        // 1. Stripe Logic
-        if (isset($payload['type'])) {
-            $gateway = 'Stripe';
-            $object = $payload['data']['object'];
-            $event = $payload['type'];
-
-            switch ($event) {
-                case 'checkout.session.completed':
-                case 'payment_intent.succeeded':
-                case 'charge.succeeded':
-                    $bookingId = $object['metadata']['booking_id'] ?? null;
-                    $transactionId = $object['id'] ?? null;
-                    $amount = isset($object['amount_total']) ? ($object['amount_total'] / 100) : (($object['amount_received'] ?? 0) / 100);
-                    $status = 'paid';
-                    $currency = strtoupper($object['currency'] ?? 'USD');
-                    break;
-                case 'payment_intent.payment_failed':
-                    $bookingId = $object['metadata']['booking_id'] ?? null;
-                    $transactionId = $object['id'] ?? null;
-                    $status = 'failed';
-                    break;
-            }
-        }
-        // 2. Generic Fallback
-        else {
-            $bookingId = $request->input('booking_id');
-            $transactionId = $request->input('transaction_id');
-            $status = $request->input('payment_status', 'failed');
-            $amount = $request->input('amount');
-            $currency = $request->input('currency', 'USD');
-            $gateway = 'Other';
-        }
-
-        if (! $bookingId) {
-            return response()->json(['success' => false, 'message' => 'No booking id found'], 400);
-        }
-
-        $booking = Booking::find($bookingId);
-        if (! $booking) {
-            return response()->json(['success' => false, 'message' => 'Booking not found'], 404);
-        }
-
-        $payment = Payment::updateOrCreate(
-            ['transaction_id' => $transactionId],
-            [
-                'booking_id' => $booking->id,
-                'amount' => $amount ?? $booking->price,
-                'currency' => $currency,
-                'payment_method' => $gateway,
-                'status' => $status,
-                'payment_payload' => $payload,
-            ]
-        );
-
-        if (in_array(strtolower($status), ['paid', 'success', 'completed', 'succeeded'])) {
-            $booking->update([
-                'payment_status' => 'paid',
-                'status' => 'ongoing',
-            ]);
-
-            // Update user subscription status
-            $booking->user->update(['is_subscribed' => true]);
-
-            // Create Initial Welcome/Activation Task
-            $booking->tasks()->firstOrCreate(
-                ['title' => 'Service Plan Activated'],
-                [
-                    'description' => 'Your plan '.$booking->plan_name.' has been activated successfully via gateway.',
-                    'progress' => 100,
-                    'status' => 'completed',
-                    'due_date' => now(),
-                ]
-            );
-        } else {
-            $booking->update(['payment_status' => 'failed']);
-        }
-
-        return response()->json(['success' => true]);
     }
 }

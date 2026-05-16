@@ -43,4 +43,14 @@ class Service extends Model
     {
         return $this->hasMany(Booking::class);
     }
+
+    public function pricingPlans()
+    {
+        return $this->belongsToMany(PricingPlan::class, 'pricing_plan_service');
+    }
+
+    public function campaigns()
+    {
+        return $this->hasMany(Campaign::class);
+    }
 }

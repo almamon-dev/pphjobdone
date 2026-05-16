@@ -14,6 +14,7 @@ import {
     DollarSign,
     TrendingUp,
     BarChart3,
+    Zap,
 } from "lucide-react";
 
 export default function Create() {
@@ -425,23 +426,23 @@ export default function Create() {
                                                                         .points
                                                                         .length >
                                                                         1 && (
-                                                                        <button
-                                                                            type="button"
-                                                                            onClick={() =>
-                                                                                removeBenefitPoint(
-                                                                                    index,
-                                                                                    pIdx,
-                                                                                )
-                                                                            }
-                                                                            className="text-red-400"
-                                                                        >
-                                                                            <MinusCircle
-                                                                                size={
-                                                                                    14
+                                                                            <button
+                                                                                type="button"
+                                                                                onClick={() =>
+                                                                                    removeBenefitPoint(
+                                                                                        index,
+                                                                                        pIdx,
+                                                                                    )
                                                                                 }
-                                                                            />
-                                                                        </button>
-                                                                    )}
+                                                                                className="text-red-400"
+                                                                            >
+                                                                                <MinusCircle
+                                                                                    size={
+                                                                                        14
+                                                                                    }
+                                                                                />
+                                                                            </button>
+                                                                        )}
                                                                 </div>
                                                             ),
                                                         )}
@@ -472,10 +473,10 @@ export default function Create() {
                                                                 <img
                                                                     src={
                                                                         benefit.icon instanceof
-                                                                        File
+                                                                            File
                                                                             ? URL.createObjectURL(
-                                                                                  benefit.icon,
-                                                                              )
+                                                                                benefit.icon,
+                                                                            )
                                                                             : `/${benefit.icon}`
                                                                     }
                                                                     alt="Benefit Icon"
@@ -483,10 +484,10 @@ export default function Create() {
                                                                 />
                                                                 <span className="text-[11px] text-[#727586] truncate max-w-[150px]">
                                                                     {benefit.icon instanceof
-                                                                    File
+                                                                        File
                                                                         ? benefit
-                                                                              .icon
-                                                                              .name
+                                                                            .icon
+                                                                            .name
                                                                         : "Current Icon"}
                                                                 </span>
                                                             </div>
@@ -705,23 +706,23 @@ export default function Create() {
                                                             />
                                                             {phase.items
                                                                 .length > 1 && (
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() =>
-                                                                        removeTimelineItem(
-                                                                            pIdx,
-                                                                            iIdx,
-                                                                        )
-                                                                    }
-                                                                    className="text-red-400 hover:text-red-500"
-                                                                >
-                                                                    <MinusCircle
-                                                                        size={
-                                                                            16
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() =>
+                                                                            removeTimelineItem(
+                                                                                pIdx,
+                                                                                iIdx,
+                                                                            )
                                                                         }
-                                                                    />
-                                                                </button>
-                                                            )}
+                                                                        className="text-red-400 hover:text-red-500"
+                                                                    >
+                                                                        <MinusCircle
+                                                                            size={
+                                                                                16
+                                                                            }
+                                                                        />
+                                                                    </button>
+                                                                )}
                                                         </div>
                                                     ),
                                                 )}
@@ -937,10 +938,10 @@ export default function Create() {
                                                                 <img
                                                                     src={
                                                                         step.icon instanceof
-                                                                        File
+                                                                            File
                                                                             ? URL.createObjectURL(
-                                                                                  step.icon,
-                                                                              )
+                                                                                step.icon,
+                                                                            )
                                                                             : `/${step.icon}`
                                                                     }
                                                                     alt="Step Icon"
@@ -948,10 +949,10 @@ export default function Create() {
                                                                 />
                                                                 <span className="text-[11px] text-[#727586] truncate max-w-[100px]">
                                                                     {step.icon instanceof
-                                                                    File
+                                                                        File
                                                                         ? step
-                                                                              .icon
-                                                                              .name
+                                                                            .icon
+                                                                            .name
                                                                         : "Current Icon"}
                                                                 </span>
                                                             </div>
@@ -1516,51 +1517,56 @@ export default function Create() {
                             </div>
                         </div>
 
-                        {/* Status Card */}
+                        {/* Campaign Status Card */}
                         <div className="bg-white rounded-[10px] border border-[#e3e4e8] shadow-sm p-5">
                             <div className="flex items-center justify-between gap-3">
-                                <div className="space-y-0.5">
-                                    <span className="text-[13px] font-bold text-[#2f3344] block">
-                                        Toggle Status
-                                    </span>
-                                    <span
-                                        className={`text-[11px] font-medium ${data.status ? "text-green-500" : "text-slate-400"}`}
-                                    >
-                                        {data.status
-                                            ? "Active (Visible)"
-                                            : "Draft (Hidden)"}
-                                    </span>
+                                {/* Status Card */}
+                                <div className="bg-white rounded-[10px] border border-[#e3e4e8] shadow-sm p-5">
+                                    <div className="flex items-center justify-between gap-3">
+                                        <div className="space-y-0.5">
+                                            <span className="text-[13px] font-bold text-[#2f3344] block">
+                                                Toggle Status
+                                            </span>
+                                            <span
+                                                className={`text-[11px] font-medium ${data.status ? "text-green-500" : "text-slate-400"}`}
+                                            >
+                                                {data.status
+                                                    ? "Active (Visible)"
+                                                    : "Draft (Hidden)"}
+                                            </span>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                setData("status", !data.status)
+                                            }
+                                            className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${data.status ? "bg-[#673ab7]" : "bg-gray-200"}`}
+                                        >
+                                            <span
+                                                className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${data.status ? "translate-x-[20px]" : "translate-x-[2px]"}`}
+                                            />
+                                        </button>
+                                    </div>
                                 </div>
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setData("status", !data.status)
-                                    }
-                                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${data.status ? "bg-[#673ab7]" : "bg-gray-200"}`}
-                                >
-                                    <span
-                                        className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${data.status ? "translate-x-[20px]" : "translate-x-[2px]"}`}
-                                    />
-                                </button>
-                            </div>
-                        </div>
 
-                        {/* Action Card */}
-                        <div className="bg-white rounded-[10px] border border-[#e3e4e8] shadow-lg p-5 space-y-2.5">
-                            <button
-                                type="submit"
-                                disabled={processing}
-                                className="w-full bg-[#673ab7] text-white py-2.5 rounded-lg text-[13px] font-bold hover:bg-[#5e35b1] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                            >
-                                <CheckCircle2 size={16} />
-                                {processing ? "Saving..." : "Save Service"}
-                            </button>
-                            <Link
-                                href={route("admin.services.index")}
-                                className="w-full bg-slate-50 text-slate-500 py-2.5 rounded-lg text-[13px] font-bold hover:bg-slate-100 transition-all flex items-center justify-center"
-                            >
-                                Cancel
-                            </Link>
+                                {/* Action Card */}
+                                <div className="bg-white rounded-[10px] border border-[#e3e4e8] shadow-lg p-5 space-y-2.5">
+                                    <button
+                                        type="submit"
+                                        disabled={processing}
+                                        className="w-full bg-[#673ab7] text-white py-2.5 rounded-lg text-[13px] font-bold hover:bg-[#5e35b1] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                                    >
+                                        <CheckCircle2 size={16} />
+                                        {processing ? "Saving..." : "Save Service"}
+                                    </button>
+                                    <Link
+                                        href={route("admin.services.index")}
+                                        className="w-full bg-slate-50 text-slate-500 py-2.5 rounded-lg text-[13px] font-bold hover:bg-slate-100 transition-all flex items-center justify-center"
+                                    >
+                                        Cancel
+                                    </Link>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </form>

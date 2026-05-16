@@ -10,14 +10,21 @@ class Booking extends Model
         'user_id',
         'service_id',
         'pricing_plan_id',
+        'campaign_tier_id',
         'plan_name',
         'price',
         'status',
         'payment_status',
+        'is_campaign',
+        'campaign_details',
+        'is_payment',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
+        'campaign_details' => 'array',
+        'is_payment' => 'boolean',
+        'is_campaign' => 'boolean',
     ];
 
     public function user()
@@ -33,6 +40,11 @@ class Booking extends Model
     public function pricingPlan()
     {
         return $this->belongsTo(PricingPlan::class);
+    }
+
+    public function campaign()
+    {
+        return $this->belongsTo(Campaign::class);
     }
 
     public function payments()

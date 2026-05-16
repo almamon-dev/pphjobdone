@@ -20,9 +20,22 @@ class ServiceController extends Controller
                 ->orWhere('subtitle', 'like', "%{$request->search}%");
         }
 
+        // Query removed
+
+        if ($request->min_price || $request->max_price) {
+            $query->whereHas('pricingPlans', function ($q) use ($request) {
+                if ($request->min_price) {
+                    $q->where('price', '>=', $request->min_price);
+                }
+                if ($request->max_price) {
+                    $q->where('price', '<=', $request->max_price);
+                }
+            });
+        }
+
         return Inertia::render('Admin/Services/Index', [
             'services' => $query->latest()->paginate($request->per_page ?? 15)->withQueryString(),
-            'filters' => $request->only(['search', 'per_page']),
+            'filters' => $request->only(['search', 'per_page', 'min_price', 'max_price']),
         ]);
     }
 
@@ -47,6 +60,7 @@ class ServiceController extends Controller
             'timeline' => 'nullable|array',
             'expect_results' => 'nullable|array',
             'status' => 'required|boolean',
+            'is_campaign' => 'required|boolean',
         ]);
 
         $validated['slug'] = Str::slug($validated['title']);
@@ -90,13 +104,16 @@ class ServiceController extends Controller
             $validated['benefits'] = $benefits;
         }
 
-        Service::create($validated);
+        $service = Service::create($validated);
+
+        // range features removed
 
         return redirect()->route('admin.services.index')->with('success', 'Service created successfully.');
     }
 
     public function edit(Service $service)
     {
+        // load removed
         return Inertia::render('Admin/Services/Edit', [
             'service' => $service,
         ]);
@@ -117,6 +134,7 @@ class ServiceController extends Controller
             'timeline' => 'nullable|array',
             'expect_results' => 'nullable|array',
             'status' => 'required|boolean',
+            'is_campaign' => 'required|boolean',
         ]);
         if ($request->hasFile('video_file')) {
             // Delete old video if it was a local file
@@ -204,6 +222,8 @@ class ServiceController extends Controller
 
         $service->update($validated);
 
+        // range features removed
+
         return redirect()->route('admin.services.index')->with('success', 'Service updated successfully.');
     }
 
@@ -214,7 +234,7 @@ class ServiceController extends Controller
             Helper::deleteFile($service->thumbnail);
         }
 
-        if ($service->video_url && ! filter_var($service->video_url, FILTER_VALIDATE_URL)) {
+        if ($service->video_url && ! filter_var($service->video_url, FILTER_VAR_VALIDATE_URL)) {
             Helper::deleteFile($service->video_url);
         }
 

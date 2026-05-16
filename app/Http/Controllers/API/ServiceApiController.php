@@ -16,9 +16,11 @@ class ServiceApiController extends Controller
      */
     public function index()
     {
-        $services = Service::where('status', true)
-            ->latest()
-            ->get();
+        $query = Service::where('status', true);
+
+        // Query removed
+
+        $services = $query->latest()->get();
 
         return $this->sendResponse(ServiceResource::collection($services), 'Services fetched successfully');
     }
@@ -36,7 +38,7 @@ class ServiceApiController extends Controller
             return $this->sendError('Service not found');
         }
 
-        return $this->sendResponse(new ServiceResource($service), 'Service fetched successfully');
+        return $this->sendResponse(new \App\Http\Resources\ServiceDetailResource($service), 'Service fetched successfully');
     }
 
     /**

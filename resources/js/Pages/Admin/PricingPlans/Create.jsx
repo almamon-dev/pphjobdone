@@ -337,23 +337,23 @@ export default function Create({ services }) {
                         </div>
 
                         <div className="bg-white rounded-[10px] border border-[#e3e4e8] shadow-sm p-6">
-                            <button
-                                type="submit"
-                                disabled={processing}
-                                className="w-full h-[46px] bg-[#673ab7] text-white rounded-lg text-[14px] font-bold hover:bg-[#5e35b1] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                            >
-                                {processing
-                                    ? "Creating..."
-                                    : "Create Pricing Plan"}
-                            </button>
-                            <Link
-                                href={route("admin.pricing-plans.index")}
-                                className="w-full h-[46px] mt-3 flex items-center justify-center text-[13px] font-bold text-[#727586] hover:text-[#2f3344] transition-colors"
-                            >
-                                Cancel
-                            </Link>
+                                <button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="w-full h-[46px] bg-[#673ab7] text-white rounded-lg text-[14px] font-bold hover:bg-[#5e35b1] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                                >
+                                    {processing
+                                        ? "Creating..."
+                                        : "Create Pricing Plan"}
+                                </button>
+                                <Link
+                                    href={route("admin.pricing-plans.index")}
+                                    className="w-full h-[46px] mt-3 flex items-center justify-center text-[13px] font-bold text-[#727586] hover:text-[#2f3344] transition-colors"
+                                >
+                                    Cancel
+                                </Link>
+                            </div>
                         </div>
-                    </div>
                 </form>
             </div>
         </AdminLayout>

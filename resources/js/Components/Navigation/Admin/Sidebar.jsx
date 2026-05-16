@@ -31,6 +31,7 @@ import {
     Award,
     BarChart,
     Utensils,
+    Zap,
 } from "lucide-react";
 // Fallback translations if LanguageContext is missing
 const t = {
@@ -139,6 +140,12 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
             path: "/admin/services",
             icon: <Briefcase size={18} />,
             route: "admin.services.*",
+        },
+        {
+            label: "Campaigns",
+            path: "/admin/campaigns",
+            icon: <Zap size={18} />,
+            route: "admin.campaigns.*",
         },
         {
             label: "Contacts",

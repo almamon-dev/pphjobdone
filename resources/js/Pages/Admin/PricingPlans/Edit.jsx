@@ -22,6 +22,7 @@ export default function Edit({ pricing_plan, services }) {
         features: pricing_plan.features || [""],
         button_text: pricing_plan.button_text || "Get Started",
         status: pricing_plan.status ? true : false,
+        // removed
     });
 
     const addFeature = () => {

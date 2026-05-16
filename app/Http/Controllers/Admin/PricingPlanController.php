@@ -19,9 +19,19 @@ class PricingPlanController extends Controller
                 ->orWhere('subtitle', 'like', "%{$request->search}%");
         }
 
+        // Query removed
+
+        if ($request->min_price) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->max_price) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
         return Inertia::render('Admin/PricingPlans/Index', [
             'pricing_plans' => $query->latest()->paginate($request->per_page ?? 15)->withQueryString(),
-            'filters' => $request->only(['search', 'per_page']),
+            'filters' => $request->only(['search', 'per_page', 'min_price', 'max_price']),
         ]);
     }
 
@@ -44,6 +54,7 @@ class PricingPlanController extends Controller
             'features' => 'nullable|array',
             'button_text' => 'required|string|max:255',
             'status' => 'required|boolean',
+            'is_campaign' => 'required|boolean',
         ]);
 
         $plan = PricingPlan::create($validated);
@@ -72,6 +83,7 @@ class PricingPlanController extends Controller
             'features' => 'nullable|array',
             'button_text' => 'required|string|max:255',
             'status' => 'required|boolean',
+            'is_campaign' => 'required|boolean',
         ]);
 
         $pricingPlan->update($validated);
