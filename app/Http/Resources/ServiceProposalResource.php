@@ -18,7 +18,7 @@ class ServiceProposalResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'slug' => $this->slug,
-            'proposed_timeline' => collect($this->timeline)->map(function ($phase, $index) {
+            'proposed_timeline' => collect($this->timeline ?? [])->map(function ($phase, $index) {
                 return [
                     'phase_tag' => 'Phase '.str_pad($index + 1, 2, '0', STR_PAD_LEFT),
                     'phase_number' => str_pad($index + 1, 2, '0', STR_PAD_LEFT),
@@ -28,7 +28,7 @@ class ServiceProposalResource extends JsonResource
                     'tasks' => $phase['items'] ?? [],
                 ];
             }),
-            'pricing' => \App\Http\Resources\PricingPlanResource::collection(\App\Models\PricingPlan::where('status', true)->get()),
+            'pricing' => \App\Http\Resources\PricingPlanResource::collection($this->pricingPlans()->where('status', true)->get()),
         ];
     }
 }

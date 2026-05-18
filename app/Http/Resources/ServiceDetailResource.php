@@ -8,103 +8,138 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class ServiceDetailResource extends JsonResource
 {
     /**
+     * Format asset paths safely to prevent double host duplication.
+     */
+    private function formatUrl($path)
+    {
+        if (!$path) {
+            return null;
+        }
+        if (filter_var($path, FILTER_VALIDATE_URL)) {
+            return $path;
+        }
+        return asset($path);
+    }
+
+    /**
      * Transform the resource into an array.
      *
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array
     {
+        // Safe null guards for JSON section columns — prevents crash when null
+        $sectionOne = is_array($this->section_one) ? $this->section_one : [];
+        $sectionTwo = is_array($this->section_two) ? $this->section_two : [];
+
         return [
-            'id' => $this->id,
-            'title' => $this->title,
-            'slug' => $this->slug,
-            'subtitle' => $this->subtitle,
-            'thumbnail' => $this->thumbnail ? asset($this->thumbnail) : [],
+            'id'          => $this->id,
+            'title'       => $this->title,
+            'slug'        => $this->slug,
+            'subtitle'    => $this->subtitle,
+            'thumbnail'   => $this->formatUrl($this->thumbnail),
             'is_campaign' => $this->campaigns()->where('status', true)->exists(),
 
             // Video
             'video' => [
-                'file' => ($this->video_url && ! filter_var($this->video_url, FILTER_VALIDATE_URL)) ? asset($this->video_url) : [],
-                'url' => ($this->video_url && filter_var($this->video_url, FILTER_VALIDATE_URL)) ? $this->video_url : [],
+                'file' => ($this->video_url && !filter_var($this->video_url, FILTER_VALIDATE_URL))
+                    ? $this->formatUrl($this->video_url)
+                    : null,
+                'url'  => ($this->video_url && filter_var($this->video_url, FILTER_VALIDATE_URL))
+                    ? $this->video_url
+                    : null,
             ],
 
-            // Pricing Plans
-            'pricing' => \App\Http\Resources\PricingPlanResource::collection(\App\Models\PricingPlan::where('status', true)->get()),
+            // Pricing Plans — scoped to THIS service only
+            'pricing' => \App\Http\Resources\PricingPlanResource::collection(
+                $this->pricingPlans()->where('status', true)->get()
+            ),
 
             // Campaigns
-            'campaigns' => \App\Http\Resources\CampaignResource::collection($this->campaigns()->where('status', true)->get()),
-            // What's Included
-            'what_include' => collect($this->benefits)->map(function ($benefit) {
+            'campaigns' => \App\Http\Resources\CampaignResource::collection(
+                $this->campaigns()->where('status', true)->get()
+            ),
+
+            // What's Included (from service_features column)
+            'what_include' => collect($this->service_features ?? [])->map(function ($item) {
                 return [
-                    'title' => $benefit['title'] ?? null,
-                    'description' => $benefit['description'] ?? null,
-                    'icon' => isset($benefit['icon']) ? asset($benefit['icon']) : null,
-                    'points' => $benefit['points'] ?? [],
+                    'title'       => $item['title']       ?? null,
+                    'description' => $item['description'] ?? null,
+                    'icon'        => $this->formatUrl($item['icon'] ?? null),
                 ];
-            }),
+            })->values(),
 
-            // Monthly Process Steps
-            'our_monthly_process' => collect($this->process_steps)->map(function ($step, $index) {
+
+
+            // Benefits Section (from section_one column)
+            'banifite' => $this->when((bool) $this->has_benifite, [
+                'badge'       => $sectionOne['subtitle']    ?? null,
+                'title'       => $sectionOne['title']       ?? null,
+                'description' => $sectionOne['description'] ?? null,
+                'points'      => $sectionOne['points']      ?? [],
+                'image'       => $this->formatUrl($sectionOne['image'] ?? null),
+                'button_text' => $sectionOne['button_text'] ?? null,
+                'button_url'  => $sectionOne['button_url']  ?? null,
+            ]),
+
+            // Secondary Features (from secondary_features column)
+            'secondary_features' => $this->when((bool) $this->has_secondary_features, collect($this->secondary_features ?? [])->map(function ($feature) {
                 return [
-                    'step_number' => $index + 1,
-                    'title' => $step['title'] ?? null,
-                    'description' => $step['description'] ?? null,
-                    'icon' => isset($step['icon']) ? asset($step['icon']) : null,
+                    'title'       => $feature['title']       ?? null,
+                    'description' => $feature['description'] ?? null,
+                    'icon'        => $this->formatUrl($feature['icon'] ?? null),
                 ];
-            }),
+            })->values()),
 
-            // Content Section One
-            'banifite' => [
-                'badge' => $this->section_one['subtitle'] ?? 'Analysis',
-                'title' => $this->section_one['title'] ?? null,
-                'description' => $this->section_one['description'] ?? null,
-                'points' => $this->section_one['points'] ?? [],
-                'image' => isset($this->section_one['image']) ? asset($this->section_one['image']) : null,
-                'button_text' => $this->section_one['button_text'] ?? null,
-                'button_url' => $this->section_one['button_url'] ?? null,
-            ],
+            // Why Choose Us Section (from section_two column)
+            'why_chose_us' => $this->when((bool) $this->has_why_chose_us, [
+                'badge'       => $sectionTwo['subtitle']    ?? null,
+                'title'       => $sectionTwo['title']       ?? null,
+                'description' => $sectionTwo['description'] ?? null,
+                'points'      => $sectionTwo['points']      ?? [],
+                'image'       => $this->formatUrl($sectionTwo['image'] ?? null),
+                'button_text' => $sectionTwo['button_text'] ?? null,
+                'button_url'  => $sectionTwo['button_url']  ?? null,
+            ]),
 
-            // Content Section Two
-            'why_chose_us' => [
-                'badge' => $this->section_two['subtitle'] ?? 'Strategy',
-                'title' => $this->section_two['title'] ?? null,
-                'description' => $this->section_two['description'] ?? null,
-                'points' => $this->section_two['points'] ?? [],
-                'image' => isset($this->section_two['image']) ? asset($this->section_two['image']) : [],
-                'button_text' => $this->section_two['button_text'] ?? null,
-                'button_url' => $this->section_two['button_url'] ?? null,
-            ],
-
-            // FAQs
-            'faq' => collect($this->faqs)->map(function ($faq) {
+            // FAQs (from faqs column)
+            'faq' => $this->when((bool) $this->has_faq, collect($this->faqs ?? [])->map(function ($faq) {
                 return [
-                    'question' => $faq['question'] ?? [],
-                    'answer' => $faq['answer'] ?? [],
+                    'question' => $faq['question'] ?? null,
+                    'answer'   => $faq['answer']   ?? null,
                 ];
-            }),
+            })->values()),
 
-            // Proposed Timeline & Investment
-            'timeline' => collect($this->timeline)->map(function ($phase, $index) {
+            // Proposed Timeline (from timeline column)
+            'timeline' => $this->when(!empty($this->timeline), collect($this->timeline ?? [])->map(function ($phase, $index) {
                 return [
                     'phase_number' => str_pad($index + 1, 2, '0', STR_PAD_LEFT),
-                    'title' => $phase['title'] ?? null,
-                    'duration' => $phase['duration'] ?? null,
-                    'price' => $phase['price'] ?? null,
-                    'items' => $phase['items'] ?? [],
+                    'title'        => $phase['title']    ?? null,
+                    'duration'     => $phase['duration'] ?? null,
+                    'price'        => $phase['price']    ?? null,
+                    'items'        => $phase['items']    ?? [],
                 ];
-            }),
+            })->values()),
 
-            // Expected Results
-            'expect_results' => collect($this->expect_results)->map(function ($result) {
+            // Expected Results (from expect_results column)
+            'expect_results' => $this->when((bool) $this->has_expect_result, collect($this->expect_results ?? [])->map(function ($result) {
                 return [
-                    'title' => $result['title'] ?? null,
-                    'value' => $result['value'] ?? null,
+                    'title'    => $result['title']    ?? null,
+                    'value'    => $result['value']    ?? null,
                     'subtitle' => $result['subtitle'] ?? null,
-                    'icon' => $result['icon'] ?? 'ArrowUpRight',
+                    'icon'     => $result['icon']     ?? 'ArrowUpRight',
                 ];
-            }),
+            })->values()),
 
-            'status' => (bool) $this->status,
+            // Brand Logos (from brands column)
+            'brands' => $this->when((bool) $this->has_brands, collect($this->brands ?? [])->map(function ($brand) {
+                return [
+                    'name' => $brand['name'] ?? null,
+                    'logo' => $this->formatUrl($brand['logo'] ?? null),
+                ];
+            })->values()),
+
+            'status'     => (bool) $this->status,
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
         ];

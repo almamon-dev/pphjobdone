@@ -56,11 +56,19 @@ class ServiceController extends Controller
             'process_steps' => 'nullable|array',
             'section_one' => 'nullable|array',
             'section_two' => 'nullable|array',
-            'benefits' => 'nullable|array',
+            'service_features' => 'nullable|array',
             'timeline' => 'nullable|array',
             'expect_results' => 'nullable|array',
             'status' => 'required|boolean',
             'is_campaign' => 'required|boolean',
+            'has_faq' => 'required|boolean',
+            'has_secondary_features' => 'required|boolean',
+            'has_benifite' => 'required|boolean',
+            'has_why_chose_us' => 'required|boolean',
+            'has_brands' => 'required|boolean',
+            'has_expect_result' => 'required|boolean',
+            'secondary_features' => 'nullable|array',
+            'brands' => 'nullable|array',
         ]);
 
         $validated['slug'] = Str::slug($validated['title']);
@@ -94,14 +102,34 @@ class ServiceController extends Controller
             $validated['process_steps'] = $steps;
         }
 
-        if ($request->has('benefits')) {
-            $benefits = $validated['benefits'];
+        if ($request->has('service_features')) {
+            $benefits = $validated['service_features'];
             foreach ($benefits as $index => $benefit) {
-                if ($request->hasFile("benefits.$index.icon")) {
-                    $benefits[$index]['icon'] = Helper::uploadFile('services/benefits', $request->file("benefits.$index.icon"));
+                if ($request->hasFile("service_features.$index.icon")) {
+                    $benefits[$index]['icon'] = Helper::uploadFile('services/benefits', $request->file("service_features.$index.icon"));
                 }
             }
-            $validated['benefits'] = $benefits;
+            $validated['service_features'] = $benefits;
+        }
+
+        if ($request->has('secondary_features')) {
+            $secFeatures = $validated['secondary_features'];
+            foreach ($secFeatures as $index => $feature) {
+                if ($request->hasFile("secondary_features.$index.icon")) {
+                    $secFeatures[$index]['icon'] = Helper::uploadFile('services/secondary_features', $request->file("secondary_features.$index.icon"));
+                }
+            }
+            $validated['secondary_features'] = $secFeatures;
+        }
+
+        if ($request->has('brands')) {
+            $brands = $validated['brands'];
+            foreach ($brands as $index => $brand) {
+                if ($request->hasFile("brands.$index.logo")) {
+                    $brands[$index]['logo'] = Helper::uploadFile('services/brands', $request->file("brands.$index.logo"));
+                }
+            }
+            $validated['brands'] = $brands;
         }
 
         $service = Service::create($validated);
@@ -130,11 +158,19 @@ class ServiceController extends Controller
             'process_steps' => 'nullable|array',
             'section_one' => 'nullable|array',
             'section_two' => 'nullable|array',
-            'benefits' => 'nullable|array',
+            'service_features' => 'nullable|array',
             'timeline' => 'nullable|array',
             'expect_results' => 'nullable|array',
             'status' => 'required|boolean',
             'is_campaign' => 'required|boolean',
+            'has_faq' => 'required|boolean',
+            'has_secondary_features' => 'required|boolean',
+            'has_benifite' => 'required|boolean',
+            'has_why_chose_us' => 'required|boolean',
+            'has_brands' => 'required|boolean',
+            'has_expect_result' => 'required|boolean',
+            'secondary_features' => 'nullable|array',
+            'brands' => 'nullable|array',
         ]);
         if ($request->hasFile('video_file')) {
             // Delete old video if it was a local file
@@ -202,22 +238,58 @@ class ServiceController extends Controller
             $validated['process_steps'] = $steps;
         }
 
-        if ($request->has('benefits')) {
-            $benefits = $validated['benefits'];
-            $oldBenefits = $service->benefits ?? [];
+        if ($request->has('service_features')) {
+            $benefits = $validated['service_features'];
+            $oldBenefits = $service->service_features ?? [];
             foreach ($benefits as $index => $benefit) {
-                if ($request->hasFile("benefits.$index.icon")) {
+                if ($request->hasFile("service_features.$index.icon")) {
                     if (isset($oldBenefits[$index]['icon'])) {
                         Helper::deleteFile($oldBenefits[$index]['icon']);
                     }
-                    $benefits[$index]['icon'] = Helper::uploadFile('services/benefits', $request->file("benefits.$index.icon"));
+                    $benefits[$index]['icon'] = Helper::uploadFile('services/benefits', $request->file("service_features.$index.icon"));
                 } else {
                     if (isset($oldBenefits[$index]['icon'])) {
                         $benefits[$index]['icon'] = $oldBenefits[$index]['icon'];
                     }
                 }
             }
-            $validated['benefits'] = $benefits;
+            $validated['service_features'] = $benefits;
+        }
+
+        if ($request->has('secondary_features')) {
+            $secFeatures = $validated['secondary_features'];
+            $oldSecFeatures = $service->secondary_features ?? [];
+            foreach ($secFeatures as $index => $feature) {
+                if ($request->hasFile("secondary_features.$index.icon")) {
+                    if (isset($oldSecFeatures[$index]['icon'])) {
+                        Helper::deleteFile($oldSecFeatures[$index]['icon']);
+                    }
+                    $secFeatures[$index]['icon'] = Helper::uploadFile('services/secondary_features', $request->file("secondary_features.$index.icon"));
+                } else {
+                    if (isset($oldSecFeatures[$index]['icon'])) {
+                        $secFeatures[$index]['icon'] = $oldSecFeatures[$index]['icon'];
+                    }
+                }
+            }
+            $validated['secondary_features'] = $secFeatures;
+        }
+
+        if ($request->has('brands')) {
+            $brands = $validated['brands'];
+            $oldBrands = $service->brands ?? [];
+            foreach ($brands as $index => $brand) {
+                if ($request->hasFile("brands.$index.logo")) {
+                    if (isset($oldBrands[$index]['logo'])) {
+                        Helper::deleteFile($oldBrands[$index]['logo']);
+                    }
+                    $brands[$index]['logo'] = Helper::uploadFile('services/brands', $request->file("brands.$index.logo"));
+                } else {
+                    if (isset($oldBrands[$index]['logo'])) {
+                        $brands[$index]['logo'] = $oldBrands[$index]['logo'];
+                    }
+                }
+            }
+            $validated['brands'] = $brands;
         }
 
         $service->update($validated);
@@ -254,10 +326,18 @@ class ServiceController extends Controller
             Helper::deleteFile($service->section_two['image']);
         }
 
-        if ($service->benefits) {
-            foreach ($service->benefits as $benefit) {
+        if ($service->service_features) {
+            foreach ($service->service_features as $benefit) {
                 if (isset($benefit['icon'])) {
                     Helper::deleteFile($benefit['icon']);
+                }
+            }
+        }
+
+        if ($service->brands) {
+            foreach ($service->brands as $brand) {
+                if (isset($brand['logo'])) {
+                    Helper::deleteFile($brand['logo']);
                 }
             }
         }

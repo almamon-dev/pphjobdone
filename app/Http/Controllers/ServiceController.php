@@ -10,7 +10,10 @@ class ServiceController extends Controller
 {
     public function show($slug)
     {
-        $service = Service::where('slug', $slug)->firstOrFail();
+        $service = Service::where('slug', $slug)
+            ->with(['pricingPlans', 'campaigns.tiers.features'])
+            ->firstOrFail();
+            
         return Inertia::render('ServiceDetails', [
             'service' => $service
         ]);

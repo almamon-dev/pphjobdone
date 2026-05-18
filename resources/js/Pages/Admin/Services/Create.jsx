@@ -26,10 +26,7 @@ export default function Create() {
         video_file: null,
         thumbnail: null,
         faqs: [{ question: "", answer: "" }],
-        benefits: [{ title: "", points: [""], icon: null }],
-        process_steps: [{ title: "", subtitle: "", icon: null }],
-        timeline: [{ title: "", duration: "", price: "", items: [""] }],
-        expect_results: [{ title: "", value: "", subtitle: "" }],
+        service_features: [{ title: "", description: "", icon: null, points: [] }],
         section_one: {
             title: "",
             subtitle: "",
@@ -49,6 +46,16 @@ export default function Create() {
         section_one_image: null,
         section_two_image: null,
         status: true,
+        is_campaign: false,
+        has_faq: true,
+        has_secondary_features: false,
+        has_benifite: true,
+        has_why_chose_us: true,
+        has_brands: true,
+        has_expect_result: true,
+        secondary_features: [{ title: "", description: "", icon: null }],
+        expect_results: [{ title: "", value: "", subtitle: "", icon: "ArrowUpRight" }],
+        brands: [{ name: "", logo: null }],
     });
 
     const [thumbPreview, setThumbPreview] = useState(null);
@@ -71,24 +78,7 @@ export default function Create() {
         }
     };
 
-    // Helper functions for new sections
-    const addProcessStep = () => {
-        setData("process_steps", [
-            ...data.process_steps,
-            { title: "", subtitle: "", icon: "" },
-        ]);
-    };
 
-    const removeProcessStep = (index) => {
-        const newSteps = data.process_steps.filter((_, i) => i !== index);
-        setData("process_steps", newSteps);
-    };
-
-    const updateProcessStep = (index, field, value) => {
-        const newSteps = [...data.process_steps];
-        newSteps[index][field] = value;
-        setData("process_steps", newSteps);
-    };
 
     const updateSection = (sectionName, field, value) => {
         setData(sectionName, {
@@ -116,44 +106,57 @@ export default function Create() {
     };
 
     const addBenefit = () => {
-        setData("benefits", [
-            ...data.benefits,
-            { title: "", points: [""], icon: null },
+        setData("service_features", [
+            ...data.service_features,
+            { title: "", description: "", icon: null, points: [] },
         ]);
     };
 
-    const removeBenefit = (index) => {
-        const newBenefits = data.benefits.filter((_, i) => i !== index);
-        setData("benefits", newBenefits);
-    };
-
-    const updateBenefit = (index, field, value) => {
-        const newBenefits = [...data.benefits];
-        newBenefits[index][field] = value;
-        setData("benefits", newBenefits);
-    };
-
     const addBenefitPoint = (benefitIndex) => {
-        const newBenefits = [...data.benefits];
-        newBenefits[benefitIndex].points = [
-            ...newBenefits[benefitIndex].points,
-            "",
-        ];
-        setData("benefits", newBenefits);
+        const updated = [...data.service_features];
+        updated[benefitIndex].points = [...(updated[benefitIndex].points || []), ""];
+        setData("service_features", updated);
     };
 
     const removeBenefitPoint = (benefitIndex, pointIndex) => {
-        const newBenefits = [...data.benefits];
-        newBenefits[benefitIndex].points = newBenefits[
-            benefitIndex
-        ].points.filter((_, i) => i !== pointIndex);
-        setData("benefits", newBenefits);
+        const updated = [...data.service_features];
+        updated[benefitIndex].points = updated[benefitIndex].points.filter((_, i) => i !== pointIndex);
+        setData("service_features", updated);
     };
 
     const updateBenefitPoint = (benefitIndex, pointIndex, value) => {
-        const newBenefits = [...data.benefits];
-        newBenefits[benefitIndex].points[pointIndex] = value;
-        setData("benefits", newBenefits);
+        const updated = [...data.service_features];
+        updated[benefitIndex].points[pointIndex] = value;
+        setData("service_features", updated);
+    };
+
+    const removeBenefit = (index) => {
+        const newBenefits = data.service_features.filter((_, i) => i !== index);
+        setData("service_features", newBenefits);
+    };
+
+    const updateBenefit = (index, field, value) => {
+        const newBenefits = [...data.service_features];
+        newBenefits[index][field] = value;
+        setData("service_features", newBenefits);
+    };
+
+    const addSecondaryFeature = () => {
+        setData("secondary_features", [
+            ...(data.secondary_features || []),
+            { title: "", description: "", icon: null },
+        ]);
+    };
+
+    const removeSecondaryFeature = (index) => {
+        const newFeatures = data.secondary_features.filter((_, i) => i !== index);
+        setData("secondary_features", newFeatures);
+    };
+
+    const updateSecondaryFeature = (index, field, value) => {
+        const newFeatures = [...data.secondary_features];
+        newFeatures[index][field] = value;
+        setData("secondary_features", newFeatures);
     };
 
     const addFaq = () => {
@@ -171,63 +174,45 @@ export default function Create() {
         setData("faqs", newFaqs);
     };
 
-    // Timeline Helpers
-    const addTimelinePhase = () => {
-        setData("timeline", [
-            ...data.timeline,
-            { title: "", duration: "", price: "", items: [""] },
-        ]);
-    };
-
-    const removeTimelinePhase = (index) => {
-        const newTimeline = data.timeline.filter((_, i) => i !== index);
-        setData("timeline", newTimeline);
-    };
-
-    const updateTimelinePhase = (index, field, value) => {
-        const newTimeline = [...data.timeline];
-        newTimeline[index][field] = value;
-        setData("timeline", newTimeline);
-    };
-
-    const addTimelineItem = (phaseIndex) => {
-        const newTimeline = [...data.timeline];
-        newTimeline[phaseIndex].items = [...newTimeline[phaseIndex].items, ""];
-        setData("timeline", newTimeline);
-    };
-
-    const updateTimelineItem = (phaseIndex, itemIndex, value) => {
-        const newTimeline = [...data.timeline];
-        newTimeline[phaseIndex].items[itemIndex] = value;
-        setData("timeline", newTimeline);
-    };
-
-    const removeTimelineItem = (phaseIndex, itemIndex) => {
-        const newTimeline = [...data.timeline];
-        newTimeline[phaseIndex].items = newTimeline[phaseIndex].items.filter(
-            (_, i) => i !== itemIndex,
-        );
-        setData("timeline", newTimeline);
-    };
-
-    // Expected Results Helpers
-    const addResult = () => {
+    const addExpectResult = () => {
         setData("expect_results", [
-            ...data.expect_results,
-            { title: "", value: "", subtitle: "" },
+            ...(data.expect_results || []),
+            { title: "", value: "", subtitle: "", icon: "ArrowUpRight" }
         ]);
     };
 
-    const removeResult = (index) => {
+    const removeExpectResult = (index) => {
         const newResults = data.expect_results.filter((_, i) => i !== index);
         setData("expect_results", newResults);
     };
 
-    const updateResult = (index, field, value) => {
+    const updateExpectResult = (index, field, value) => {
         const newResults = [...data.expect_results];
         newResults[index][field] = value;
         setData("expect_results", newResults);
     };
+
+    const addBrand = () => {
+        setData("brands", [
+            ...(data.brands || []),
+            { name: "", logo: null }
+        ]);
+    };
+
+    const removeBrand = (index) => {
+        const newBrands = data.brands.filter((_, i) => i !== index);
+        setData("brands", newBrands);
+    };
+
+    const updateBrand = (index, field, value) => {
+        const newBrands = [...data.brands];
+        newBrands[index][field] = value;
+        setData("brands", newBrands);
+    };
+
+
+
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -238,7 +223,7 @@ export default function Create() {
         <AdminLayout>
             <Head title="Add Service" />
 
-            <div className="space-y-4 max-w-[1200px] mx-auto pb-20">
+            <div className="space-y-4 max-w-full mx-auto pb-20">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <h1 className="text-[24px] font-bold text-[#2f3344] tracking-tight">
@@ -317,7 +302,7 @@ export default function Create() {
                         </div>
 
                         {/* Benefits Section */}
-                        <div className="bg-white rounded-[12px] border border-[#e3e4e8] shadow-sm p-8">
+                        <div className="bg-white rounded-[12px] border border-[#e3e4e8] shadow-sm p-5 md:p-6">
                             <div className="flex items-center justify-between mb-6">
                                 <div className="flex items-center gap-3">
                                     <CheckCircle2
@@ -325,7 +310,7 @@ export default function Create() {
                                         className="text-[#673ab7]"
                                     />
                                     <h2 className="text-[18px] font-bold text-[#2f3344]">
-                                        What's Included (Inclusions)
+                                        Service Features
                                     </h2>
                                 </div>
                                 <button
@@ -333,21 +318,21 @@ export default function Create() {
                                     onClick={addBenefit}
                                     className="text-[#673ab7] text-[13px] font-bold hover:underline flex items-center gap-1"
                                 >
-                                    <Plus size={16} /> Add Benefit
+                                    <Plus size={16} /> Add Feature
                                 </button>
                             </div>
 
                             <div className="space-y-4">
-                                {data.benefits.map((benefit, index) => (
+                                {data.service_features.map((benefit, index) => (
                                     <div
                                         key={index}
-                                        className="p-6 bg-[#f8f9fc] rounded-xl border border-[#e3e4e8] space-y-4"
+                                        className="p-4 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8] space-y-3"
                                     >
                                         <div className="flex justify-between items-start">
                                             <h3 className="text-[14px] font-bold text-[#673ab7]">
-                                                Benefit {index + 1}
+                                                Feature {index + 1}
                                             </h3>
-                                            {data.benefits.length > 1 && (
+                                            {data.service_features.length > 1 && (
                                                 <button
                                                     type="button"
                                                     onClick={() =>
@@ -359,11 +344,11 @@ export default function Create() {
                                                 </button>
                                             )}
                                         </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div className="space-y-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                            <div className="md:col-span-2 space-y-4">
                                                 <div className="space-y-1">
                                                     <label className="text-[12px] font-bold text-[#727586]">
-                                                        Inclusion Title
+                                                        Feature Title
                                                     </label>
                                                     <input
                                                         type="text"
@@ -375,83 +360,62 @@ export default function Create() {
                                                                 e.target.value,
                                                             )
                                                         }
-                                                        placeholder="e.g., On-Page Optimization"
+                                                        placeholder="e.g., Competitor Analysis"
                                                         className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg outline-none font-bold"
                                                     />
                                                 </div>
+                                                <div className="space-y-1">
+                                                    <label className="text-[12px] font-bold text-[#727586]">
+                                                        Feature Description / Text
+                                                    </label>
+                                                    <textarea
+                                                        value={benefit.description}
+                                                        onChange={(e) =>
+                                                            updateBenefit(
+                                                                index,
+                                                                "description",
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        placeholder="e.g., It's vital to keep tabs on what the competitor is up to. How else will you..."
+                                                        className="w-full min-h-[64px] h-[64px] p-3 border border-[#e3e4e8] rounded-lg outline-none text-[13px] resize-none"
+                                                    />
+                                                </div>
+                                                {/* Points */}
                                                 <div className="space-y-2">
-                                                    <div className="flex justify-between items-center">
-                                                        <label className="text-[12px] font-bold text-[#727586]">
-                                                            Inclusion Points
-                                                        </label>
+                                                    <div className="flex items-center justify-between">
+                                                        <label className="text-[12px] font-bold text-[#727586]">Bullet Points (optional)</label>
                                                         <button
                                                             type="button"
-                                                            onClick={() =>
-                                                                addBenefitPoint(
-                                                                    index,
-                                                                )
-                                                            }
-                                                            className="text-[#673ab7] text-[11px] font-bold"
+                                                            onClick={() => addBenefitPoint(index)}
+                                                            className="text-[#673ab7] text-[11px] font-bold hover:underline flex items-center gap-1"
                                                         >
-                                                            + Add Point
+                                                            <Plus size={12} /> Add Point
                                                         </button>
                                                     </div>
-                                                    <div className="space-y-2">
-                                                        {benefit.points.map(
-                                                            (point, pIdx) => (
-                                                                <div
-                                                                    key={pIdx}
-                                                                    className="flex gap-2"
-                                                                >
-                                                                    <input
-                                                                        type="text"
-                                                                        value={
-                                                                            point
-                                                                        }
-                                                                        onChange={(
-                                                                            e,
-                                                                        ) =>
-                                                                            updateBenefitPoint(
-                                                                                index,
-                                                                                pIdx,
-                                                                                e
-                                                                                    .target
-                                                                                    .value,
-                                                                            )
-                                                                        }
-                                                                        placeholder="e.g., Title tags & meta descriptions"
-                                                                        className="flex-1 h-[36px] px-3 bg-white border border-[#e3e4e8] rounded-lg text-[13px] outline-none"
-                                                                    />
-                                                                    {benefit
-                                                                        .points
-                                                                        .length >
-                                                                        1 && (
-                                                                            <button
-                                                                                type="button"
-                                                                                onClick={() =>
-                                                                                    removeBenefitPoint(
-                                                                                        index,
-                                                                                        pIdx,
-                                                                                    )
-                                                                                }
-                                                                                className="text-red-400"
-                                                                            >
-                                                                                <MinusCircle
-                                                                                    size={
-                                                                                        14
-                                                                                    }
-                                                                                />
-                                                                            </button>
-                                                                        )}
-                                                                </div>
-                                                            ),
-                                                        )}
-                                                    </div>
+                                                    {(benefit.points || []).map((point, pIdx) => (
+                                                        <div key={pIdx} className="flex gap-2">
+                                                            <input
+                                                                type="text"
+                                                                value={point}
+                                                                onChange={(e) => updateBenefitPoint(index, pIdx, e.target.value)}
+                                                                placeholder={`Point ${pIdx + 1}`}
+                                                                className="flex-1 h-[36px] px-3 border border-[#e3e4e8] rounded-lg outline-none text-[12px]"
+                                                            />
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => removeBenefitPoint(index, pIdx)}
+                                                                className="text-red-400 hover:text-red-600"
+                                                            >
+                                                                <Trash2 size={14} />
+                                                            </button>
+                                                        </div>
+                                                    ))}
                                                 </div>
                                             </div>
                                             <div className="space-y-1">
                                                 <label className="text-[12px] font-bold text-[#727586]">
-                                                    Benefit Icon
+                                                    Feature Icon
                                                 </label>
                                                 <div className="relative group">
                                                     <input
@@ -467,7 +431,7 @@ export default function Create() {
                                                         accept="image/*"
                                                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                                     />
-                                                    <div className="flex flex-col items-center justify-center w-full h-[135px] bg-white border-2 border-dashed border-[#e3e4e8] rounded-xl group-hover:border-[#673ab7] transition-all overflow-hidden px-3">
+                                                    <div className="flex flex-col items-center justify-center w-full h-[110px] bg-white border border-dashed border-[#e3e4e8] rounded-lg group-hover:border-[#673ab7] transition-all overflow-hidden px-3">
                                                         {benefit.icon ? (
                                                             <div className="flex flex-col items-center gap-2">
                                                                 <img
@@ -479,8 +443,8 @@ export default function Create() {
                                                                             )
                                                                             : `/${benefit.icon}`
                                                                     }
-                                                                    alt="Benefit Icon"
-                                                                    className="h-12 w-12 object-contain"
+                                                                    alt="Feature Icon"
+                                                                    className="h-9 w-9 object-contain"
                                                                 />
                                                                 <span className="text-[11px] text-[#727586] truncate max-w-[150px]">
                                                                     {benefit.icon instanceof
@@ -497,9 +461,8 @@ export default function Create() {
                                                                     size={20}
                                                                     className="text-[#a0a3af]"
                                                                 />
-                                                                <span className="text-[12px] text-[#727586]">
-                                                                    Upload
-                                                                    Benefit Icon
+                                                                <span className="text-[12px] text-[#727586] text-center">
+                                                                    Upload Feature Icon
                                                                 </span>
                                                             </div>
                                                         )}
@@ -512,855 +475,809 @@ export default function Create() {
                             </div>
                         </div>
 
-                        {/* FAQ Section */}
-                        <div className="bg-white rounded-[12px] border border-[#e3e4e8] shadow-sm p-8">
-                            <div className="flex items-center justify-between mb-6">
-                                <div className="flex items-center gap-3">
-                                    <HelpCircle
-                                        size={22}
-                                        className="text-[#673ab7]"
-                                    />
-                                    <h2 className="text-[18px] font-bold text-[#2f3344]">
-                                        FAQs
-                                    </h2>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={addFaq}
-                                    className="text-[#673ab7] text-[13px] font-bold hover:underline flex items-center gap-1"
-                                >
-                                    <Plus size={16} /> Add FAQ
-                                </button>
-                            </div>
-
-                            <div className="space-y-4">
-                                {data.faqs.map((faq, index) => (
-                                    <div
-                                        key={index}
-                                        className="space-y-2 p-4 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]"
+                        {/* Secondary Features Section */}
+                        {data.has_secondary_features && (
+                            <div className="bg-white rounded-[12px] border border-[#e3e4e8] shadow-sm p-5 md:p-6">
+                                <div className="flex items-center justify-between mb-6">
+                                    <div className="flex items-center gap-3">
+                                        <Zap
+                                            size={22}
+                                            className="text-[#673ab7]"
+                                        />
+                                        <h2 className="text-[18px] font-bold text-[#2f3344]">
+                                            Secondary Features
+                                        </h2>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={addSecondaryFeature}
+                                        className="text-[#673ab7] text-[13px] font-bold hover:underline flex items-center gap-1"
                                     >
-                                        <div className="flex space-x-2">
-                                            <input
-                                                type="text"
-                                                value={faq.question}
+                                        <Plus size={16} /> Add Secondary Feature
+                                    </button>
+                                </div>
+
+                                <div className="space-y-4">
+                                    {(data.secondary_features || []).map((feature, index) => (
+                                        <div
+                                            key={index}
+                                            className="p-4 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8] space-y-3"
+                                        >
+                                            <div className="flex justify-between items-start">
+                                                <h3 className="text-[14px] font-bold text-[#673ab7]">
+                                                    Secondary Feature {index + 1}
+                                                </h3>
+                                                {(data.secondary_features || []).length > 1 && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            removeSecondaryFeature(index)
+                                                        }
+                                                        className="text-red-500 hover:text-red-700"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                                <div className="md:col-span-2 space-y-4">
+                                                    <div className="space-y-1">
+                                                        <label className="text-[12px] font-bold text-[#727586]">
+                                                            Feature Title
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            value={feature.title}
+                                                            onChange={(e) =>
+                                                                updateSecondaryFeature(
+                                                                    index,
+                                                                    "title",
+                                                                    e.target.value,
+                                                                )
+                                                            }
+                                                            placeholder="e.g., Research"
+                                                            className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg outline-none font-bold"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <label className="text-[12px] font-bold text-[#727586]">
+                                                            Description
+                                                        </label>
+                                                        <textarea
+                                                            value={feature.description}
+                                                            onChange={(e) =>
+                                                                updateSecondaryFeature(
+                                                                    index,
+                                                                    "description",
+                                                                    e.target.value,
+                                                                )
+                                                            }
+                                                            placeholder="Description..."
+                                                            className="w-full min-h-[64px] h-[64px] p-3 border border-[#e3e4e8] rounded-lg outline-none text-[13px] resize-none"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <label className="text-[12px] font-bold text-[#727586]">
+                                                        Feature Icon
+                                                    </label>
+                                                    <div className="relative group">
+                                                        <input
+                                                            type="file"
+                                                            onChange={(e) =>
+                                                                updateSecondaryFeature(
+                                                                    index,
+                                                                    "icon",
+                                                                    e.target
+                                                                        .files[0],
+                                                                )
+                                                            }
+                                                            accept="image/*"
+                                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                                        />
+                                                        <div className="flex flex-col items-center justify-center w-full h-[110px] bg-white border border-dashed border-[#e3e4e8] rounded-lg group-hover:border-[#673ab7] transition-all overflow-hidden px-3">
+                                                            {feature.icon ? (
+                                                                <div className="flex flex-col items-center gap-2">
+                                                                    <img
+                                                                        src={
+                                                                            feature.icon instanceof
+                                                                                File
+                                                                                ? URL.createObjectURL(
+                                                                                    feature.icon,
+                                                                                )
+                                                                                : `/${feature.icon}`
+                                                                        }
+                                                                        alt="Icon"
+                                                                        className="h-9 w-9 object-contain"
+                                                                    />
+                                                                    <span className="text-[11px] text-[#727586] truncate max-w-[150px]">
+                                                                        {feature.icon instanceof
+                                                                            File
+                                                                            ? feature
+                                                                                .icon
+                                                                                .name
+                                                                            : "Current Icon"}
+                                                                    </span>
+                                                                </div>
+                                                            ) : (
+                                                                <div className="flex flex-col items-center gap-2">
+                                                                    <Upload
+                                                                        size={20}
+                                                                        className="text-[#a0a3af]"
+                                                                    />
+                                                                    <span className="text-[12px] text-[#727586] text-center">
+                                                                        Upload Feature Icon
+                                                                    </span>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* FAQ Section */}
+                        {data.has_faq && (
+                            <div className="bg-white rounded-[12px] border border-[#e3e4e8] shadow-sm p-5 md:p-6 relative overflow-hidden">
+                                <div className="flex items-center justify-between mb-6">
+                                    <div className="flex items-center gap-3">
+                                        <HelpCircle
+                                            size={22}
+                                            className="text-[#673ab7]"
+                                        />
+                                        <h2 className="text-[18px] font-bold text-[#2f3344]">
+                                            FAQs
+                                        </h2>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={addFaq}
+                                        className="text-[#673ab7] text-[13px] font-bold hover:underline flex items-center gap-1"
+                                    >
+                                        <Plus size={16} /> Add FAQ
+                                    </button>
+                                </div>
+
+                                <div className="space-y-4">
+                                    {data.faqs.map((faq, index) => (
+                                        <div
+                                            key={index}
+                                            className="space-y-2 p-4 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]"
+                                        >
+                                            <div className="flex space-x-2">
+                                                <input
+                                                    type="text"
+                                                    value={faq.question}
+                                                    onChange={(e) =>
+                                                        updateFaq(
+                                                            index,
+                                                            "question",
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    placeholder="Question"
+                                                    className="flex-1 h-[40px] px-3 border border-[#e3e4e8] rounded-lg outline-none"
+                                                />
+                                                {data.faqs.length > 1 && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            removeFaq(index)
+                                                        }
+                                                        className="text-red-500"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <textarea
+                                                value={faq.answer}
                                                 onChange={(e) =>
                                                     updateFaq(
                                                         index,
-                                                        "question",
+                                                        "answer",
                                                         e.target.value,
                                                     )
                                                 }
-                                                placeholder="Question"
-                                                className="flex-1 h-[40px] px-3 border border-[#e3e4e8] rounded-lg outline-none"
+                                                placeholder="Answer"
+                                                className="w-full min-h-[80px] p-3 border border-[#e3e4e8] rounded-lg outline-none"
                                             />
-                                            {data.faqs.length > 1 && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        removeFaq(index)
-                                                    }
-                                                    className="text-red-500"
-                                                >
-                                                    <Trash2 size={16} />
-                                                </button>
-                                            )}
                                         </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+
+
+
+
+
+
+                        {/* Content Section One */}
+                        {data.has_benifite && (
+                            <div className="bg-white rounded-[10px] border border-[#e3e4e8] shadow-sm p-5">
+                                <div className="flex items-center gap-2.5 mb-4">
+                                    <Briefcase
+                                        size={20}
+                                        className="text-[#673ab7]"
+                                    />
+                                    <h2 className="text-[16px] font-bold text-[#2f3344]">
+                                        Benefits (Section One)
+                                    </h2>
+                                </div>
+
+                                <div className="grid grid-cols-1 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="space-y-1">
+                                            <label className="block text-[13px] font-bold text-[#2f3344]">
+                                                Title
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={data.section_one.title}
+                                                onChange={(e) =>
+                                                    updateSection(
+                                                        "section_one",
+                                                        "title",
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg focus:ring-1 focus:ring-[#673ab7] outline-none text-[13px]"
+                                            />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="block text-[13px] font-bold text-[#2f3344]">
+                                                Badge (e.g., Our Benefit)
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={data.section_one.subtitle}
+                                                onChange={(e) =>
+                                                    updateSection(
+                                                        "section_one",
+                                                        "subtitle",
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                placeholder="Our Benefit"
+                                                className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg focus:ring-1 focus:ring-[#673ab7] outline-none text-[13px]"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <label className="block text-[13px] font-bold text-[#2f3344]">
+                                            Description
+                                        </label>
                                         <textarea
-                                            value={faq.answer}
+                                            value={data.section_one.description}
                                             onChange={(e) =>
-                                                updateFaq(
-                                                    index,
-                                                    "answer",
+                                                updateSection(
+                                                    "section_one",
+                                                    "description",
                                                     e.target.value,
                                                 )
                                             }
-                                            placeholder="Answer"
-                                            className="w-full min-h-[80px] p-3 border border-[#e3e4e8] rounded-lg outline-none"
+                                            placeholder="Brief description..."
+                                            className="w-full min-h-[80px] p-3 border border-[#e3e4e8] rounded-lg focus:ring-1 focus:ring-[#673ab7] outline-none text-[13px]"
                                         />
                                     </div>
-                                ))}
-                            </div>
-                        </div>
 
-                        {/* Proposed Timeline & Investment Section */}
-                        <div className="bg-white rounded-[12px] border border-[#e3e4e8] shadow-sm p-8">
-                            <div className="flex items-center justify-between mb-6">
-                                <div className="flex items-center gap-3">
-                                    <Clock
-                                        size={22}
-                                        className="text-[#673ab7]"
-                                    />
-                                    <h2 className="text-[18px] font-bold text-[#2f3344]">
-                                        Proposed Timeline & Investment
-                                    </h2>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={addTimelinePhase}
-                                    className="text-[#673ab7] text-[13px] font-bold hover:underline flex items-center gap-1"
-                                >
-                                    <Plus size={16} /> Add Phase
-                                </button>
-                            </div>
-
-                            <div className="space-y-6">
-                                {data.timeline.map((phase, pIdx) => (
-                                    <div
-                                        key={pIdx}
-                                        className="p-6 bg-[#f8f9fc] rounded-xl border border-[#e3e4e8] space-y-4"
-                                    >
-                                        <div className="flex justify-between items-center bg-white p-3 rounded-lg border border-[#e3e4e8]">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-full bg-[#673ab7] text-white flex items-center justify-center font-bold text-[14px]">
-                                                    {String(pIdx + 1).padStart(
-                                                        2,
-                                                        "0",
-                                                    )}
-                                                </div>
-                                                <input
-                                                    type="text"
-                                                    value={phase.title}
-                                                    onChange={(e) =>
-                                                        updateTimelinePhase(
-                                                            pIdx,
-                                                            "title",
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                    placeholder="Phase Title (e.g., Technical Foundation)"
-                                                    className="border-none focus:ring-0 font-bold text-[#2f3344] p-0 text-[15px] bg-transparent w-[300px]"
-                                                />
-                                            </div>
-                                            {data.timeline.length > 1 && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        removeTimelinePhase(
-                                                            pIdx,
-                                                        )
-                                                    }
-                                                    className="text-red-500 hover:text-red-700 p-1"
-                                                >
-                                                    <Trash2 size={16} />
-                                                </button>
-                                            )}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="space-y-1">
+                                            <label className="block text-[13px] font-bold text-[#2f3344]">
+                                                Button Text
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={data.section_one.button_text}
+                                                onChange={(e) =>
+                                                    updateSection(
+                                                        "section_one",
+                                                        "button_text",
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                placeholder="Contact Us"
+                                                className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg focus:ring-1 focus:ring-[#673ab7] outline-none text-[13px]"
+                                            />
                                         </div>
+                                    </div>
 
-                                        <div className="grid grid-cols-1 gap-4">
-                                            <div className="space-y-1">
-                                                <label className="text-[12px] font-bold text-[#727586] flex items-center gap-1">
-                                                    <Clock size={12} />{" "}
-                                                    Timeframe
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    value={phase.duration}
-                                                    onChange={(e) =>
-                                                        updateTimelinePhase(
-                                                            pIdx,
-                                                            "duration",
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                    placeholder="e.g., Week 1-2"
-                                                    className="w-full h-[38px] px-3 bg-white border border-[#e3e4e8] rounded-lg outline-none text-[13px]"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <div className="flex justify-between items-center">
-                                                <label className="text-[12px] font-bold text-[#727586]">
-                                                    Phase Items/Tasks
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="space-y-3">
+                                            <div className="flex items-center justify-between">
+                                                <label className="block text-[13px] font-bold text-[#2f3344]">
+                                                    Key Points
                                                 </label>
                                                 <button
                                                     type="button"
                                                     onClick={() =>
-                                                        addTimelineItem(pIdx)
+                                                        addSectionPoint(
+                                                            "section_one",
+                                                        )
                                                     }
-                                                    className="text-[#673ab7] text-[11px] font-bold"
+                                                    className="text-[#673ab7] text-[12px] font-bold"
                                                 >
-                                                    + Add Item
+                                                    + Add Point
                                                 </button>
                                             </div>
                                             <div className="space-y-2">
-                                                {phase.items.map(
-                                                    (item, iIdx) => (
+                                                {data.section_one.points?.map(
+                                                    (point, idx) => (
                                                         <div
-                                                            key={iIdx}
+                                                            key={idx}
                                                             className="flex gap-2"
                                                         >
                                                             <input
                                                                 type="text"
-                                                                value={item}
+                                                                value={point}
                                                                 onChange={(e) =>
-                                                                    updateTimelineItem(
-                                                                        pIdx,
-                                                                        iIdx,
+                                                                    updateSectionPoint(
+                                                                        "section_one",
+                                                                        idx,
                                                                         e.target
                                                                             .value,
                                                                     )
                                                                 }
-                                                                placeholder="e.g., Technical SEO Audit & Fixes"
-                                                                className="flex-1 h-[36px] px-3 bg-white border border-[#e3e4e8] rounded-lg text-[13px] outline-none"
+                                                                className="flex-1 h-[40px] px-3 border border-[#e3e4e8] rounded-lg outline-none text-[13px]"
                                                             />
-                                                            {phase.items
-                                                                .length > 1 && (
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() =>
-                                                                            removeTimelineItem(
-                                                                                pIdx,
-                                                                                iIdx,
-                                                                            )
-                                                                        }
-                                                                        className="text-red-400 hover:text-red-500"
-                                                                    >
-                                                                        <MinusCircle
-                                                                            size={
-                                                                                16
-                                                                            }
-                                                                        />
-                                                                    </button>
-                                                                )}
+                                                            <button
+                                                                type="button"
+                                                                onClick={() =>
+                                                                    removeSectionPoint(
+                                                                        "section_one",
+                                                                        idx,
+                                                                    )
+                                                                }
+                                                                className="text-red-400 hover:text-red-500 transition-colors"
+                                                            >
+                                                                <Trash2 size={16} />
+                                                            </button>
                                                         </div>
                                                     ),
                                                 )}
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Expected Results Section */}
-                        <div className="bg-white rounded-[12px] border border-[#e3e4e8] shadow-sm p-8">
-                            <div className="flex items-center justify-between mb-6">
-                                <div className="flex items-center gap-3">
-                                    <BarChart3
-                                        size={22}
-                                        className="text-[#673ab7]"
-                                    />
-                                    <h2 className="text-[18px] font-bold text-[#2f3344]">
-                                        Expected Results
-                                    </h2>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={addResult}
-                                    className="text-[#673ab7] text-[13px] font-bold hover:underline flex items-center gap-1"
-                                >
-                                    <Plus size={16} /> Add Result
-                                </button>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {data.expect_results.map((result, rIdx) => (
-                                    <div
-                                        key={rIdx}
-                                        className="p-5 bg-[#f8f9fc] rounded-xl border border-[#e3e4e8] space-y-3 relative group"
-                                    >
-                                        <button
-                                            type="button"
-                                            onClick={() => removeResult(rIdx)}
-                                            className="absolute top-2 right-2 text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
-                                        >
-                                            <Trash2 size={14} />
-                                        </button>
 
                                         <div className="space-y-1">
-                                            <label className="text-[11px] font-bold text-[#727586] uppercase tracking-wider">
-                                                Result Title
+                                            <label className="block text-[13px] font-bold text-[#2f3344]">
+                                                Section Image
+                                            </label>
+                                            <div className="relative group">
+                                                <input
+                                                    type="file"
+                                                    onChange={(e) =>
+                                                        handleFileChange(
+                                                            e,
+                                                            "section_one_image",
+                                                        )
+                                                    }
+                                                    accept="image/*"
+                                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                                />
+                                                <div className="flex flex-col items-center justify-center w-full h-[140px] bg-[#f8f9fc] border-2 border-dashed border-[#e3e4e8] rounded-lg group-hover:border-[#673ab7] transition-all overflow-hidden">
+                                                    {sectionOnePreview ? (
+                                                        <img
+                                                            src={sectionOnePreview}
+                                                            alt="Section Preview"
+                                                            className="w-full h-full object-contain"
+                                                        />
+                                                    ) : (
+                                                        <div className="text-center p-2">
+                                                            <Upload
+                                                                size={20}
+                                                                className="text-[#a0a3af] mx-auto mb-1.5"
+                                                            />
+                                                            <p className="text-[11px] text-[#727586]">
+                                                                Upload Image
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Content Section Two */}
+                        {data.has_why_chose_us && (
+                            <div className="bg-white rounded-[10px] border border-[#e3e4e8] shadow-sm p-5">
+                                <div className="flex items-center gap-2.5 mb-4">
+                                    <Briefcase
+                                        size={20}
+                                        className="text-[#673ab7]"
+                                    />
+                                    <h2 className="text-[16px] font-bold text-[#2f3344]">
+                                        Why Us (Section Two)
+                                    </h2>
+                                </div>
+
+                                <div className="grid grid-cols-1 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="space-y-1">
+                                            <label className="block text-[13px] font-bold text-[#2f3344]">
+                                                Title
                                             </label>
                                             <input
                                                 type="text"
-                                                value={result.title}
+                                                value={data.section_two.title}
                                                 onChange={(e) =>
-                                                    updateResult(
-                                                        rIdx,
+                                                    updateSection(
+                                                        "section_two",
                                                         "title",
                                                         e.target.value,
                                                     )
                                                 }
-                                                placeholder="e.g., Organic Traffic"
-                                                className="w-full h-[38px] px-3 bg-white border border-[#e3e4e8] rounded-lg outline-none text-[13px]"
+                                                className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg focus:ring-1 focus:ring-[#673ab7] outline-none text-[13px]"
                                             />
                                         </div>
-
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <div className="space-y-1">
-                                                <label className="text-[11px] font-bold text-[#727586] uppercase tracking-wider">
-                                                    Growth/Value
-                                                </label>
-                                                <div className="relative">
-                                                    <TrendingUp
-                                                        size={14}
-                                                        className="absolute left-3 top-1/2 -translate-y-1/2 text-green-500"
-                                                    />
-                                                    <input
-                                                        type="text"
-                                                        value={result.value}
-                                                        onChange={(e) =>
-                                                            updateResult(
-                                                                rIdx,
-                                                                "value",
-                                                                e.target.value,
-                                                            )
-                                                        }
-                                                        placeholder="+150%"
-                                                        className="w-full h-[38px] pl-9 pr-3 bg-white border border-[#e3e4e8] rounded-lg outline-none text-[13px] font-bold text-green-600"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="space-y-1">
-                                                <label className="text-[11px] font-bold text-[#727586] uppercase tracking-wider">
-                                                    Timeframe
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    value={result.subtitle}
-                                                    onChange={(e) =>
-                                                        updateResult(
-                                                            rIdx,
-                                                            "subtitle",
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                    placeholder="6 Months"
-                                                    className="w-full h-[38px] px-3 bg-white border border-[#e3e4e8] rounded-lg outline-none text-[13px]"
-                                                />
-                                            </div>
+                                        <div className="space-y-1">
+                                            <label className="block text-[13px] font-bold text-[#2f3344]">
+                                                Subtitle
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={data.section_two.subtitle}
+                                                onChange={(e) =>
+                                                    updateSection(
+                                                        "section_two",
+                                                        "subtitle",
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg focus:ring-1 focus:ring-[#673ab7] outline-none text-[13px]"
+                                            />
                                         </div>
                                     </div>
-                                ))}
-                            </div>
-                        </div>
 
-                        {/* Process Steps Section */}
-                        <div className="bg-white rounded-[12px] border border-[#e3e4e8] shadow-sm p-8">
-                            <div className="flex items-center justify-between mb-6">
-                                <div className="flex items-center gap-3">
-                                    <Briefcase
-                                        size={22}
-                                        className="text-[#673ab7]"
-                                    />
-                                    <h2 className="text-[18px] font-bold text-[#2f3344]">
-                                        Monthly Process Steps
-                                    </h2>
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={addProcessStep}
-                                    className="text-[#673ab7] text-[13px] font-bold hover:underline flex items-center gap-1"
-                                >
-                                    <Plus size={16} /> Add Step
-                                </button>
-                            </div>
+                                    <div className="space-y-1">
+                                        <label className="block text-[13px] font-bold text-[#2f3344]">
+                                            Description
+                                        </label>
+                                        <textarea
+                                            value={data.section_two.description}
+                                            onChange={(e) =>
+                                                updateSection(
+                                                    "section_two",
+                                                    "description",
+                                                    e.target.value,
+                                                )
+                                            }
+                                            placeholder="Brief description..."
+                                            className="w-full min-h-[80px] p-3 border border-[#e3e4e8] rounded-lg focus:ring-1 focus:ring-[#673ab7] outline-none text-[13px]"
+                                        />
+                                    </div>
 
-                            <div className="space-y-4">
-                                {data.process_steps.map((step, index) => (
-                                    <div
-                                        key={index}
-                                        className="p-6 bg-[#f8f9fc] rounded-xl border border-[#e3e4e8] space-y-4"
-                                    >
-                                        <div className="flex justify-between items-start">
-                                            <h3 className="text-[14px] font-bold text-[#673ab7]">
-                                                Step {index + 1}
-                                            </h3>
-                                            {data.process_steps.length > 1 && (
+                                    <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+                                        <div className="space-y-1">
+                                            <label className="block text-[13px] font-bold text-[#2f3344]">
+                                                Button Text
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={data.section_two.button_text}
+                                                onChange={(e) =>
+                                                    updateSection(
+                                                        "section_two",
+                                                        "button_text",
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                placeholder="Learn More"
+                                                className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg focus:ring-1 focus:ring-[#673ab7] outline-none text-[13px]"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="space-y-3">
+                                            <div className="flex items-center justify-between">
+                                                <label className="block text-[13px] font-bold text-[#2f3344]">
+                                                    Key Points
+                                                </label>
                                                 <button
                                                     type="button"
                                                     onClick={() =>
-                                                        removeProcessStep(index)
+                                                        addSectionPoint(
+                                                            "section_two",
+                                                        )
                                                     }
-                                                    className="text-red-500 hover:text-red-700"
+                                                    className="text-[#673ab7] text-[12px] font-bold"
                                                 >
-                                                    <Trash2 size={16} />
+                                                    + Add Point
                                                 </button>
-                                            )}
+                                            </div>
+                                            <div className="space-y-2">
+                                                {data.section_two.points?.map(
+                                                    (point, idx) => (
+                                                        <div
+                                                            key={idx}
+                                                            className="flex gap-2"
+                                                        >
+                                                            <input
+                                                                type="text"
+                                                                value={point}
+                                                                onChange={(e) =>
+                                                                    updateSectionPoint(
+                                                                        "section_two",
+                                                                        idx,
+                                                                        e.target
+                                                                            .value,
+                                                                    )
+                                                                }
+                                                                className="flex-1 h-[40px] px-3 border border-[#e3e4e8] rounded-lg outline-none text-[13px]"
+                                                            />
+                                                            <button
+                                                                type="button"
+                                                                onClick={() =>
+                                                                    removeSectionPoint(
+                                                                        "section_two",
+                                                                        idx,
+                                                                    )
+                                                                }
+                                                                className="text-red-400 hover:text-red-500 transition-colors"
+                                                            >
+                                                                <Trash2 size={16} />
+                                                            </button>
+                                                        </div>
+                                                    ),
+                                                )}
+                                            </div>
                                         </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                            <div className="space-y-1">
-                                                <label className="text-[12px] font-bold text-[#727586]">
-                                                    Step Title
-                                                </label>
+
+                                        <div className="space-y-1">
+                                            <label className="block text-[13px] font-bold text-[#2f3344]">
+                                                Section Image
+                                            </label>
+                                            <div className="relative group">
                                                 <input
-                                                    type="text"
-                                                    value={step.title}
+                                                    type="file"
                                                     onChange={(e) =>
-                                                        updateProcessStep(
-                                                            index,
-                                                            "title",
-                                                            e.target.value,
+                                                        handleFileChange(
+                                                            e,
+                                                            "section_two_image",
                                                         )
                                                     }
-                                                    className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg outline-none"
+                                                    accept="image/*"
+                                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                                 />
-                                            </div>
-                                            <div className="space-y-1">
-                                                <label className="text-[12px] font-bold text-[#727586]">
-                                                    Step Subtitle/Text
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    value={step.subtitle}
-                                                    onChange={(e) =>
-                                                        updateProcessStep(
-                                                            index,
-                                                            "subtitle",
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                    className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg outline-none"
-                                                />
-                                            </div>
-                                            <div className="space-y-1">
-                                                <label className="text-[12px] font-bold text-[#727586]">
-                                                    Step Icon
-                                                </label>
-                                                <div className="relative group">
-                                                    <input
-                                                        type="file"
-                                                        onChange={(e) =>
-                                                            updateProcessStep(
-                                                                index,
-                                                                "icon",
-                                                                e.target
-                                                                    .files[0],
-                                                            )
-                                                        }
-                                                        accept="image/*"
-                                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                                                    />
-                                                    <div className="flex flex-col items-center justify-center w-full h-[40px] bg-white border border-[#e3e4e8] rounded-lg group-hover:border-[#673ab7] transition-all overflow-hidden px-3">
-                                                        {step.icon ? (
-                                                            <div className="flex items-center gap-2">
-                                                                <img
-                                                                    src={
-                                                                        step.icon instanceof
-                                                                            File
-                                                                            ? URL.createObjectURL(
-                                                                                step.icon,
-                                                                            )
-                                                                            : `/${step.icon}`
-                                                                    }
-                                                                    alt="Step Icon"
-                                                                    className="h-6 w-6 object-contain"
-                                                                />
-                                                                <span className="text-[11px] text-[#727586] truncate max-w-[100px]">
-                                                                    {step.icon instanceof
-                                                                        File
-                                                                        ? step
-                                                                            .icon
-                                                                            .name
-                                                                        : "Current Icon"}
-                                                                </span>
-                                                            </div>
-                                                        ) : (
-                                                            <div className="flex items-center gap-2">
-                                                                <Upload
-                                                                    size={14}
-                                                                    className="text-[#a0a3af]"
-                                                                />
-                                                                <span className="text-[11px] text-[#727586]">
-                                                                    Upload
-                                                                </span>
-                                                            </div>
-                                                        )}
-                                                    </div>
+                                                <div className="flex flex-col items-center justify-center w-full h-[140px] bg-[#f8f9fc] border-2 border-dashed border-[#e3e4e8] rounded-lg group-hover:border-[#673ab7] transition-all overflow-hidden">
+                                                    {sectionTwoPreview ? (
+                                                        <img
+                                                            src={sectionTwoPreview}
+                                                            alt="Section Preview"
+                                                            className="w-full h-full object-contain"
+                                                        />
+                                                    ) : (
+                                                        <div className="text-center p-2">
+                                                            <Upload
+                                                                size={20}
+                                                                className="text-[#a0a3af] mx-auto mb-1.5"
+                                                            />
+                                                            <p className="text-[11px] text-[#727586]">
+                                                                Upload Image
+                                                            </p>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                ))}
+                                </div>
                             </div>
-                        </div>
+                        )}
 
-                        {/* Content Section One */}
-                        <div className="bg-white rounded-[10px] border border-[#e3e4e8] shadow-sm p-5">
-                            <div className="flex items-center gap-2.5 mb-4">
-                                <Briefcase
-                                    size={20}
-                                    className="text-[#673ab7]"
-                                />
-                                <h2 className="text-[16px] font-bold text-[#2f3344]">
-                                    Primary Content Section (e.g., Features)
-                                </h2>
-                            </div>
-
-                            <div className="grid grid-cols-1 gap-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-1">
-                                        <label className="block text-[13px] font-bold text-[#2f3344]">
-                                            Title
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={data.section_one.title}
-                                            onChange={(e) =>
-                                                updateSection(
-                                                    "section_one",
-                                                    "title",
-                                                    e.target.value,
-                                                )
-                                            }
-                                            className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg focus:ring-1 focus:ring-[#673ab7] outline-none text-[13px]"
+                        {/* Expected Results Section */}
+                        {data.has_expect_result && (
+                            <div className="bg-white rounded-[12px] border border-[#e3e4e8] shadow-sm p-5 md:p-6">
+                                <div className="flex items-center justify-between mb-6">
+                                    <div className="flex items-center gap-3">
+                                        <TrendingUp
+                                            size={22}
+                                            className="text-[#673ab7]"
                                         />
+                                        <h2 className="text-[18px] font-bold text-[#2f3344]">
+                                            Driving Real Results (Expected Results)
+                                        </h2>
                                     </div>
-                                    <div className="space-y-1">
-                                        <label className="block text-[13px] font-bold text-[#2f3344]">
-                                            Badge (e.g., Our Benefit)
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={data.section_one.subtitle}
-                                            onChange={(e) =>
-                                                updateSection(
-                                                    "section_one",
-                                                    "subtitle",
-                                                    e.target.value,
-                                                )
-                                            }
-                                            placeholder="Our Benefit"
-                                            className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg focus:ring-1 focus:ring-[#673ab7] outline-none text-[13px]"
-                                        />
-                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={addExpectResult}
+                                        className="text-[#673ab7] text-[13px] font-bold hover:underline flex items-center gap-1"
+                                    >
+                                        <Plus size={16} /> Add Stat Card
+                                    </button>
                                 </div>
 
-                                <div className="space-y-1">
-                                    <label className="block text-[13px] font-bold text-[#2f3344]">
-                                        Description
-                                    </label>
-                                    <textarea
-                                        value={data.section_one.description}
-                                        onChange={(e) =>
-                                            updateSection(
-                                                "section_one",
-                                                "description",
-                                                e.target.value,
-                                            )
-                                        }
-                                        placeholder="Brief description..."
-                                        className="w-full min-h-[80px] p-3 border border-[#e3e4e8] rounded-lg focus:ring-1 focus:ring-[#673ab7] outline-none text-[13px]"
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-1">
-                                        <label className="block text-[13px] font-bold text-[#2f3344]">
-                                            Button Text
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={data.section_one.button_text}
-                                            onChange={(e) =>
-                                                updateSection(
-                                                    "section_one",
-                                                    "button_text",
-                                                    e.target.value,
-                                                )
-                                            }
-                                            placeholder="Contact Us"
-                                            className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg focus:ring-1 focus:ring-[#673ab7] outline-none text-[13px]"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-3">
-                                        <div className="flex items-center justify-between">
-                                            <label className="block text-[13px] font-bold text-[#2f3344]">
-                                                Key Points
-                                            </label>
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    addSectionPoint(
-                                                        "section_one",
-                                                    )
-                                                }
-                                                className="text-[#673ab7] text-[12px] font-bold"
-                                            >
-                                                + Add Point
-                                            </button>
-                                        </div>
-                                        <div className="space-y-2">
-                                            {data.section_one.points?.map(
-                                                (point, idx) => (
-                                                    <div
-                                                        key={idx}
-                                                        className="flex gap-2"
+                                <div className="space-y-4">
+                                    {(data.expect_results || []).map((result, index) => (
+                                        <div
+                                            key={index}
+                                            className="p-4 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8] space-y-3 relative"
+                                        >
+                                            <div className="flex justify-between items-start">
+                                                <h3 className="text-[14px] font-bold text-[#673ab7]">
+                                                    Stat Card {index + 1}
+                                                </h3>
+                                                {(data.expect_results || []).length > 1 && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeExpectResult(index)}
+                                                        className="text-red-500 hover:text-red-700"
                                                     >
-                                                        <input
-                                                            type="text"
-                                                            value={point}
-                                                            onChange={(e) =>
-                                                                updateSectionPoint(
-                                                                    "section_one",
-                                                                    idx,
-                                                                    e.target
-                                                                        .value,
-                                                                )
-                                                            }
-                                                            className="flex-1 h-[40px] px-3 border border-[#e3e4e8] rounded-lg outline-none text-[13px]"
-                                                        />
-                                                        <button
-                                                            type="button"
-                                                            onClick={() =>
-                                                                removeSectionPoint(
-                                                                    "section_one",
-                                                                    idx,
-                                                                )
-                                                            }
-                                                            className="text-red-400 hover:text-red-500 transition-colors"
-                                                        >
-                                                            <Trash2 size={16} />
-                                                        </button>
-                                                    </div>
-                                                ),
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-1">
-                                        <label className="block text-[13px] font-bold text-[#2f3344]">
-                                            Section Image
-                                        </label>
-                                        <div className="relative group">
-                                            <input
-                                                type="file"
-                                                onChange={(e) =>
-                                                    handleFileChange(
-                                                        e,
-                                                        "section_one_image",
-                                                    )
-                                                }
-                                                accept="image/*"
-                                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                                            />
-                                            <div className="flex flex-col items-center justify-center w-full h-[140px] bg-[#f8f9fc] border-2 border-dashed border-[#e3e4e8] rounded-lg group-hover:border-[#673ab7] transition-all overflow-hidden">
-                                                {sectionOnePreview ? (
-                                                    <img
-                                                        src={sectionOnePreview}
-                                                        alt="Section Preview"
-                                                        className="w-full h-full object-contain"
-                                                    />
-                                                ) : (
-                                                    <div className="text-center p-2">
-                                                        <Upload
-                                                            size={20}
-                                                            className="text-[#a0a3af] mx-auto mb-1.5"
-                                                        />
-                                                        <p className="text-[11px] text-[#727586]">
-                                                            Upload Image
-                                                        </p>
-                                                    </div>
+                                                        <Trash2 size={16} />
+                                                    </button>
                                                 )}
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Content Section Two */}
-                        <div className="bg-white rounded-[10px] border border-[#e3e4e8] shadow-sm p-5">
-                            <div className="flex items-center gap-2.5 mb-4">
-                                <Briefcase
-                                    size={20}
-                                    className="text-[#673ab7]"
-                                />
-                                <h2 className="text-[16px] font-bold text-[#2f3344]">
-                                    Secondary Content Section (e.g., Why Us)
-                                </h2>
-                            </div>
-
-                            <div className="grid grid-cols-1 gap-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-1">
-                                        <label className="block text-[13px] font-bold text-[#2f3344]">
-                                            Title
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={data.section_two.title}
-                                            onChange={(e) =>
-                                                updateSection(
-                                                    "section_two",
-                                                    "title",
-                                                    e.target.value,
-                                                )
-                                            }
-                                            className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg focus:ring-1 focus:ring-[#673ab7] outline-none text-[13px]"
-                                        />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <label className="block text-[13px] font-bold text-[#2f3344]">
-                                            Subtitle
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={data.section_two.subtitle}
-                                            onChange={(e) =>
-                                                updateSection(
-                                                    "section_two",
-                                                    "subtitle",
-                                                    e.target.value,
-                                                )
-                                            }
-                                            className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg focus:ring-1 focus:ring-[#673ab7] outline-none text-[13px]"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-1">
-                                    <label className="block text-[13px] font-bold text-[#2f3344]">
-                                        Description
-                                    </label>
-                                    <textarea
-                                        value={data.section_two.description}
-                                        onChange={(e) =>
-                                            updateSection(
-                                                "section_two",
-                                                "description",
-                                                e.target.value,
-                                            )
-                                        }
-                                        placeholder="Brief description..."
-                                        className="w-full min-h-[80px] p-3 border border-[#e3e4e8] rounded-lg focus:ring-1 focus:ring-[#673ab7] outline-none text-[13px]"
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-                                    <div className="space-y-1">
-                                        <label className="block text-[13px] font-bold text-[#2f3344]">
-                                            Button Text
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={data.section_two.button_text}
-                                            onChange={(e) =>
-                                                updateSection(
-                                                    "section_two",
-                                                    "button_text",
-                                                    e.target.value,
-                                                )
-                                            }
-                                            placeholder="Learn More"
-                                            className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg focus:ring-1 focus:ring-[#673ab7] outline-none text-[13px]"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-3">
-                                        <div className="flex items-center justify-between">
-                                            <label className="block text-[13px] font-bold text-[#2f3344]">
-                                                Key Points
-                                            </label>
-                                            <button
-                                                type="button"
-                                                onClick={() =>
-                                                    addSectionPoint(
-                                                        "section_two",
-                                                    )
-                                                }
-                                                className="text-[#673ab7] text-[12px] font-bold"
-                                            >
-                                                + Add Point
-                                            </button>
-                                        </div>
-                                        <div className="space-y-2">
-                                            {data.section_two.points?.map(
-                                                (point, idx) => (
-                                                    <div
-                                                        key={idx}
-                                                        className="flex gap-2"
-                                                    >
-                                                        <input
-                                                            type="text"
-                                                            value={point}
-                                                            onChange={(e) =>
-                                                                updateSectionPoint(
-                                                                    "section_two",
-                                                                    idx,
-                                                                    e.target
-                                                                        .value,
-                                                                )
-                                                            }
-                                                            className="flex-1 h-[40px] px-3 border border-[#e3e4e8] rounded-lg outline-none text-[13px]"
-                                                        />
-                                                        <button
-                                                            type="button"
-                                                            onClick={() =>
-                                                                removeSectionPoint(
-                                                                    "section_two",
-                                                                    idx,
-                                                                )
-                                                            }
-                                                            className="text-red-400 hover:text-red-500 transition-colors"
-                                                        >
-                                                            <Trash2 size={16} />
-                                                        </button>
-                                                    </div>
-                                                ),
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-1">
-                                        <label className="block text-[13px] font-bold text-[#2f3344]">
-                                            Section Image
-                                        </label>
-                                        <div className="relative group">
-                                            <input
-                                                type="file"
-                                                onChange={(e) =>
-                                                    handleFileChange(
-                                                        e,
-                                                        "section_two_image",
-                                                    )
-                                                }
-                                                accept="image/*"
-                                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                                            />
-                                            <div className="flex flex-col items-center justify-center w-full h-[140px] bg-[#f8f9fc] border-2 border-dashed border-[#e3e4e8] rounded-lg group-hover:border-[#673ab7] transition-all overflow-hidden">
-                                                {sectionTwoPreview ? (
-                                                    <img
-                                                        src={sectionTwoPreview}
-                                                        alt="Section Preview"
-                                                        className="w-full h-full object-contain"
+                                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                                <div className="space-y-1">
+                                                    <label className="text-[12px] font-bold text-[#727586]">
+                                                        Stat Value (e.g. 100%, 3%, 15m)
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        value={result.value}
+                                                        onChange={(e) => updateExpectResult(index, "value", e.target.value)}
+                                                        placeholder="100%"
+                                                        className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg outline-none font-bold"
                                                     />
-                                                ) : (
-                                                    <div className="text-center p-2">
-                                                        <Upload
-                                                            size={20}
-                                                            className="text-[#a0a3af] mx-auto mb-1.5"
-                                                        />
-                                                        <p className="text-[11px] text-[#727586]">
-                                                            Upload Image
-                                                        </p>
-                                                    </div>
-                                                )}
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <label className="text-[12px] font-bold text-[#727586]">
+                                                        Title
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        value={result.title}
+                                                        onChange={(e) => updateExpectResult(index, "title", e.target.value)}
+                                                        placeholder="Organic Traffic"
+                                                        className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg outline-none font-bold"
+                                                    />
+                                                </div>
+                                                <div className="space-y-1 md:col-span-2">
+                                                    <label className="text-[12px] font-bold text-[#727586]">
+                                                        Subtitle/Detail description
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        value={result.subtitle}
+                                                        onChange={(e) => updateExpectResult(index, "subtitle", e.target.value)}
+                                                        placeholder="Traffic boost on search engines..."
+                                                        className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg outline-none"
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    ))}
                                 </div>
                             </div>
-                        </div>
+                        )}
+
+                        {/* Brand Logos Section */}
+                        {data.has_brands && (
+                            <div className="bg-white rounded-[12px] border border-[#e3e4e8] shadow-sm p-5 md:p-6">
+                                <div className="flex items-center justify-between mb-6">
+                                    <div className="flex items-center gap-3">
+                                        <BarChart3
+                                            size={22}
+                                            className="text-[#673ab7]"
+                                        />
+                                        <h2 className="text-[18px] font-bold text-[#2f3344]">
+                                            Brand Logos
+                                        </h2>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={addBrand}
+                                        className="text-[#673ab7] text-[13px] font-bold hover:underline flex items-center gap-1"
+                                    >
+                                        <Plus size={16} /> Add Brand
+                                    </button>
+                                </div>
+
+                                <div className="space-y-4">
+                                    {(data.brands || []).map((brand, index) => (
+                                        <div
+                                            key={index}
+                                            className="p-4 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8] space-y-3"
+                                        >
+                                            <div className="flex justify-between items-start">
+                                                <h3 className="text-[14px] font-bold text-[#673ab7]">
+                                                    Brand {index + 1}
+                                                </h3>
+                                                {(data.brands || []).length > 1 && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeBrand(index)}
+                                                        className="text-red-500 hover:text-red-700"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                                <div className="md:col-span-2 space-y-1">
+                                                    <label className="text-[12px] font-bold text-[#727586]">
+                                                        Brand Name
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        value={brand.name}
+                                                        onChange={(e) => updateBrand(index, "name", e.target.value)}
+                                                        placeholder="e.g. Notion"
+                                                        className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg outline-none font-bold"
+                                                    />
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <label className="text-[12px] font-bold text-[#727586]">
+                                                        Brand Logo
+                                                    </label>
+                                                    <div className="relative group">
+                                                        <input
+                                                            type="file"
+                                                            onChange={(e) => updateBrand(index, "logo", e.target.files[0])}
+                                                            accept="image/*"
+                                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                                        />
+                                                        <div className="flex flex-col items-center justify-center w-full h-[85px] bg-white border border-dashed border-[#e3e4e8] rounded-lg group-hover:border-[#673ab7] transition-all overflow-hidden px-2 py-1">
+                                                            {brand.logo ? (
+                                                                <div className="flex flex-col items-center gap-1">
+                                                                    <img
+                                                                        src={
+                                                                            brand.logo instanceof File
+                                                                                ? URL.createObjectURL(brand.logo)
+                                                                                : `/${brand.logo}`
+                                                                        }
+                                                                        alt="Logo"
+                                                                        className="h-10 w-full object-contain"
+                                                                    />
+                                                                    <span className="text-[10px] text-[#727586] truncate max-w-[120px]">
+                                                                        {brand.logo instanceof File ? brand.logo.name : "Current Logo"}
+                                                                    </span>
+                                                                </div>
+                                                            ) : (
+                                                                <div className="flex flex-col items-center gap-1">
+                                                                    <Upload size={16} className="text-[#a0a3af]" />
+                                                                    <span className="text-[11px] text-[#727586] text-center">
+                                                                        Upload Logo
+                                                                    </span>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Right Column: Meta & Actions */}
                     <div className="col-span-12 lg:col-span-4 space-y-5 lg:sticky lg:top-5 text-[14px]">
-                        {/* Service Logo/Thumbnail */}
-                        <div className="bg-white rounded-[10px] border border-[#e3e4e8] shadow-sm p-5">
-                            <div className="flex items-center gap-2.5 mb-3">
-                                <Upload size={18} className="text-[#673ab7]" />
+                        {/* Status & Campaign Settings Card / Service Settings */}
+                        <div className="bg-white rounded-[10px] border border-[#e3e4e8] shadow-sm p-5 space-y-4">
+                            <div className="flex items-center gap-2.5 mb-1">
+                                <CheckCircle2 size={18} className="text-[#673ab7]" />
                                 <h2 className="text-[15px] font-bold text-[#2f3344]">
-                                    Thumbnail
+                                    Service Settings
                                 </h2>
                             </div>
-                            <div className="space-y-3">
+
+                            {/* Service Logo/Thumbnail */}
+                            <div className="space-y-2">
+                                <label className="block text-[13px] font-bold text-[#2f3344]">
+                                    Thumbnail
+                                </label>
                                 <div className="relative group">
                                     <input
                                         type="file"
@@ -1390,6 +1307,178 @@ export default function Create() {
                                         )}
                                     </div>
                                 </div>
+                            </div>
+
+                            <div className="space-y-3.5 pt-4 border-t border-[#f1f2f4]">
+                                {/* Toggle Status */}
+                                <div className="flex items-center justify-between p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
+                                    <div className="space-y-0.5">
+                                        <span className="text-[13px] font-bold text-[#2f3344] block">
+                                            Service Status
+                                        </span>
+                                        <span className={`text-[11px] font-semibold ${data.status ? "text-green-600" : "text-slate-400"}`}>
+                                            {data.status ? "Active (Visible)" : "Draft (Hidden)"}
+                                        </span>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setData("status", !data.status)}
+                                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${data.status ? "bg-[#673ab7]" : "bg-gray-200"}`}
+                                    >
+                                        <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${data.status ? "translate-x-[20px]" : "translate-x-[2px]"}`} />
+                                    </button>
+                                </div>
+
+                                {/* Toggle Campaign */}
+                                <div className="flex items-center justify-between p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
+                                    <div className="space-y-0.5">
+                                        <span className="text-[13px] font-bold text-[#2f3344] block">
+                                            Is Campaign?
+                                        </span>
+                                        <span className={`text-[11px] font-semibold ${data.is_campaign ? "text-orange-600" : "text-slate-400"}`}>
+                                            {data.is_campaign ? "Campaign (Has Tiers)" : "Standard Service"}
+                                        </span>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setData("is_campaign", !data.is_campaign)}
+                                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${data.is_campaign ? "bg-orange-500" : "bg-gray-200"}`}
+                                    >
+                                        <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${data.is_campaign ? "translate-x-[20px]" : "translate-x-[2px]"}`} />
+                                    </button>
+                                </div>
+
+                                {/* Toggle FAQ */}
+                                <div className="flex items-center justify-between p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
+                                    <div className="space-y-0.5">
+                                        <span className="text-[13px] font-bold text-[#2f3344] block">
+                                            Enable FAQ?
+                                        </span>
+                                        <span className={`text-[11px] font-semibold ${data.has_faq ? "text-[#673ab7]" : "text-slate-400"}`}>
+                                            {data.has_faq ? "FAQ Enabled" : "FAQ Disabled"}
+                                        </span>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setData("has_faq", !data.has_faq)}
+                                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${data.has_faq ? "bg-[#673ab7]" : "bg-gray-200"}`}
+                                    >
+                                        <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${data.has_faq ? "translate-x-[20px]" : "translate-x-[2px]"}`} />
+                                    </button>
+                                </div>
+
+                                {/* Toggle Secondary Features */}
+                                <div className="flex items-center justify-between p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
+                                    <div className="space-y-0.5">
+                                        <span className="text-[13px] font-bold text-[#2f3344] block">
+                                            Secondary Features?
+                                        </span>
+                                        <span className={`text-[11px] font-semibold ${data.has_secondary_features ? "text-[#673ab7]" : "text-slate-400"}`}>
+                                            {data.has_secondary_features ? "Enabled" : "Disabled"}
+                                        </span>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setData("has_secondary_features", !data.has_secondary_features)}
+                                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${data.has_secondary_features ? "bg-[#673ab7]" : "bg-gray-200"}`}
+                                    >
+                                        <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${data.has_secondary_features ? "translate-x-[20px]" : "translate-x-[2px]"}`} />
+                                    </button>
+                                </div>
+
+                                {/* Toggle Benefits Section */}
+                                <div className="flex items-center justify-between p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
+                                    <div className="space-y-0.5">
+                                        <span className="text-[13px] font-bold text-[#2f3344] block">
+                                            Benefits Section?
+                                        </span>
+                                        <span className={`text-[11px] font-semibold ${data.has_benifite ? "text-[#673ab7]" : "text-slate-400"}`}>
+                                            {data.has_benifite ? "Enabled" : "Disabled"}
+                                        </span>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setData("has_benifite", !data.has_benifite)}
+                                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${data.has_benifite ? "bg-[#673ab7]" : "bg-gray-200"}`}
+                                    >
+                                        <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${data.has_benifite ? "translate-x-[20px]" : "translate-x-[2px]"}`} />
+                                    </button>
+                                </div>
+
+                                {/* Toggle Why Us Section */}
+                                <div className="flex items-center justify-between p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
+                                    <div className="space-y-0.5">
+                                        <span className="text-[13px] font-bold text-[#2f3344] block">
+                                            Why Us Section?
+                                        </span>
+                                        <span className={`text-[11px] font-semibold ${data.has_why_chose_us ? "text-[#673ab7]" : "text-slate-400"}`}>
+                                            {data.has_why_chose_us ? "Enabled" : "Disabled"}
+                                        </span>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setData("has_why_chose_us", !data.has_why_chose_us)}
+                                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${data.has_why_chose_us ? "bg-[#673ab7]" : "bg-gray-200"}`}
+                                    >
+                                        <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${data.has_why_chose_us ? "translate-x-[20px]" : "translate-x-[2px]"}`} />
+                                    </button>
+                                </div>
+
+                                {/* Toggle Brands Section */}
+                                <div className="flex items-center justify-between p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
+                                    <div className="space-y-0.5">
+                                        <span className="text-[13px] font-bold text-[#2f3344] block">
+                                            Brands Section?
+                                        </span>
+                                        <span className={`text-[11px] font-semibold ${data.has_brands ? "text-[#673ab7]" : "text-slate-400"}`}>
+                                            {data.has_brands ? "Enabled" : "Disabled"}
+                                        </span>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setData("has_brands", !data.has_brands)}
+                                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${data.has_brands ? "bg-[#673ab7]" : "bg-gray-200"}`}
+                                    >
+                                        <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${data.has_brands ? "translate-x-[20px]" : "translate-x-[2px]"}`} />
+                                    </button>
+                                </div>
+
+                                {/* Toggle Expected Results Section */}
+                                <div className="flex items-center justify-between p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
+                                    <div className="space-y-0.5">
+                                        <span className="text-[13px] font-bold text-[#2f3344] block">
+                                            Expected Results?
+                                        </span>
+                                        <span className={`text-[11px] font-semibold ${data.has_expect_result ? "text-[#673ab7]" : "text-slate-400"}`}>
+                                            {data.has_expect_result ? "Enabled" : "Disabled"}
+                                        </span>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setData("has_expect_result", !data.has_expect_result)}
+                                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${data.has_expect_result ? "bg-[#673ab7]" : "bg-gray-200"}`}
+                                    >
+                                        <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${data.has_expect_result ? "translate-x-[20px]" : "translate-x-[2px]"}`} />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="pt-2 space-y-2">
+                                <button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="w-full bg-[#673ab7] text-white py-2.5 rounded-lg text-[13px] font-bold hover:bg-[#5e35b1] transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-md shadow-[#673ab7]/10"
+                                >
+                                    <CheckCircle2 size={16} />
+                                    {processing ? "Saving..." : "Save Service"}
+                                </button>
+                                <Link
+                                    href={route("admin.services.index")}
+                                    className="w-full bg-slate-50 text-slate-500 py-2.5 rounded-lg text-[13px] font-bold hover:bg-slate-100 transition-all flex items-center justify-center border border-slate-200"
+                                >
+                                    Cancel
+                                </Link>
                             </div>
                         </div>
 
@@ -1514,58 +1603,6 @@ export default function Create() {
                                             </button>
                                         </div>
                                     )}
-                            </div>
-                        </div>
-
-                        {/* Campaign Status Card */}
-                        <div className="bg-white rounded-[10px] border border-[#e3e4e8] shadow-sm p-5">
-                            <div className="flex items-center justify-between gap-3">
-                                {/* Status Card */}
-                                <div className="bg-white rounded-[10px] border border-[#e3e4e8] shadow-sm p-5">
-                                    <div className="flex items-center justify-between gap-3">
-                                        <div className="space-y-0.5">
-                                            <span className="text-[13px] font-bold text-[#2f3344] block">
-                                                Toggle Status
-                                            </span>
-                                            <span
-                                                className={`text-[11px] font-medium ${data.status ? "text-green-500" : "text-slate-400"}`}
-                                            >
-                                                {data.status
-                                                    ? "Active (Visible)"
-                                                    : "Draft (Hidden)"}
-                                            </span>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                setData("status", !data.status)
-                                            }
-                                            className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${data.status ? "bg-[#673ab7]" : "bg-gray-200"}`}
-                                        >
-                                            <span
-                                                className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${data.status ? "translate-x-[20px]" : "translate-x-[2px]"}`}
-                                            />
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Action Card */}
-                                <div className="bg-white rounded-[10px] border border-[#e3e4e8] shadow-lg p-5 space-y-2.5">
-                                    <button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="w-full bg-[#673ab7] text-white py-2.5 rounded-lg text-[13px] font-bold hover:bg-[#5e35b1] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                                    >
-                                        <CheckCircle2 size={16} />
-                                        {processing ? "Saving..." : "Save Service"}
-                                    </button>
-                                    <Link
-                                        href={route("admin.services.index")}
-                                        className="w-full bg-slate-50 text-slate-500 py-2.5 rounded-lg text-[13px] font-bold hover:bg-slate-100 transition-all flex items-center justify-center"
-                                    >
-                                        Cancel
-                                    </Link>
-                                </div>
                             </div>
                         </div>
                     </div>

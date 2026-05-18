@@ -28,6 +28,7 @@ return new class extends Migration
             $t->string('reset_password_token')->nullable();
             $t->timestamp('reset_password_token_expire_at')->nullable();
             $t->boolean('profile_setup')->default(false);
+            $t->boolean('is_subscribed')->default(false);
             $t->rememberToken();
             $t->timestamps();
         });

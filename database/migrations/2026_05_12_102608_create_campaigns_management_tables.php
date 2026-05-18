@@ -35,6 +35,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('campaign_tier_id')->constrained()->onDelete('cascade');
             $table->string('feature_text');
+            $table->json('sub_items')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();
         });

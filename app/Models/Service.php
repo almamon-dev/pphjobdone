@@ -20,10 +20,19 @@ class Service extends Model
         'process_steps',
         'section_one',
         'section_two',
-        'benefits',
+        'service_features',
+        'secondary_features',
         'timeline',
         'expect_results',
+        'brands',
         'status',
+        'is_campaign',
+        'has_faq',
+        'has_secondary_features',
+        'has_benifite',
+        'has_why_chose_us',
+        'has_brands',
+        'has_expect_result',
     ];
 
     protected $casts = [
@@ -32,10 +41,19 @@ class Service extends Model
         'process_steps' => 'array',
         'section_one' => 'array',
         'section_two' => 'array',
-        'benefits' => 'array',
+        'service_features' => 'array',
+        'secondary_features' => 'array',
         'timeline' => 'array',
         'expect_results' => 'array',
+        'brands' => 'array',
         'status' => 'boolean',
+        'is_campaign' => 'boolean',
+        'has_faq' => 'boolean',
+        'has_secondary_features' => 'boolean',
+        'has_benifite' => 'boolean',
+        'has_why_chose_us' => 'boolean',
+        'has_brands' => 'boolean',
+        'has_expect_result' => 'boolean',
     ];
 
 

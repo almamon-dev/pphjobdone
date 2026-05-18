@@ -48,7 +48,7 @@ export default function Index({ services, filters = {}, auth }) {
         <AdminLayout>
             <Head title="Service Management" />
 
-            <div className="space-y-6 max-w-[1240px] mx-auto pb-20">
+            <div className="space-y-6 max-w-full mx-auto pb-20">
                 {/* Top Header */}
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -132,9 +132,20 @@ export default function Index({ services, filters = {}, auth }) {
                                                         )}
                                                     </div>
                                                     <div>
-                                                        <p className="text-[14px] font-bold text-[#2f3344] group-hover:text-[#673ab7] transition-colors">
-                                                            {service.title}
-                                                        </p>
+                                                        <div className="flex items-center gap-2">
+                                                            <p className="text-[14px] font-bold text-[#2f3344] group-hover:text-[#673ab7] transition-colors">
+                                                                {service.title}
+                                                            </p>
+                                                            {service.is_campaign ? (
+                                                                <span className="px-1.5 py-0.5 rounded bg-orange-50 text-orange-600 text-[9px] font-bold uppercase tracking-wider border border-orange-100">
+                                                                    Campaign
+                                                                </span>
+                                                            ) : (
+                                                                <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[9px] font-bold uppercase tracking-wider border border-slate-200">
+                                                                    Standard
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                         <p className="text-[12px] text-[#727586]">
                                                             /{service.slug}
                                                         </p>
@@ -148,11 +159,10 @@ export default function Index({ services, filters = {}, auth }) {
                                             </td>
                                             <td className="px-5 py-5">
                                                 <span
-                                                    className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${
-                                                        service.status
+                                                    className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${service.status
                                                             ? "bg-green-100 text-green-700"
                                                             : "bg-gray-100 text-gray-700"
-                                                    }`}
+                                                        }`}
                                                 >
                                                     {service.status
                                                         ? "Active"

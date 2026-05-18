@@ -23,13 +23,22 @@ return new class extends Migration
             $table->json('process_steps')->nullable();
             $table->json('section_one')->nullable(); // Title, Subtitle, Image
             $table->json('section_two')->nullable(); // Title, Subtitle, Image
-            $table->json('benefits')->nullable(); // Title, Description, Image
+            $table->json('service_features')->nullable(); // Title, Description, Image
+            $table->json('secondary_features')->nullable(); // Additional separate feature grid
             $table->string('video_file')->nullable();
             $table->string('video_url')->nullable();
             $table->json('timeline')->nullable();
             $table->json('expect_results')->nullable();
             $table->string('thumbnail')->nullable();
             $table->boolean('status')->default(true);
+            $table->boolean('is_campaign')->default(false);
+            $table->boolean('has_faq')->default(true);
+            $table->boolean('has_secondary_features')->default(false);
+            $table->boolean('has_benifite')->default(true);
+            $table->boolean('has_why_chose_us')->default(true);
+            $table->json('brands')->nullable();
+            $table->boolean('has_brands')->default(true);  
+            $table->boolean('has_expect_result')->default(true);  
             $table->timestamps();
         });
     }

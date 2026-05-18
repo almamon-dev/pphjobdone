@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('service_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('pricing_plan_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('plan_name')->nullable();
             $table->decimal('price', 10, 2)->default(0.00);
             $table->string('status')->default('pending'); // pending, ongoing, completed, cancelled
             $table->string('payment_status')->default('pending'); // pending, paid, failed, refunded
+            $table->json('campaign_details')->nullable();
             $table->timestamps();
         });
     }
