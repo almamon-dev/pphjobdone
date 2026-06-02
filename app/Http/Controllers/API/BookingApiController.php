@@ -37,8 +37,8 @@ class BookingApiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'pricing_plan_id' => 'required_without:campaign_tier_id|exists:pricing_plans,id',
-            'campaign_tier_id' => 'required_without:pricing_plan_id|exists:campaign_tiers,id',
+            'pricing_plan_id' => 'required_without:campaign_tier_id|nullable|exists:pricing_plans,id',
+            'campaign_tier_id' => 'required_without:pricing_plan_id|nullable|exists:campaign_tiers,id',
             'campaign_details' => 'nullable|array',
         ]);
 
@@ -70,7 +70,6 @@ class BookingApiController extends Controller
             'price' => $price,
             'status' => 'pending',
             'payment_status' => 'pending',
-            'is_payment' => false,
             'is_campaign' => $isCampaign,
             'campaign_details' => $request->campaign_details,
         ]);
@@ -146,12 +145,10 @@ class BookingApiController extends Controller
         if (in_array(strtolower($request->status), ['paid', 'success', 'completed', 'succeeded'])) {
             $booking->update([
                 'payment_status' => 'paid',
-                'is_payment' => true,
                 'status' => 'ongoing',
             ]);
             $booking->user->update(['is_subscribed' => true]);
         }
-
         return $this->sendResponse($payment, 'Payment recorded and verified.');
     }
 }

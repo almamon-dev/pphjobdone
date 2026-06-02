@@ -41,7 +41,9 @@ class ServiceController extends Controller
 
     public function create()
     {
-        return Inertia::render('Admin/Services/Create');
+        return Inertia::render('Admin/Services/Create', [
+            'pricing_plans' => \App\Models\PricingPlan::select('id', 'name', 'price')->get(),
+        ]);
     }
 
     public function store(Request $request)
@@ -69,6 +71,8 @@ class ServiceController extends Controller
             'has_expect_result' => 'required|boolean',
             'secondary_features' => 'nullable|array',
             'brands' => 'nullable|array',
+            'pricing_plan_ids' => 'nullable|array',
+            'pricing_plan_ids.*' => 'exists:pricing_plans,id',
         ]);
 
         $validated['slug'] = Str::slug($validated['title']);
@@ -132,7 +136,8 @@ class ServiceController extends Controller
             $validated['brands'] = $brands;
         }
 
-        $service = Service::create($validated);
+        $service = Service::create(collect($validated)->except('pricing_plan_ids')->toArray());
+        $service->pricingPlans()->sync($request->input('pricing_plan_ids', []));
 
         // range features removed
 
@@ -141,9 +146,9 @@ class ServiceController extends Controller
 
     public function edit(Service $service)
     {
-        // load removed
         return Inertia::render('Admin/Services/Edit', [
-            'service' => $service,
+            'service' => $service->load('pricingPlans'),
+            'pricing_plans' => \App\Models\PricingPlan::select('id', 'name', 'price')->get(),
         ]);
     }
 
@@ -171,6 +176,8 @@ class ServiceController extends Controller
             'has_expect_result' => 'required|boolean',
             'secondary_features' => 'nullable|array',
             'brands' => 'nullable|array',
+            'pricing_plan_ids' => 'nullable|array',
+            'pricing_plan_ids.*' => 'exists:pricing_plans,id',
         ]);
         if ($request->hasFile('video_file')) {
             // Delete old video if it was a local file
@@ -292,7 +299,8 @@ class ServiceController extends Controller
             $validated['brands'] = $brands;
         }
 
-        $service->update($validated);
+        $service->update(collect($validated)->except('pricing_plan_ids')->toArray());
+        $service->pricingPlans()->sync($request->input('pricing_plan_ids', []));
 
         // range features removed
 

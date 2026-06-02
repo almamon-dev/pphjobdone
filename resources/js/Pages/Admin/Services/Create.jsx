@@ -17,8 +17,9 @@ import {
     Zap,
 } from "lucide-react";
 
-export default function Create() {
+export default function Create({ pricing_plans = [] }) {
     const { data, setData, post, processing, errors } = useForm({
+        pricing_plan_ids: [],
         title: "",
         subtitle: "",
         video_source: "url", // Added this
@@ -75,6 +76,18 @@ export default function Create() {
             if (field === "video_file") {
                 setData((prev) => ({ ...prev, video_url: "" })); // Clear URL if file is uploaded
             }
+        }
+    };
+
+    const handlePlanToggle = (id) => {
+        const currentIds = [...data.pricing_plan_ids];
+        if (currentIds.includes(id)) {
+            setData(
+                "pricing_plan_ids",
+                currentIds.filter((i) => i !== id),
+            );
+        } else {
+            setData("pricing_plan_ids", [...currentIds, id]);
         }
     };
 
@@ -298,6 +311,58 @@ export default function Create() {
                                         className="w-full h-[44px] px-4 border border-[#e3e4e8] rounded-[8px] focus:ring-1 focus:ring-[#673ab7] outline-none text-[14px]"
                                     />
                                 </div>
+                            </div>
+                        </div>
+
+                        {/* Pricing Plans Section */}
+                        <div className="bg-white rounded-[10px] border border-[#e3e4e8] shadow-sm p-5">
+                            <div className="flex items-center gap-2.5 mb-4">
+                                <DollarSign
+                                    size={20}
+                                    className="text-[#673ab7]"
+                                />
+                                <h2 className="text-[16px] font-bold text-[#2f3344]">
+                                    Associate Pricing Plans
+                                </h2>
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <label className="block text-[12px] font-bold text-[#727586] mb-2">
+                                    Select the pricing plans that apply to this service
+                                </label>
+                                {pricing_plans.length > 0 ? (
+                                    <div className="flex flex-wrap gap-x-6 gap-y-3 p-4 border border-[#e3e4e8] rounded-lg bg-[#fcfcfd]">
+                                        {pricing_plans.map((plan) => (
+                                            <label
+                                                key={plan.id}
+                                                className="flex items-center gap-2.5 cursor-pointer group whitespace-nowrap"
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    checked={data.pricing_plan_ids.includes(plan.id)}
+                                                    onChange={() => handlePlanToggle(plan.id)}
+                                                    className="w-4 h-4 rounded border-gray-300 text-[#673ab7] focus:ring-[#673ab7] flex-shrink-0"
+                                                />
+                                                <span className="text-[13px] text-[#2f3344] group-hover:text-[#673ab7] transition-colors">
+                                                    {plan.name} ({plan.price})
+                                                </span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="text-[13px] text-[#727586] italic p-3 border border-[#e3e4e8] rounded-lg bg-[#f8f9fc]">
+                                        No pricing plans found. Please{" "}
+                                        <Link href={route("admin.pricing-plans.create")} className="text-[#673ab7] font-semibold hover:underline">
+                                            create a pricing plan
+                                        </Link>{" "}
+                                        first.
+                                    </p>
+                                )}
+                                {errors.pricing_plan_ids && (
+                                    <p className="text-red-500 text-[11px] mt-1">
+                                        {errors.pricing_plan_ids}
+                                    </p>
+                                )}
                             </div>
                         </div>
 

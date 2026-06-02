@@ -17,7 +17,7 @@ class PricingPlanResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'price' => $this->price,
+            'price' => (float) $this->price,
             'subtitle' => $this->subtitle,
             'is_popular' => $this->is_popular,
             'features' => $this->features,

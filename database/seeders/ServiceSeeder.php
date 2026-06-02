@@ -16,7 +16,7 @@ class ServiceSeeder extends Seeder
 
         $services = [
             [
-                'title' => 'Monthly SEO That Grows Revenue',
+                'title' => 'Monthly SEO',
                 'slug' => 'monthly-seo',
                 'thumbnail' => 'images/seo-thumbnail.jpg',
                 'subtitle' => 'Comprehensive monthly SEO campaigns for maximum growth',
@@ -87,10 +87,20 @@ class ServiceSeeder extends Seeder
                         'description' => 'If you want to improve the organic ranking of your website, you must adhere to the technical requirements of modern search engines. And this is where we can help you.',
                         'icon' => 'icons/speed.svg',
                     ],
+                    [
+                        'title' => 'Keyword Research',
+                        'description' => 'Identify profitable search phrases to rank your business for high-intent traffic and strategic growth.',
+                        'icon' => 'icons/megaphone.svg',
+                    ],
+                    [
+                        'title' => 'Reporting & Insights',
+                        'description' => 'Detailed monthly updates on organic progress, keyword movements, and traffic growth metrics.',
+                        'icon' => 'icons/audit.svg',
+                    ],
                 ],
             ],
             [
-                'title' => 'Rank Your Business At The Top Of Local Search',
+                'title' => 'Local SEO',
                 'slug' => 'local-seo',
                 'thumbnail' => 'images/seo-thumbnail.jpg',
                 'subtitle' => 'Dominate your local market and the Pack 3.',
@@ -201,10 +211,20 @@ class ServiceSeeder extends Seeder
                         'description' => "We prioritize our clients before anything else! We aim to achieve 100% satisfaction! We guarantee you won't regret your order with us!",
                         'icon' => 'icons/speed.svg',
                     ],
+                    [
+                        'title' => 'GBP Optimization',
+                        'description' => 'Complete configuration and optimization of your Google Business Profile to rank in the local Map Pack.',
+                        'icon' => 'icons/megaphone.svg',
+                    ],
+                    [
+                        'title' => 'Citation Auditing',
+                        'description' => 'Clean up inconsistent directories and build new NAP citations to boost authority.',
+                        'icon' => 'icons/audit.svg',
+                    ],
                 ],
             ],
             [
-                'title' => 'Profitable PPC Campaigns',
+                'title' => 'PPC Campaigns',
                 'slug' => 'ppc-campaigns',
                 'thumbnail' => 'images/seo-benefits.jpg',
                 'subtitle' => 'GROWTH PLAN',
@@ -344,23 +364,76 @@ class ServiceSeeder extends Seeder
                     'button_text' => 'MORE ABOUT OUR COMPANY',
                     'image' => 'images/seo-benefits.jpg',
                 ],
-                'section_two' => null,
-              
-                'service_features' => [
+                'secondary_features' => [
                     [
-                        'title' => 'Visibility',
-                        'description' => 'Build topical authority, long-tail rank growth, and knowledge graph presence.',
-                        'icon' => 'icons/speed.svg',
+                        'title' => 'Keyword Integration',
+                        'description' => 'Target high-volume, low-competition keywords naturally integrated into the content.',
+                        'icon' => 'icons/megaphone.svg',
                     ],
                     [
-                        'title' => 'Authority',
-                        'description' => 'Publish well-researched pieces that establish industry expertise.',
+                        'title' => 'TF-IDF Analysis',
+                        'description' => 'Advanced term-frequency analysis to ensure topical coverage matches top-ranking competitors.',
                         'icon' => 'icons/audit.svg',
                     ],
                     [
-                        'title' => 'Conversion',
-                        'description' => 'Drive readers to take key actions and purchase product offerings.',
+                        'title' => 'Plagiarism Free',
+                        'description' => '100% unique, human-crafted content written by expert writers and editors.',
+                        'icon' => 'icons/speed.svg',
+                    ],
+                ],
+                'section_two' => [
+                    'title' => 'Why Our Content SEO Dominates',
+                    'subtitle' => 'Unmatched Quality',
+                    'description' => 'We do not believe in cheap AI-spun content or low-quality articles. We write content that builds trust, addresses search intent, and turns casual visitors into buyers.',
+                    'points' => [
+                        'Deep Topic Research & Competitor Mapping',
+                        'High Conversion Rate Centered Copywriting',
+                        'Meticulous Editorial Review Process'
+                    ],
+                    'button_text' => 'Get Content Strategy',
+                    'image' => 'images/seo-why-us.jpg',
+                ],
+              
+                'service_features' => [
+                    [
+                        'title' => 'Topical Authority',
+                        'description' => 'Build topical dominance with depth-first content mapping.',
+                        'icon' => 'icons/speed.svg',
+                    ],
+                    [
+                        'title' => 'Keyword Optimization',
+                        'description' => 'Integrate targeted search phrases organically into the copy.',
+                        'icon' => 'icons/audit.svg',
+                    ],
+                    [
+                        'title' => 'Plagiarism Free',
+                        'description' => 'Ensure 100% unique, human-written content checked via Copyscape.',
                         'icon' => 'icons/megaphone.svg',
+                    ],
+                    [
+                        'title' => 'Internal Linking',
+                        'description' => 'Structured internal link networks to pass page authority.',
+                        'icon' => 'icons/speed.svg',
+                    ],
+                    [
+                        'title' => 'SEO Metadata',
+                        'description' => 'Craft optimized titles, descriptions, and image alt text.',
+                        'icon' => 'icons/audit.svg',
+                    ],
+                    [
+                        'title' => 'Readability & Formatting',
+                        'description' => 'Clear heading structures, list layouts, and high engagement hooks.',
+                        'icon' => 'icons/megaphone.svg',
+                    ],
+                    [
+                        'title' => 'Search Intent Alignment',
+                        'description' => 'Develop copy specifically tailored to informational or commercial intent.',
+                        'icon' => 'icons/speed.svg',
+                    ],
+                    [
+                        'title' => 'Editorial Review',
+                        'description' => 'Rigorous proofreading and fact-checking before final delivery.',
+                        'icon' => 'icons/audit.svg',
                     ],
                 ],
                 'expect_results' => [

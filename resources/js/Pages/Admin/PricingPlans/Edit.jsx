@@ -105,11 +105,11 @@ export default function Edit({ pricing_plan, services }) {
                                         Select Services{" "}
                                         <span className="text-red-500">*</span>
                                     </label>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 border border-[#e3e4e8] rounded-lg bg-[#fcfcfd]">
+                                    <div className="flex flex-wrap gap-x-6 gap-y-3 p-4 border border-[#e3e4e8] rounded-lg bg-[#fcfcfd]">
                                         {services.map((service) => (
                                             <label
                                                 key={service.id}
-                                                className="flex items-center gap-2 cursor-pointer group"
+                                                className="flex items-center gap-2.5 cursor-pointer group whitespace-nowrap"
                                             >
                                                 <input
                                                     type="checkbox"
@@ -121,7 +121,7 @@ export default function Edit({ pricing_plan, services }) {
                                                             service.id,
                                                         )
                                                     }
-                                                    className="w-4 h-4 rounded border-gray-300 text-[#673ab7] focus:ring-[#673ab7]"
+                                                    className="w-4 h-4 rounded border-gray-300 text-[#673ab7] focus:ring-[#673ab7] flex-shrink-0"
                                                 />
                                                 <span className="text-[13px] text-[#2f3344] group-hover:text-[#673ab7] transition-colors">
                                                     {service.title}

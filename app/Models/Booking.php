@@ -17,13 +17,11 @@ class Booking extends Model
         'payment_status',
         'is_campaign',
         'campaign_details',
-        'is_payment',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
         'campaign_details' => 'array',
-        'is_payment' => 'boolean',
         'is_campaign' => 'boolean',
     ];
 
@@ -42,9 +40,9 @@ class Booking extends Model
         return $this->belongsTo(PricingPlan::class);
     }
 
-    public function campaign()
+    public function campaignTier()
     {
-        return $this->belongsTo(Campaign::class);
+        return $this->belongsTo(CampaignTier::class);
     }
 
     public function payments()

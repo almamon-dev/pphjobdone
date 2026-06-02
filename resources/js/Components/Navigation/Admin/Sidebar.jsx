@@ -142,6 +142,12 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
             route: "admin.services.*",
         },
         {
+            label: "Pricing Plans",
+            path: "/admin/pricing-plans",
+            icon: <CircleDollarSign size={18} />,
+            route: "admin.pricing-plans.*",
+        },
+        {
             label: "Campaigns",
             path: "/admin/campaigns",
             icon: <Zap size={18} />,

@@ -22,6 +22,7 @@ class CampaignResource extends JsonResource
             'tiers' => $this->tiers->map(function ($tier) {
                 return [
                     'id' => $tier->id,
+                    'campaign_tier_id' => $tier->id,
                     'price' => (float) $tier->price,
                     'features' => $tier->features->map(function ($feature) {
                         return [
