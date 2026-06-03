@@ -30,6 +30,7 @@ Route::any('payments/webhook', [\App\Http\Controllers\API\BookingApiController::
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('bookings/create', [\App\Http\Controllers\API\BookingApiController::class, 'store']);
+    Route::post('bookings/upgrade', [\App\Http\Controllers\API\BookingApiController::class, 'upgrade']);
     Route::prefix('payments')->group(function () {
         Route::post('verify', [\App\Http\Controllers\API\BookingApiController::class, 'verifyPayment']);
         Route::get('list', [\App\Http\Controllers\API\BookingApiController::class, 'paymentList']);

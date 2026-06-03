@@ -83,16 +83,45 @@ class BookingApiController extends Controller
         if ($booking->price > 0) {
             try {
                 Stripe::setApiKey(config('services.stripe.secret') ?? env('STRIPE_SECRET'));
-                $intent = PaymentIntent::create([
-                    'amount' => (int) ($booking->price * 100),
-                    'currency' => 'usd',
+                
+                $user = Auth::user();
+                $customers = \Stripe\Customer::all(['email' => $user->email, 'limit' => 1]);
+                
+                if (count($customers->data) > 0) {
+                    $stripeCustomer = $customers->data[0];
+                } else {
+                    $stripeCustomer = \Stripe\Customer::create([
+                        'email' => $user->email,
+                        'name' => $user->name,
+                    ]);
+                }
+
+                $subscription = \Stripe\Subscription::create([
+                    'customer' => $stripeCustomer->id,
+                    'items' => [
+                        [
+                            'price_data' => [
+                                'currency' => 'usd',
+                                'product_data' => [
+                                    'name' => $planName,
+                                ],
+                                'unit_amount' => (int) ($booking->price * 100),
+                                'recurring' => [
+                                    'interval' => 'month',
+                                ],
+                            ],
+                        ],
+                    ],
+                    'payment_behavior' => 'default_incomplete',
+                    'payment_settings' => ['save_default_payment_method' => 'on_subscription'],
+                    'expand' => ['latest_invoice.payment_intent'],
                     'metadata' => [
                         'booking_id' => $booking->id,
-                        'user_id' => Auth::id(),
+                        'user_id' => $user->id,
                     ],
-                    'automatic_payment_methods' => ['enabled' => true],
                 ]);
-                $responseData['client_secret'] = $intent->client_secret;
+
+                $responseData['client_secret'] = $subscription->latest_invoice->payment_intent->client_secret;
             } catch (\Exception $e) {
                 Log::error('Stripe Error: '.$e->getMessage());
             }
@@ -150,5 +179,173 @@ class BookingApiController extends Controller
             $booking->user->update(['is_subscribed' => true]);
         }
         return $this->sendResponse($payment, 'Payment recorded and verified.');
+    }
+
+    /**
+     * Handle Stripe Webhooks (for recurring payments)
+     */
+    public function webhook(Request $request)
+    {
+        $payload = $request->getContent();
+        $sigHeader = $request->header('Stripe-Signature');
+        $endpointSecret = env('STRIPE_WEBHOOK_SECRET');
+
+        try {
+            if ($endpointSecret) {
+                $event = \Stripe\Webhook::constructEvent($payload, $sigHeader, $endpointSecret);
+            } else {
+                // Fallback if no webhook secret is set (less secure, but works for testing)
+                $event = \Stripe\Event::constructFrom(json_decode($payload, true));
+            }
+        } catch (\UnexpectedValueException $e) {
+            return response()->json(['error' => 'Invalid payload'], 400);
+        } catch (\Stripe\Exception\SignatureVerificationException $e) {
+            return response()->json(['error' => 'Invalid signature'], 400);
+        }
+
+        // Handle the event
+        switch ($event->type) {
+            case 'invoice.payment_succeeded':
+                $invoice = $event->data->object;
+                
+                // If it's a subscription invoice
+                if ($invoice->subscription) {
+                    try {
+                        Stripe::setApiKey(config('services.stripe.secret') ?? env('STRIPE_SECRET'));
+                        $subscription = \Stripe\Subscription::retrieve($invoice->subscription);
+                        
+                        $bookingId = $subscription->metadata->booking_id ?? null;
+                        
+                        if ($bookingId) {
+                            $booking = Booking::find($bookingId);
+                            if ($booking) {
+                                // Check if this transaction was already recorded (e.g. first payment via verifyPayment)
+                                $transactionId = $invoice->payment_intent;
+                                if (!Payment::where('transaction_id', $transactionId)->exists()) {
+                                    Payment::create([
+                                        'booking_id' => $booking->id,
+                                        'transaction_id' => $transactionId,
+                                        'amount' => $invoice->amount_paid / 100,
+                                        'currency' => strtoupper($invoice->currency),
+                                        'payment_method' => 'Stripe Subscription',
+                                        'status' => 'succeeded',
+                                        'payment_payload' => $invoice->toArray(),
+                                    ]);
+                                    
+                                    $booking->update([
+                                        'payment_status' => 'paid',
+                                    ]);
+                                    $booking->user->update(['is_subscribed' => true]);
+                                }
+                            }
+                        }
+                    } catch (\Exception $e) {
+                        Log::error('Webhook Subscription Error: ' . $e->getMessage());
+                    }
+                }
+                break;
+                
+            case 'customer.subscription.deleted':
+                $subscription = $event->data->object;
+                $bookingId = $subscription->metadata->booking_id ?? null;
+                if ($bookingId) {
+                    $booking = Booking::find($bookingId);
+                    if ($booking) {
+                        $booking->user->update(['is_subscribed' => false]);
+                        // Optionally update booking status if needed
+                    }
+                }
+                break;
+        }
+
+        return response()->json(['status' => 'success']);
+    }
+
+    /**
+     * Upgrade or Downgrade a booking's package
+     */
+    public function upgrade(Request $request)
+    {
+        $request->validate([
+            'booking_id' => 'required|exists:bookings,id',
+            'pricing_plan_id' => 'required_without:campaign_tier_id|nullable|exists:pricing_plans,id',
+            'campaign_tier_id' => 'required_without:pricing_plan_id|nullable|exists:campaign_tiers,id',
+        ]);
+
+        $booking = Booking::where('user_id', Auth::id())->findOrFail($request->booking_id);
+
+        if ($request->campaign_tier_id) {
+            $tier = CampaignTier::with('campaign.service')->findOrFail($request->campaign_tier_id);
+            $planId = null;
+            $campaignTierId = $tier->id;
+            $planName = $tier->campaign->title . " ($" . $tier->price . ")";
+            $price = $tier->price;
+        } else {
+            $plan = PricingPlan::with('services')->findOrFail($request->pricing_plan_id);
+            $planId = $plan->id;
+            $campaignTierId = null;
+            $planName = $plan->name;
+            $price = $plan->price;
+        }
+
+        try {
+            Stripe::setApiKey(config('services.stripe.secret') ?? env('STRIPE_SECRET'));
+            
+            $user = Auth::user();
+            $customers = \Stripe\Customer::all(['email' => $user->email, 'limit' => 1]);
+            
+            if (count($customers->data) == 0) {
+                return $this->sendError('Stripe customer not found.');
+            }
+            
+            $stripeCustomer = $customers->data[0];
+            $subscriptions = \Stripe\Subscription::all(['customer' => $stripeCustomer->id]);
+            $targetSubscription = null;
+            
+            foreach ($subscriptions->data as $sub) {
+                if (isset($sub->metadata->booking_id) && $sub->metadata->booking_id == $booking->id) {
+                    $targetSubscription = $sub;
+                    break;
+                }
+            }
+            
+            if (!$targetSubscription) {
+                return $this->sendError('Active subscription not found for this booking.');
+            }
+
+            // Update the subscription item with the new price
+            \Stripe\Subscription::update($targetSubscription->id, [
+                'items' => [
+                    [
+                        'id' => $targetSubscription->items->data[0]->id,
+                        'price_data' => [
+                            'currency' => 'usd',
+                            'product_data' => [
+                                'name' => $planName,
+                            ],
+                            'unit_amount' => (int) ($price * 100),
+                            'recurring' => [
+                                'interval' => 'month',
+                            ],
+                        ],
+                    ],
+                ],
+                'proration_behavior' => 'create_prorations',
+            ]);
+
+            // Update local booking record
+            $booking->update([
+                'pricing_plan_id' => $planId,
+                'campaign_tier_id' => $campaignTierId,
+                'plan_name' => $planName,
+                'price' => $price,
+            ]);
+
+            return $this->sendResponse($booking, 'Package updated successfully.');
+
+        } catch (\Exception $e) {
+            Log::error('Stripe Upgrade Error: '.$e->getMessage());
+            return $this->sendError('Failed to upgrade package: ' . $e->getMessage());
+        }
     }
 }
