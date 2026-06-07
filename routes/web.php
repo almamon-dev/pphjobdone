@@ -10,6 +10,13 @@ Route::get('/', function () {
 });
 Route::get('/services/{slug}', [\App\Http\Controllers\ServiceController::class, 'show'])->name('services.show');
 
+Route::get('/test-payment', function () {
+    $token = auth()->user()->createToken('test-payment')->plainTextToken;
+    return Inertia::render('TestPayment', [
+        'token' => $token
+    ]);
+})->middleware(['auth']);
+
 use App\Http\Controllers\Admin\Dashboard\OverviewController;
 
 Route::get('/dashboard', [OverviewController::class, 'index'])

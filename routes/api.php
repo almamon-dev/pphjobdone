@@ -26,14 +26,14 @@ Route::get('services/proposal/{slug}', [\App\Http\Controllers\API\ServiceApiCont
 Route::get('pricing-plans', [\App\Http\Controllers\API\PricingPlanApiController::class, 'index']);
 
 // Bookings & Payments
-Route::any('payments/webhook', [\App\Http\Controllers\API\BookingApiController::class, 'webhook']);
+Route::any('payments/webhook', [\App\Http\Controllers\API\PaymentApiController::class, 'webhook']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('bookings/create', [\App\Http\Controllers\API\BookingApiController::class, 'store']);
-    Route::post('bookings/upgrade', [\App\Http\Controllers\API\BookingApiController::class, 'upgrade']);
+    Route::post('campaign-bookings/create', [\App\Http\Controllers\API\CampaignBookingApiController::class, 'store']);
+    Route::post('subscription-bookings/create', [\App\Http\Controllers\API\SubscriptionBookingApiController::class, 'store']);
+    Route::post('subscription-bookings/upgrade', [\App\Http\Controllers\API\SubscriptionBookingApiController::class, 'upgrade']);
     Route::prefix('payments')->group(function () {
-        Route::post('verify', [\App\Http\Controllers\API\BookingApiController::class, 'verifyPayment']);
-        Route::get('list', [\App\Http\Controllers\API\BookingApiController::class, 'paymentList']);
+        Route::get('list', [\App\Http\Controllers\API\PaymentApiController::class, 'index']);
     });
 });
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -49,8 +49,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('user/services', [\App\Http\Controllers\API\UserServicesApiController::class, 'index']);
     Route::get('user/reports', [\App\Http\Controllers\API\UserReportsApiController::class, 'index']);
     Route::get('user/tasks', [\App\Http\Controllers\API\UserTasksApiController::class, 'index']);
-    Route::get('user/bookings', [\App\Http\Controllers\API\BookingApiController::class, 'index']);
-    Route::get('user/bookings/{id}', [\App\Http\Controllers\API\BookingApiController::class, 'show']);
+    Route::get('user/bookings', [\App\Http\Controllers\API\UserBookingApiController::class, 'index']);
+    Route::get('user/bookings/{id}', [\App\Http\Controllers\API\UserBookingApiController::class, 'show']);
 
     // Chat Routes
     Route::get('conversations', [\App\Http\Controllers\API\ChatApiController::class, 'getConversations']);
