@@ -44,7 +44,7 @@ class SubscriptionBookingApiController extends Controller
             'client_secret' => null,
         ];
 
-        // 2. Stripe Logic (Recurring Subscription)
+        // 2. Stripe Logic (One-Time Payment)
         if ($booking->price > 0) {
             try {
                 Stripe::setApiKey(config('services.stripe.secret') ?? env('STRIPE_SECRET'));
@@ -61,48 +61,20 @@ class SubscriptionBookingApiController extends Controller
                     ]);
                 }
 
-                $products = \Stripe\Product::all(['limit' => 100]);
-                $stripeProduct = null;
-                foreach($products->data as $p) {
-                    if ($p->name === $plan->name) {
-                        $stripeProduct = $p;
-                        break;
-                    }
-                }
-                if (!$stripeProduct) {
-                    $stripeProduct = \Stripe\Product::create([
-                        'name' => $plan->name,
-                    ]);
-                }
-
-                $subscription = \Stripe\Subscription::create([
+                $paymentIntent = \Stripe\PaymentIntent::create([
+                    'amount' => (int) ($booking->price * 100),
+                    'currency' => 'usd',
                     'customer' => $stripeCustomer->id,
-                    'items' => [
-                        [
-                            'price_data' => [
-                                'currency' => 'usd',
-                                'product' => $stripeProduct->id,
-                                'unit_amount' => (int) ($booking->price * 100),
-                                'recurring' => [
-                                    'interval' => 'month',
-                                ],
-                            ],
-                        ],
-                    ],
-                    'payment_behavior' => 'default_incomplete',
-                    'payment_settings' => ['save_default_payment_method' => 'on_subscription'],
-                    'expand' => ['latest_invoice.payment_intent'],
+                    'description' => 'Payment for ' . $plan->name,
                     'metadata' => [
                         'booking_id' => $booking->id,
                         'user_id' => $user->id,
                     ],
                 ]);
 
-                if (isset($subscription->latest_invoice) && isset($subscription->latest_invoice->payment_intent)) {
-                    $responseData['client_secret'] = $subscription->latest_invoice->payment_intent->client_secret;
-                }
+                $responseData['client_secret'] = $paymentIntent->client_secret;
             } catch (\Exception $e) {
-                Log::error('Stripe Subscription Error: '.$e->getMessage());
+                Log::error('Stripe Payment Error: '.$e->getMessage());
             }
         }
 
