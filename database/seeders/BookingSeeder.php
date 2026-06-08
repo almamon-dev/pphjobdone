@@ -25,8 +25,11 @@ class BookingSeeder extends Seeder
 
         foreach ($users as $user) {
             foreach ($pricingPlans->random(2) as $plan) {
+                $serviceId = \DB::table('pricing_plan_service')->where('pricing_plan_id', $plan->id)->value('service_id') ?? $services->random()->id;
+                
                 $booking = Booking::create([
                     'user_id' => $user->id,
+                    'service_id' => $serviceId,
                     'pricing_plan_id' => $plan->id,
                     'plan_name' => $plan->name,
                     'price' => $plan->price,
@@ -40,16 +43,18 @@ class BookingSeeder extends Seeder
                     'amount' => $plan->price,
                     'currency' => 'USD',
                     'payment_method' => 'Stripe',
-                    'status' => 'paid',
+                    'status' => 'succeeded',
                     'payment_payload' => ['seeded' => true],
                 ]);
             }
 
             // Create one failed/pending booking
             $plan = $pricingPlans->random();
+            $serviceId = \DB::table('pricing_plan_service')->where('pricing_plan_id', $plan->id)->value('service_id') ?? $services->random()->id;
 
             Booking::create([
                 'user_id' => $user->id,
+                'service_id' => $serviceId,
                 'pricing_plan_id' => $plan->id,
                 'plan_name' => $plan->name,
                 'price' => $plan->price,
