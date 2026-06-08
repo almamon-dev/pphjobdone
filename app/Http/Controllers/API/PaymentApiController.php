@@ -40,6 +40,8 @@ class PaymentApiController extends Controller
         $payload = $request->getContent();
         $sigHeader = $request->header('Stripe-Signature');
         $endpointSecret = env('STRIPE_WEBHOOK_SECRET');
+        
+        Log::info('Webhook Received', ['sigHeader' => $sigHeader, 'has_secret' => (bool)$endpointSecret]);
 
         try {
             if ($endpointSecret) {
@@ -49,10 +51,14 @@ class PaymentApiController extends Controller
                 $event = \Stripe\Event::constructFrom(json_decode($payload, true));
             }
         } catch (\UnexpectedValueException $e) {
+            Log::error('Webhook Error: Invalid payload', ['error' => $e->getMessage()]);
             return response()->json(['error' => 'Invalid payload'], 400);
         } catch (\Stripe\Exception\SignatureVerificationException $e) {
+            Log::error('Webhook Error: Invalid signature', ['error' => $e->getMessage()]);
             return response()->json(['error' => 'Invalid signature'], 400);
         }
+
+        Log::info('Webhook Event Type: ' . $event->type);
 
         // Handle the event
         switch ($event->type) {
