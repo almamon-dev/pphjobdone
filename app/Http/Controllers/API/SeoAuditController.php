@@ -68,20 +68,31 @@ class SeoAuditController extends Controller
             ]
         ];
         // 5. Determine User ID and Subscription Status
-        $userId = \Illuminate\Support\Facades\Auth::id();
+        $user = auth('sanctum')->user();
+        
+        $userId = null;
         $auditEmail = $request->email;
-        $isSubscribed = \Illuminate\Support\Facades\Auth::check() ? \Illuminate\Support\Facades\Auth::user()->is_subscribed : false;
+        $isSubscribed = false;
 
-        if (! $userId && $request->email) {
+        if ($user) {
+            $userId = $user->id;
+            $auditEmail = $user->email;
+        } elseif ($request->email) {
             $existingUser = \App\Models\User::where('email', $request->email)->first();
             if ($existingUser) {
+                $user = $existingUser;
                 $userId = $existingUser->id;
                 $auditEmail = $existingUser->email;
-                $isSubscribed = $existingUser->is_subscribed;
             }
-        } elseif ($userId) {
-            $auditEmail = \Illuminate\Support\Facades\Auth::user()->email;
-            $isSubscribed = \Illuminate\Support\Facades\Auth::user()->is_subscribed;
+        }
+
+        if ($user) {
+            $hasActiveBooking = \App\Models\Booking::where('user_id', $user->id)
+                ->whereIn('status', ['active', 'ongoing'])
+                ->where('payment_status', 'paid')
+                ->exists();
+                
+            $isSubscribed = $user->is_subscribed || $hasActiveBooking;
         }
 
         // 6. Store in Database

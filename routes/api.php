@@ -17,6 +17,7 @@ Route::prefix('auth')->middleware(['auth.rate.limit'])->group(function () {
 // AI SEO Audit
 Route::post('seo-audit', [\App\Http\Controllers\API\SeoAuditController::class, 'audit']);
 Route::get('seo-audit/download', [\App\Http\Controllers\API\SeoAuditController::class, 'downloadPdf']);
+Route::get('campaign-report/download', [\App\Http\Controllers\API\UserReportsApiController::class, 'downloadCampaignReport']);
 
 // Services
 Route::get('services', [\App\Http\Controllers\API\ServiceApiController::class, 'index']);

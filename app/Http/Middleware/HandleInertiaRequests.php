@@ -27,7 +27,7 @@ class HandleInertiaRequests extends Middleware
         $notifications = [];
         $unreadCount = 0;
 
-        if ($request->user() && $request->user()->role === 'admin') {
+        if ($request->user() && $request->user()->is_admin) {
             $notifications = $request->user()->unreadNotifications()->take(5)->get();
             $unreadCount = $request->user()->unreadNotifications()->count();
         }

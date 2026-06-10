@@ -47,6 +47,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Contacts
         Route::resource('contacts', \App\Http\Controllers\Admin\ContactController::class)->only(['index', 'destroy']);
         
+        // Bookings & Tasks
+        Route::resource('bookings', \App\Http\Controllers\Admin\BookingController::class)->only(['index', 'show']);
+        Route::post('bookings/{booking}/tasks', [\App\Http\Controllers\Admin\BookingController::class, 'storeTask'])->name('bookings.tasks.store');
+        Route::put('bookings/{booking}/tasks/{task}', [\App\Http\Controllers\Admin\BookingController::class, 'updateTask'])->name('bookings.tasks.update');
+        Route::delete('bookings/{booking}/tasks/{task}', [\App\Http\Controllers\Admin\BookingController::class, 'destroyTask'])->name('bookings.tasks.destroy');
+        
         // Notifications
         Route::post('notifications/{id}/read', function ($id) {
             $notification = auth()->user()->notifications()->findOrFail($id);

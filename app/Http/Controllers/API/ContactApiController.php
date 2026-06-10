@@ -23,7 +23,7 @@ class ContactApiController extends Controller
         $message = \App\Models\ContactMessage::create($validatedData);
 
         // Notify all admins
-        $admins = \App\Models\User::where('role', 'admin')->get();
+        $admins = \App\Models\User::where('is_admin', true)->get();
         \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\NewContactMessageNotification($message));
 
         return response()->json([

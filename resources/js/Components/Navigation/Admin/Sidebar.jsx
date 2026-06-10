@@ -107,6 +107,12 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
             title: "Settings",
             items: [
                 {
+                    label: "Pricing Plans",
+                    icon: <CircleDollarSign size={20} />,
+                    href: "/admin/pricing-plans",
+                    active: usePage().url.startsWith("/admin/pricing-plans"),
+                },
+                {
                     label: "System Settings",
                     icon: <Cog size={18} />,
                     path: "/admin/settings/system",
@@ -152,6 +158,12 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
             path: "/admin/campaigns",
             icon: <Zap size={18} />,
             route: "admin.campaigns.*",
+        },
+        {
+            label: "Client Bookings",
+            path: "/admin/bookings",
+            icon: <FolderKanban size={18} />,
+            route: "admin.bookings.*",
         },
         {
             label: "Contacts",

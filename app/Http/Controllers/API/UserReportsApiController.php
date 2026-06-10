@@ -28,6 +28,7 @@ class UserReportsApiController extends Controller
                     'created_at' => $audit->created_at->toISOString(),
                     'download_link' => url("/api/seo-audit/download?audit_id=" . $audit->id),
                     'view_link' => '#',
+                    'data' => $audit->response_data,
                 ];
             });
 
@@ -46,8 +47,8 @@ class UserReportsApiController extends Controller
                     'status' => 'Available',
                     'date' => now()->format('Y-m-d'),
                     'created_at' => now()->toISOString(),
-                    'download_link' => '#',
-                    'view_link' => '#',
+                    'download_link' => url("/api/campaign-report/download?booking_id=" . $booking->id),
+                    'view_link' => '/dashboard/progress-tasks',
                 ];
             });
 
@@ -58,5 +59,21 @@ class UserReportsApiController extends Controller
             'data' => $reports,
             'message' => 'User reports fetched successfully',
         ]);
+    }
+
+    public function downloadCampaignReport(Request $request)
+    {
+        $bookingId = $request->query('booking_id');
+        if (!$bookingId) {
+            return response()->json(['error' => 'Booking ID is required'], 400);
+        }
+
+        $booking = \App\Models\Booking::with(['service', 'tasks', 'user'])->find($bookingId);
+        if (!$booking) {
+            return response()->json(['error' => 'Booking not found'], 404);
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.campaign-report', ['booking' => $booking]);
+        return $pdf->download('Campaign-Progress-Report-BKG-' . $booking->id . '.pdf');
     }
 }
