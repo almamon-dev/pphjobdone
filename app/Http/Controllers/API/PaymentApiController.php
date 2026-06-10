@@ -94,6 +94,7 @@ class PaymentApiController extends Controller
                                     
                                     $booking->update([
                                         'payment_status' => 'paid',
+                                        'status' => 'active',
                                     ]);
                                     $booking->user->update(['is_subscribed' => true]);
                                     
@@ -154,6 +155,7 @@ class PaymentApiController extends Controller
                                 
                                 $booking->update([
                                     'payment_status' => 'paid',
+                                    'status' => 'active',
                                 ]);
                                 
                                 Log::info('Successfully processed Payment Intent for Booking ID: ' . $bookingId);
