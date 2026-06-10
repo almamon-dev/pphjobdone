@@ -22,10 +22,17 @@ class SubscriptionBookingApiController extends Controller
     {
         $request->validate([
             'pricing_plan_id' => 'required|exists:pricing_plans,id',
+            'service_id'      => 'nullable|exists:services,id',
         ]);
 
         $plan = PricingPlan::with('services')->findOrFail($request->pricing_plan_id);
-        $service = $plan->services->first();
+
+        // Use user-selected service if provided, otherwise fall back to first linked service
+        if ($request->service_id) {
+            $service = $plan->services->firstWhere('id', $request->service_id) ?? $plan->services->first();
+        } else {
+            $service = $plan->services->first();
+        }
 
         // 1. Create Booking
         $booking = Booking::create([

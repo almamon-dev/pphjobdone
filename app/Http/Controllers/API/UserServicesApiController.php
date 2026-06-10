@@ -16,6 +16,7 @@ class UserServicesApiController extends Controller
         $services = \App\Models\Booking::with(['service', 'pricingPlan'])
             ->where('user_id', $userId)
             ->where('payment_status', 'paid')
+            ->where('is_campaign', false)
             ->get()
             ->filter(function ($booking) {
                 return $booking->service !== null || $booking->pricingPlan !== null;

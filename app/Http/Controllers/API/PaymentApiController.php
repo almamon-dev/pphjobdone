@@ -41,7 +41,9 @@ class PaymentApiController extends Controller
         $sigHeader = $request->header('Stripe-Signature');
         $endpointSecret = env('STRIPE_WEBHOOK_SECRET');
         
-        Log::info('Webhook Received', ['sigHeader' => $sigHeader, 'has_secret' => (bool)$endpointSecret]);
+        Log::info('==== WEBHOOK RECEIVED ====');
+        Log::info('Webhook Headers & Config', ['sigHeader' => $sigHeader, 'has_secret' => (bool)$endpointSecret]);
+        Log::info('Webhook Raw Payload', ['payload' => json_decode($payload, true)]);
 
         try {
             if ($endpointSecret) {
@@ -58,18 +60,20 @@ class PaymentApiController extends Controller
             return response()->json(['error' => 'Invalid signature'], 400);
         }
 
-        Log::info('Webhook Event Type: ' . $event->type);
+        Log::info('Webhook Event Type Verified: ' . $event->type);
 
         // Handle the event
         switch ($event->type) {
             case 'invoice.payment_succeeded':
                 $invoice = $event->data->object;
+                Log::info('Invoice Payment Succeeded Data: ', $invoice->toArray());
                 
                 // If it's a subscription invoice
                 if ($invoice->subscription) {
                     try {
                         Stripe::setApiKey(config('services.stripe.secret') ?? env('STRIPE_SECRET'));
                         $subscription = \Stripe\Subscription::retrieve($invoice->subscription);
+                        Log::info('Retrieved Subscription Data: ', $subscription->toArray());
                         
                         $bookingId = $subscription->metadata->booking_id ?? null;
                         
@@ -92,28 +96,42 @@ class PaymentApiController extends Controller
                                         'payment_status' => 'paid',
                                     ]);
                                     $booking->user->update(['is_subscribed' => true]);
+                                    
+                                    Log::info('Successfully processed Subscription Invoice for Booking ID: ' . $bookingId);
+                                } else {
+                                    Log::info('Payment already exists for Transaction ID: ' . $transactionId);
                                 }
+                            } else {
+                                Log::warning('Booking not found for ID: ' . $bookingId);
                             }
+                        } else {
+                            Log::warning('No booking_id found in subscription metadata');
                         }
                     } catch (\Exception $e) {
                         Log::error('Webhook Subscription Error: ' . $e->getMessage());
                     }
+                } else {
+                    Log::info('Invoice is not a subscription invoice.');
                 }
                 break;
                 
             case 'customer.subscription.deleted':
                 $subscription = $event->data->object;
+                Log::info('Subscription Deleted Data: ', $subscription->toArray());
+                
                 $bookingId = $subscription->metadata->booking_id ?? null;
                 if ($bookingId) {
                     $booking = Booking::find($bookingId);
                     if ($booking) {
                         $booking->user->update(['is_subscribed' => false]);
+                        Log::info('User subscription status updated to false for Booking ID: ' . $bookingId);
                     }
                 }
                 break;
                 
             case 'payment_intent.succeeded':
                 $paymentIntent = $event->data->object;
+                Log::info('Payment Intent Succeeded Data: ', $paymentIntent->toArray());
                 
                 // Exclude invoice-generated payment intents (they are handled by invoice.payment_succeeded)
                 if (empty($paymentIntent->invoice)) {
@@ -137,14 +155,29 @@ class PaymentApiController extends Controller
                                 $booking->update([
                                     'payment_status' => 'paid',
                                 ]);
+                                
+                                Log::info('Successfully processed Payment Intent for Booking ID: ' . $bookingId);
+                            } else {
+                                Log::info('Payment already exists for Transaction ID: ' . $transactionId);
                             }
+                        } else {
+                            Log::warning('Booking not found for ID: ' . $bookingId);
                         }
+                    } else {
+                        Log::warning('No booking_id found in payment intent metadata');
                     }
+                } else {
+                    Log::info('Payment intent belongs to an invoice (skipped, will be handled by invoice.payment_succeeded).');
                 }
+                break;
+                
+            default:
+                Log::info('Unhandled webhook event type: ' . $event->type);
                 break;
         }
 
         return response()->json(['status' => 'success']);
     }
 }
+
 /*  */

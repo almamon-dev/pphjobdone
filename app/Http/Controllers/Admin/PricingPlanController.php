@@ -54,7 +54,6 @@ class PricingPlanController extends Controller
             'features' => 'nullable|array',
             'button_text' => 'required|string|max:255',
             'status' => 'required|boolean',
-            'is_campaign' => 'required|boolean',
         ]);
 
         $plan = PricingPlan::create($validated);
@@ -83,7 +82,6 @@ class PricingPlanController extends Controller
             'features' => 'nullable|array',
             'button_text' => 'required|string|max:255',
             'status' => 'required|boolean',
-            'is_campaign' => 'required|boolean',
         ]);
 
         $pricingPlan->update($validated);

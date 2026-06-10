@@ -15,7 +15,7 @@ class PricingPlanApiController extends Controller
      */
     public function index()
     {
-        $plans = PricingPlan::where('status', true)->get();
+        $plans = PricingPlan::with('services:id,title,slug')->where('status', true)->get();
 
         return $this->sendResponse($plans, 'Plans retrieved successfully');
     }
