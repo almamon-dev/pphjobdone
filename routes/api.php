@@ -16,7 +16,7 @@ Route::prefix('auth')->middleware(['auth.rate.limit'])->group(function () {
 
 // AI SEO Audit
 Route::post('seo-audit', [\App\Http\Controllers\API\SeoAuditController::class, 'audit']);
-Route::post('seo-audit/download', [\App\Http\Controllers\API\SeoAuditController::class, 'downloadPdf']);
+Route::get('seo-audit/download', [\App\Http\Controllers\API\SeoAuditController::class, 'downloadPdf']);
 
 // Services
 Route::get('services', [\App\Http\Controllers\API\ServiceApiController::class, 'index']);
@@ -24,6 +24,9 @@ Route::get('services/{slug}', [\App\Http\Controllers\API\ServiceApiController::c
 Route::get('services/details/{slug}', [\App\Http\Controllers\API\ServiceApiController::class, 'show']);
 Route::get('services/proposal/{slug}', [\App\Http\Controllers\API\ServiceApiController::class, 'proposal']);
 Route::get('pricing-plans', [\App\Http\Controllers\API\PricingPlanApiController::class, 'index']);
+
+// Contact Form
+Route::post('contact', [\App\Http\Controllers\API\ContactApiController::class, 'store']);
 
 // Bookings & Payments
 Route::any('payments/webhook', [\App\Http\Controllers\API\PaymentApiController::class, 'webhook']);
@@ -58,8 +61,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('messages/send', [\App\Http\Controllers\API\ChatApiController::class, 'sendMessage']);
 });
 
-// Contact Message
-Route::post('contact', [\App\Http\Controllers\API\ContactApiController::class, 'store']);
 
 // Broadcasting Auth
 Broadcast::routes(['middleware' => ['auth:sanctum']]);

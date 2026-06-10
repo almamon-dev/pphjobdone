@@ -22,17 +22,24 @@ class HandleInertiaRequests extends Middleware
         return parent::version($request);
     }
 
-    /**
-     * Define the props that are shared by default.
-     *
-     * @return array<string, mixed>
-     */
     public function share(Request $request): array
     {
+        $notifications = [];
+        $unreadCount = 0;
+
+        if ($request->user() && $request->user()->role === 'admin') {
+            $notifications = $request->user()->unreadNotifications()->take(5)->get();
+            $unreadCount = $request->user()->unreadNotifications()->count();
+        }
+
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+            ],
+            'adminNotifications' => [
+                'list' => $notifications,
+                'unreadCount' => $unreadCount,
             ],
         ];
     }

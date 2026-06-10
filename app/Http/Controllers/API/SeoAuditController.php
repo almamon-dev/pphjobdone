@@ -94,6 +94,7 @@ class SeoAuditController extends Controller
 
         $audit['audit_id'] = $storedAudit->id;
         $audit['is_subscribed'] = $isSubscribed;
+        $audit['download_pdf'] = url('/api/seo-audit/download?audit_id=' . $storedAudit->id);
 
         // NEW: Link Audit with Booking Tasks
         if ($userId) {

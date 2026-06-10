@@ -17,27 +17,28 @@ import {
 } from "lucide-react";
 
 const Header = ({ onMenuClick }) => {
-    const { auth } = usePage().props;
+    const { auth, adminNotifications } = usePage().props;
     const [open, setOpen] = useState(false);
+    const [notifOpen, setNotifOpen] = useState(false);
     const dropdownRef = useRef(null);
+    const notifRef = useRef(null);
 
     const handleLogout = () => {
         router.post(route("logout"));
     };
 
-    // Close dropdown on outside click
+    const markAsRead = (id) => {
+        router.post(route("notifications.read", id), {}, { preserveScroll: true, preserveState: true });
+    };
+
+    // Close dropdowns on outside click
     useEffect(() => {
         const handleClickOutside = (e) => {
-            if (
-                dropdownRef.current &&
-                !dropdownRef.current.contains(e.target)
-            ) {
-                setOpen(false);
-            }
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setOpen(false);
+            if (notifRef.current && !notifRef.current.contains(e.target)) setNotifOpen(false);
         };
         document.addEventListener("mousedown", handleClickOutside);
-        return () =>
-            document.removeEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     return (
@@ -77,13 +78,69 @@ const Header = ({ onMenuClick }) => {
                     >
                         <Home size={20} strokeWidth={1.5} />
                     </Link>
-                    <button
-                        className="w-10 h-10 flex items-center justify-center text-slate-500 hover:bg-slate-50 rounded-xl relative"
-                        title="Notifications"
-                    >
-                        <Bell size={20} strokeWidth={1.5} />
-                        <span className="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
-                    </button>
+                    
+                    {/* Notifications Dropdown */}
+                    <div className="relative" ref={notifRef}>
+                        <button
+                            onClick={() => setNotifOpen(!notifOpen)}
+                            className={`w-10 h-10 flex items-center justify-center rounded-xl relative transition-all ${notifOpen ? "bg-slate-100 text-[#0a66c2]" : "text-slate-500 hover:bg-slate-50"}`}
+                            title="Notifications"
+                        >
+                            <Bell size={20} strokeWidth={1.5} />
+                            {adminNotifications?.unreadCount > 0 && (
+                                <span className="absolute top-2 right-2 flex items-center justify-center w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full ring-2 ring-white">
+                                    {adminNotifications.unreadCount}
+                                </span>
+                            )}
+                        </button>
+
+                        {/* Notification List */}
+                        {notifOpen && (
+                            <div className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                                <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                                    <h3 className="font-bold text-slate-800 text-sm">Notifications</h3>
+                                    {adminNotifications?.unreadCount > 0 && (
+                                        <span className="bg-red-100 text-red-600 text-xs font-bold px-2 py-0.5 rounded-full">
+                                            {adminNotifications.unreadCount} New
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="max-h-[300px] overflow-y-auto no-scrollbar">
+                                    {adminNotifications?.list?.length > 0 ? (
+                                        adminNotifications.list.map((notif) => (
+                                            <div key={notif.id} className="p-4 border-b border-slate-50 hover:bg-slate-50 transition-colors flex gap-3 relative group">
+                                                <div className="w-8 h-8 rounded-full bg-[#0a66c2]/10 flex items-center justify-center shrink-0 mt-1">
+                                                    <Mail size={14} className="text-[#0a66c2]" />
+                                                </div>
+                                                <div className="flex-1 pr-4">
+                                                    <p className="text-[13px] text-slate-800 leading-tight">
+                                                        <span className="font-bold">{notif.data.name}</span> sent a message.
+                                                    </p>
+                                                    <p className="text-[11px] text-slate-500 mt-1 truncate">{notif.data.message}</p>
+                                                </div>
+                                                <button
+                                                    onClick={() => markAsRead(notif.id)}
+                                                    className="absolute right-3 top-4 opacity-0 group-hover:opacity-100 transition-opacity text-[10px] text-[#0a66c2] font-semibold hover:underline bg-white/80 px-1 rounded"
+                                                >
+                                                    Mark Read
+                                                </button>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="p-8 text-center text-slate-500 text-[13px]">
+                                            <Bell size={24} className="mx-auto mb-2 opacity-20" />
+                                            No new notifications
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="p-2 bg-slate-50/50 border-t border-slate-100">
+                                    <Link href={route('admin.contacts.index')} className="block text-center text-xs text-[#0a66c2] font-bold hover:underline py-1">
+                                        View All Contacts
+                                    </Link>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {/* User Profile Dropdown */}

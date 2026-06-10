@@ -46,6 +46,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('campaigns', \App\Http\Controllers\Admin\CampaignController::class);
         // Contacts
         Route::resource('contacts', \App\Http\Controllers\Admin\ContactController::class)->only(['index', 'destroy']);
+        
+        // Notifications
+        Route::post('notifications/{id}/read', function ($id) {
+            $notification = auth()->user()->notifications()->findOrFail($id);
+            $notification->markAsRead();
+            return back();
+        })->name('notifications.read');
     });
 });
 
