@@ -14,20 +14,44 @@ class UserReportsApiController extends Controller
         $userId = $user->id;
         $userEmail = $user->email;
 
-        $reports = SeoAudit::where('user_id', $userId)
+        $seoReports = SeoAudit::where('user_id', $userId)
             ->orWhereRaw('LOWER(email) = ?', [strtolower($userEmail)])
             ->latest()
             ->get()
             ->map(function ($audit) {
                 return [
-                    'id' => $audit->id,
-                    'title' => ($audit->url ? parse_url($audit->url, PHP_URL_HOST) : 'SEO') . ' Report',
-                    'subtitle' => 'SEO Monthly • ' . $audit->created_at->format('F d, Y'),
+                    'id' => 'seo_' . $audit->id,
+                    'title' => ($audit->url ? parse_url($audit->url, PHP_URL_HOST) : 'SEO') . ' Analysis',
+                    'type' => 'SEO Audit',
                     'status' => 'Available',
                     'date' => $audit->created_at->format('Y-m-d'),
-                    'download_url' => url("/api/seo-audit/download?audit_id=" . $audit->id),
+                    'created_at' => $audit->created_at->toISOString(),
+                    'download_link' => url("/api/seo-audit/download?audit_id=" . $audit->id),
+                    'view_link' => '#',
                 ];
             });
+
+        $bookingReports = \App\Models\Booking::with('service')
+            ->where('user_id', $userId)
+            ->whereIn('status', ['ongoing', 'active'])
+            ->where('payment_status', 'paid')
+            ->latest()
+            ->get()
+            ->map(function ($booking) {
+                $serviceTitle = $booking->service?->title ?? ($booking->plan_name . ' Service');
+                return [
+                    'id' => 'bkg_' . $booking->id,
+                    'title' => $serviceTitle . ' - Progress Report',
+                    'type' => 'Campaign Report',
+                    'status' => 'Available',
+                    'date' => now()->format('Y-m-d'),
+                    'created_at' => now()->toISOString(),
+                    'download_link' => '#',
+                    'view_link' => '#',
+                ];
+            });
+
+        $reports = $seoReports->merge($bookingReports)->sortByDesc('created_at')->values();
 
         return response()->json([
             'success' => true,

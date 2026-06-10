@@ -13,7 +13,7 @@ class UserTasksApiController extends Controller
 
         $bookings = Booking::with('service', 'tasks')
             ->where('user_id', $userId)
-            ->where('status', 'ongoing')
+            ->whereIn('status', ['ongoing', 'active'])
             ->where('payment_status', 'paid')
             ->get();
 
