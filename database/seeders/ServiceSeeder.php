@@ -16,8 +16,8 @@ class ServiceSeeder extends Seeder
 
         $services = [
             [
-                'title' => 'Monthly SEO',
-                'slug' => 'monthly-seo',
+                'title' => 'SEO CAMPAIGN',
+                'slug' => 'seo-campaign',
                 'thumbnail' => 'images/seo-thumbnail.jpg',
                 'subtitle' => 'Comprehensive monthly SEO campaigns for maximum growth',
                 'description' => 'Scale your business with our tailored monthly SEO strategies. We provide consistent growth through technical optimization, content, and high-quality links.',
@@ -100,8 +100,8 @@ class ServiceSeeder extends Seeder
                 ],
             ],
             [
-                'title' => 'Local SEO',
-                'slug' => 'local-seo',
+                'title' => 'GUEST POSTING',
+                'slug' => 'guest-posting',
                 'thumbnail' => 'images/seo-thumbnail.jpg',
                 'subtitle' => 'Dominate your local market and the Pack 3.',
                 'description' => 'Own the "near me" searches. We optimize your local ecosystem—from Google Business Profile to localized landing pages—to drive high-intent store visits and calls.',
@@ -224,8 +224,8 @@ class ServiceSeeder extends Seeder
                 ],
             ],
             [
-                'title' => 'PPC Campaigns',
-                'slug' => 'ppc-campaigns',
+                'title' => 'LINK BUILIDING',
+                'slug' => 'link-building',
                 'thumbnail' => 'images/seo-benefits.jpg',
                 'subtitle' => 'GROWTH PLAN',
                 'description' => "We Offer Link Building Strategies That Nobody Delivers!\nLink building is quite a broad term and requires quite a lot of research to find what strategies are working these days and what's not. What works for others might not work for you! You need to have the right partner on your side if you want to grow!",
@@ -344,8 +344,8 @@ class ServiceSeeder extends Seeder
                 ],
             ],
             [
-                'title' => 'Content Writing',
-                'slug' => 'content-writing',
+                'title' => 'SMM MARKETING',
+                'slug' => 'smm-marketing',
                 'subtitle' => 'Topical authority that ranks and converts.',
                 'description' => 'We don’t just write blogs; we build topical dominance. Every piece is engineered with TF-IDF optimization and search intent mapping.',
                 'thumbnail' => 'images/seo-thumbnail.jpg',
@@ -396,43 +396,43 @@ class ServiceSeeder extends Seeder
               
                 'service_features' => [
                     [
-                        'title' => 'Topical Authority',
-                        'description' => 'Build topical dominance with depth-first content mapping.',
+                        'title' => 'Paid search marketing',
+                        'description' => 'Craft campaigns — built just for your business — to ensure real and quantifiable ROI.',
                         'icon' => 'icons/speed.svg',
                     ],
                     [
-                        'title' => 'Keyword Optimization',
-                        'description' => 'Integrate targeted search phrases organically into the copy.',
+                        'title' => 'Search engine optimization',
+                        'description' => 'Maintain your best spot on the search results page, so you can find new customers and re-engage loyal ones.',
                         'icon' => 'icons/audit.svg',
                     ],
                     [
-                        'title' => 'Plagiarism Free',
-                        'description' => 'Ensure 100% unique, human-written content checked via Copyscape.',
+                        'title' => 'Email marketing',
+                        'description' => 'When it comes to reaching your target audience, you can’t get much closer than direct to their inboxes.',
                         'icon' => 'icons/megaphone.svg',
                     ],
                     [
-                        'title' => 'Internal Linking',
-                        'description' => 'Structured internal link networks to pass page authority.',
+                        'title' => 'Conversion rate optimization',
+                        'description' => 'Conversion rate optimization (CRO) is the systematic process of increasing the percentage of website visitors who take a desired action — such as filling out a form, becoming customers, or clicking “buy now.”',
                         'icon' => 'icons/speed.svg',
                     ],
                     [
-                        'title' => 'SEO Metadata',
-                        'description' => 'Craft optimized titles, descriptions, and image alt text.',
+                        'title' => 'Social media marketing',
+                        'description' => 'Social media management is vital for company and brand awareness.',
                         'icon' => 'icons/audit.svg',
                     ],
                     [
-                        'title' => 'Readability & Formatting',
-                        'description' => 'Clear heading structures, list layouts, and high engagement hooks.',
+                        'title' => 'Google Shopping',
+                        'description' => 'Google Shopping ads are a no-brainer for any ecommerce company with an online presence wishing to increase sales.',
                         'icon' => 'icons/megaphone.svg',
                     ],
                     [
-                        'title' => 'Search Intent Alignment',
-                        'description' => 'Develop copy specifically tailored to informational or commercial intent.',
+                        'title' => 'Influencer marketing',
+                        'description' => 'We help you choose the right influencers for your brand, build real relationships, and manage campaigns that deliver measurable results.',
                         'icon' => 'icons/speed.svg',
                     ],
                     [
-                        'title' => 'Editorial Review',
-                        'description' => 'Rigorous proofreading and fact-checking before final delivery.',
+                        'title' => 'Amazon shopping',
+                        'description' => 'Marketing on Amazon is all about keywords and presentation.',
                         'icon' => 'icons/audit.svg',
                     ],
                 ],
@@ -463,7 +463,7 @@ class ServiceSeeder extends Seeder
                     ],
                 ],
                 'has_brands' => true,
-                'has_expect_result' => true,
+                'has_expect_result' => true,    
                 'brands' => [
                     ['name' => 'Notion', 'logo' => 'images/brands/notion.png'],
                     ['name' => 'Intercom', 'logo' => 'images/brands/intercom.png'],

@@ -28,6 +28,7 @@ Route::get('pricing-plans', [\App\Http\Controllers\API\PricingPlanApiController:
 
 // Contact Form
 Route::post('contact', [\App\Http\Controllers\API\ContactApiController::class, 'store']);
+Route::post('newsletter/subscribe', [\App\Http\Controllers\SubscriberController::class, 'store']);
 
 // Bookings & Payments
 Route::any('payments/webhook', [\App\Http\Controllers\API\PaymentApiController::class, 'webhook']);

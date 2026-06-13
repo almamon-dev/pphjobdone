@@ -10,8 +10,8 @@ class CampaignSeeder extends Seeder
 {
     public function run(): void
     {
-        $monthlySeo = Service::where('title', 'like', '%Monthly SEO%')->first();
-        $contentWriting = Service::where('title', 'like', '%Content Writing%')->first();
+        $seoCampaign = Service::where('title', 'like', '%SEO CAMPAIGN%')->first();
+        $smmMarketing = Service::where('title', 'like', '%SMM MARKETING%')->first();
 
         $priceTiers = [
             5 => [
@@ -119,10 +119,10 @@ class CampaignSeeder extends Seeder
             ]
         ];
 
-        // 1. Submit SEO Campaign (Under Monthly SEO Service)
-        if ($monthlySeo) {
+        // 1. Submit SEO Campaign (Under SEO Campaign Service)
+        if ($seoCampaign) {
             $campaign = Campaign::updateOrCreate(
-                ['service_id' => $monthlySeo->id, 'title' => 'Submit SEO Campaign'],
+                ['service_id' => $seoCampaign->id, 'title' => 'Submit SEO Campaign'],
                 ['subtitle' => 'Choose a tier, enter your details, and checkout securely.', 'status' => true]
             );
 
@@ -143,8 +143,8 @@ class CampaignSeeder extends Seeder
             }
         }
 
-        // 2. Add Content Writing Campaigns
-        if ($contentWriting) {
+        // 2. Add SMM Marketing Campaigns
+        if ($smmMarketing) {
             // New Marketing Campaigns
             $marketingCampaigns = [
                 [
@@ -199,7 +199,7 @@ class CampaignSeeder extends Seeder
 
             foreach ($marketingCampaigns as $mCampaign) {
                 $campaign = Campaign::updateOrCreate(
-                    ['service_id' => $contentWriting->id, 'title' => $mCampaign['title']],
+                    ['service_id' => $smmMarketing->id, 'title' => $mCampaign['title']],
                     ['subtitle' => $mCampaign['subtitle'], 'status' => true]
                 );
 
