@@ -119,4 +119,50 @@ class UserDashboardApiController extends Controller
             'message' => 'User dashboard data fetched successfully',
         ]);
     }
+
+    public function getAiInsights(Request $request, \App\Services\OpenAiService $openAiService)
+    {
+        $userId = auth()->id();
+
+        // Gather basic data for AI
+        $activeBookings = \App\Models\Booking::where('user_id', $userId)
+            ->where('status', 'ongoing')
+            ->where('payment_status', 'paid')
+            ->with(['service:id,title', 'tasks' => function ($q) {
+                $q->select('id', 'booking_id', 'title', 'progress', 'status');
+            }])
+            ->get();
+
+        $latestAudit = \App\Models\SeoAudit::where('user_id', $userId)->latest()->first();
+
+        $userData = [
+            'active_services_count' => $activeBookings->count(),
+            'services' => $activeBookings->map(function ($b) {
+                return [
+                    'title' => $b->service->title ?? $b->plan_name,
+                    'overall_progress' => $b->tasks->avg('progress'),
+                    'pending_tasks' => $b->tasks->where('status', 'pending')->pluck('title'),
+                    'completed_tasks' => $b->tasks->where('status', 'completed')->pluck('title'),
+                ];
+            })->toArray(),
+            'latest_seo_audit' => $latestAudit ? [
+                'url' => $latestAudit->url,
+                'score' => $latestAudit->response_data['overall_score'] ?? null,
+                'recommendations' => array_slice($latestAudit->response_data['recommendations'] ?? [], 0, 2)
+            ] : null,
+        ];
+
+        // Call OpenAI
+        $insights = $openAiService->generateDashboardInsights($userData);
+
+        if (isset($insights['error'])) {
+            return $this->sendError($insights['error'], [], 400);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $insights,
+            'message' => 'AI insights generated successfully',
+        ]);
+    }
 }

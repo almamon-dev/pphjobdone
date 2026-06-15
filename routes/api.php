@@ -24,6 +24,7 @@ Route::get('services', [\App\Http\Controllers\API\ServiceApiController::class, '
 Route::get('services/{slug}', [\App\Http\Controllers\API\ServiceApiController::class, 'show']); // Add this
 Route::get('services/details/{slug}', [\App\Http\Controllers\API\ServiceApiController::class, 'show']);
 Route::get('services/proposal/{slug}', [\App\Http\Controllers\API\ServiceApiController::class, 'proposal']);
+Route::post('services/proposal/generate', [\App\Http\Controllers\API\ServiceApiController::class, 'generateAiProposal']);
 Route::get('pricing-plans', [\App\Http\Controllers\API\PricingPlanApiController::class, 'index']);
 
 // Contact Form
@@ -50,9 +51,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('profile/update-password', [\App\Http\Controllers\API\ProfileApiController::class, 'updatePassword']);
     // User Dashboard
     Route::get('user/dashboard', [\App\Http\Controllers\API\UserDashboardApiController::class, 'index']);
+    Route::get('user/dashboard/ai-insights', [\App\Http\Controllers\API\UserDashboardApiController::class, 'getAiInsights']);
     // User Services & Bookings
     Route::get('user/services', [\App\Http\Controllers\API\UserServicesApiController::class, 'index']);
     Route::get('user/reports', [\App\Http\Controllers\API\UserReportsApiController::class, 'index']);
+    Route::get('user/reports/ai-summary', [\App\Http\Controllers\API\UserReportsApiController::class, 'getAiReportSummary']);
     Route::get('user/tasks', [\App\Http\Controllers\API\UserTasksApiController::class, 'index']);
     Route::get('user/bookings', [\App\Http\Controllers\API\UserBookingApiController::class, 'index']);
     Route::get('user/bookings/{id}', [\App\Http\Controllers\API\UserBookingApiController::class, 'show']);
@@ -61,6 +64,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('conversations', [\App\Http\Controllers\API\ChatApiController::class, 'getConversations']);
     Route::get('conversations/{id}/messages', [\App\Http\Controllers\API\ChatApiController::class, 'getMessages']);
     Route::post('messages/send', [\App\Http\Controllers\API\ChatApiController::class, 'sendMessage']);
+    Route::post('chat/bot', [\App\Http\Controllers\API\ChatApiController::class, 'chatBot']);
 });
 
 

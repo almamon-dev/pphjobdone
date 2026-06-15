@@ -167,4 +167,36 @@ class ChatApiController extends Controller
             'data' => $message->load(['sender', 'receiver'])
         ]);
     }
+
+    public function chatBot(Request $request, \App\Services\OpenAiService $openAiService)
+    {
+        $request->validate([
+            'message' => 'required|string',
+        ]);
+
+        $services = \App\Models\Service::with('pricingPlans')->get()->map(function($s) {
+            return [
+                'name' => $s->title,
+                'description' => $s->short_description,
+                'plans' => $s->pricingPlans->map(fn($p) => $p->name . ': $' . $p->price)
+            ];
+        })->toArray();
+
+        $context = [
+            'agency_name' => 'PPHJobDone',
+            'services' => $services,
+            'faq' => 'We offer SEO, Link Building, Content Writing. Payments are secure. Support is 24/7.'
+        ];
+
+        $reply = $openAiService->generateChatbotReply($request->message, $context);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'message' => $reply,
+                'sender' => 'AI Assistant',
+                'created_at' => now()
+            ]
+        ]);
+    }
 }
