@@ -106,17 +106,18 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
         {
             title: "Settings",
             items: [
-                {
-                    label: "Pricing Plans",
-                    icon: <CircleDollarSign size={20} />,
-                    href: "/admin/pricing-plans",
-                    active: usePage().url.startsWith("/admin/pricing-plans"),
-                },
+
                 {
                     label: "System Settings",
                     icon: <Cog size={18} />,
                     path: "/admin/settings/system",
                     route: "admin.settings.system",
+                },
+                {
+                    label: "Payment Settings",
+                    icon: <CreditCard size={18} />,
+                    path: "/admin/settings/payment",
+                    route: "admin.settings.payment",
                 },
                 {
                     label: "Logout",

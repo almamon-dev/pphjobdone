@@ -35,6 +35,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/settings/system', [SystemSettingsController::class, 'edit'])->name('settings.system');
         Route::post('/settings/system', [SystemSettingsController::class, 'update'])->name('settings.system.update');
+        Route::get('/settings/payment', [\App\Http\Controllers\Admin\Settings\PaymentSettingsController::class, 'edit'])->name('settings.payment');
+        Route::post('/settings/payment', [\App\Http\Controllers\Admin\Settings\PaymentSettingsController::class, 'update'])->name('settings.payment.update');
         // Users
         Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->only(['index', 'destroy']);
         // Services

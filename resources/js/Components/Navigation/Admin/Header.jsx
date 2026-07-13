@@ -200,7 +200,7 @@ const Header = ({ onMenuClick }) => {
                                 <DropdownLink
                                     icon={Settings}
                                     label="General Settings"
-                                    href={route("admin.settings.edit")}
+                                    href={route("admin.settings.system")}
                                 />
                                 <DropdownLink
                                     icon={Home}
