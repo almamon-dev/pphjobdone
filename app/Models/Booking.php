@@ -17,6 +17,8 @@ class Booking extends Model
         'payment_status',
         'is_campaign',
         'campaign_details',
+        'website_url',
+        'target_keywords',
     ];
 
     protected $casts = [

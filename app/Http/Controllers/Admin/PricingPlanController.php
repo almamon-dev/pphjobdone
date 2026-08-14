@@ -30,7 +30,7 @@ class PricingPlanController extends Controller
         }
 
         return Inertia::render('Admin/PricingPlans/Index', [
-            'pricing_plans' => $query->latest()->paginate($request->per_page ?? 15)->withQueryString(),
+            'pricing_plans' => $query->latest()->paginate($request->per_page ?? 10)->withQueryString(),
             'filters' => $request->only(['search', 'per_page', 'min_price', 'max_price']),
         ]);
     }

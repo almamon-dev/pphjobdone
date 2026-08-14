@@ -33,6 +33,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Admin Settings
     Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/search', [\App\Http\Controllers\Admin\GlobalSearchController::class, 'search'])->name('global-search');
         Route::get('/settings/system', [SystemSettingsController::class, 'edit'])->name('settings.system');
         Route::post('/settings/system', [SystemSettingsController::class, 'update'])->name('settings.system.update');
         Route::get('/settings/payment', [\App\Http\Controllers\Admin\Settings\PaymentSettingsController::class, 'edit'])->name('settings.payment');
@@ -43,11 +44,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('services', \App\Http\Controllers\Admin\ServiceController::class);
         // Pricing Plans
         Route::resource('pricing-plans', \App\Http\Controllers\Admin\PricingPlanController::class);
-        // Campaigns
+        // Campaigns & Case Studies
         Route::post('campaigns/{campaign}/duplicate', [\App\Http\Controllers\Admin\CampaignController::class, 'duplicate'])->name('campaigns.duplicate');
         Route::resource('campaigns', \App\Http\Controllers\Admin\CampaignController::class);
-        // Contacts
+        Route::resource('case-studies', \App\Http\Controllers\Admin\CaseStudyController::class);
+        // Contacts & AI Leads
         Route::resource('contacts', \App\Http\Controllers\Admin\ContactController::class)->only(['index', 'destroy']);
+        Route::get('leads', [\App\Http\Controllers\Admin\LeadController::class, 'index'])->name('leads.index');
+        Route::patch('leads/{lead}/status', [\App\Http\Controllers\Admin\LeadController::class, 'updateStatus'])->name('leads.status');
+        Route::delete('leads/{lead}', [\App\Http\Controllers\Admin\LeadController::class, 'destroy'])->name('leads.destroy');
         
         // Bookings & Tasks
         Route::resource('bookings', \App\Http\Controllers\Admin\BookingController::class)->only(['index', 'show']);

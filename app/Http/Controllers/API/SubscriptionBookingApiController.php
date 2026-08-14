@@ -23,6 +23,8 @@ class SubscriptionBookingApiController extends Controller
         $request->validate([
             'pricing_plan_id' => 'required|exists:pricing_plans,id',
             'service_id'      => 'nullable|exists:services,id',
+            'website_url'     => 'nullable|string|max:500',
+            'target_keywords' => 'nullable|string',
         ]);
 
         $plan = PricingPlan::with('services')->findOrFail($request->pricing_plan_id);
@@ -44,6 +46,8 @@ class SubscriptionBookingApiController extends Controller
             'status' => 'pending',
             'payment_status' => 'pending',
             'is_campaign' => false,
+            'website_url' => $request->website_url,
+            'target_keywords' => $request->target_keywords,
         ]);
 
         $responseData = [

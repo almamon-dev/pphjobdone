@@ -16,7 +16,7 @@ class UserDashboardApiController extends Controller
 
         // 1. Stats Calculation
         $activeBookings = \App\Models\Booking::where('user_id', $userId)
-            ->where('status', 'ongoing')
+            ->whereIn('status', ['ongoing', 'active', 'in_progress'])
             ->where('payment_status', 'paid')
             ->get();
         
@@ -81,6 +81,85 @@ class UserDashboardApiController extends Controller
             ]]);
         }
 
+        // 3. Performance & Booking Analytics Chart Data (Dynamic DB)
+        $months = collect([]);
+        $bookingsSeries = [];
+        $paymentsSeries = [];
+        $tasksSeries = [];
+
+        $totalUserBookings = \App\Models\Booking::where('user_id', $userId)->count();
+
+        for ($i = 5; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $monthLabel = $date->format('M');
+            $year = $date->year;
+            $monthNum = $date->month;
+
+            $months->push($monthLabel);
+
+            // Real monthly bookings created
+            $monthlyBookings = \App\Models\Booking::where('user_id', $userId)
+                ->whereYear('created_at', $year)
+                ->whereMonth('created_at', $monthNum)
+                ->count();
+
+            // Real monthly payments made
+            $monthlyPayments = (float) \App\Models\Payment::whereHas('booking', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })
+                ->whereYear('created_at', $year)
+                ->whereMonth('created_at', $monthNum)
+                ->sum('amount');
+
+            // Real monthly tasks completed
+            $monthlyTasks = \App\Models\Task::whereHas('booking', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })
+                ->whereYear('updated_at', $year)
+                ->whereMonth('updated_at', $monthNum)
+                ->where('status', 'completed')
+                ->count();
+
+            // Strict real database values
+            $bookingsSeries[] = $monthlyBookings;
+            $paymentsSeries[] = $monthlyPayments;
+            $tasksSeries[] = $monthlyTasks;
+        }
+
+        // Dynamic KPI Summary calculations
+        $totalCompletedTasks = \App\Models\Task::whereHas('booking', function ($q) use ($userId) {
+            $q->where('user_id', $userId);
+        })->where('status', 'completed')->count();
+
+        $prevMonthBookings = $bookingsSeries[count($bookingsSeries) - 2] ?? 0;
+        $currMonthBookings = end($bookingsSeries) ?: 0;
+        
+        $growthRateStr = '0%';
+        if ($prevMonthBookings > 0) {
+            $growthRate = round((($currMonthBookings - $prevMonthBookings) / $prevMonthBookings) * 100, 1);
+            $growthRateStr = ($growthRate >= 0 ? '+' : '') . $growthRate . '%';
+        }
+
+        $totalPayments = (float) \App\Models\Payment::whereHas('booking', function ($q) use ($userId) {
+            $q->where('user_id', $userId);
+        })->sum('amount');
+
+        $chartData = [
+            'labels' => $months->toArray(),
+            'overview' => [
+                'bookings' => $bookingsSeries,
+                'payments' => $paymentsSeries,
+                'tasks' => $tasksSeries,
+            ],
+            'kpis' => [
+                'growth_rate' => $growthRateStr,
+                'total_bookings' => (string) $totalUserBookings,
+                'total_spent' => '$' . number_format($totalPayments, 2),
+                'completed_tasks' => (string) $totalCompletedTasks,
+                'health_score' => $avgProgress > 0 ? $avgProgress . '%' : '0%',
+            ]
+        ];
+
         return response()->json([
             'success' => true,
             'data' => [
@@ -114,6 +193,7 @@ class UserDashboardApiController extends Controller
                         'color' => 'bg-pink-600',
                     ],
                 ],
+                'chart' => $chartData,
                 'activities' => $activities,
             ],
             'message' => 'User dashboard data fetched successfully',
@@ -126,7 +206,7 @@ class UserDashboardApiController extends Controller
 
         // Gather basic data for AI
         $activeBookings = \App\Models\Booking::where('user_id', $userId)
-            ->where('status', 'ongoing')
+            ->whereIn('status', ['ongoing', 'active', 'in_progress'])
             ->where('payment_status', 'paid')
             ->with(['service:id,title', 'tasks' => function ($q) {
                 $q->select('id', 'booking_id', 'title', 'progress', 'status');
@@ -140,14 +220,15 @@ class UserDashboardApiController extends Controller
             'services' => $activeBookings->map(function ($b) {
                 return [
                     'title' => $b->service->title ?? $b->plan_name,
-                    'overall_progress' => $b->tasks->avg('progress'),
-                    'pending_tasks' => $b->tasks->where('status', 'pending')->pluck('title'),
-                    'completed_tasks' => $b->tasks->where('status', 'completed')->pluck('title'),
+                    'overall_progress' => round($b->tasks->avg('progress') ?? 0),
+                    'pending_tasks' => $b->tasks->where('status', 'pending')->pluck('title')->toArray(),
+                    'in_progress_tasks' => $b->tasks->where('status', 'in_progress')->pluck('title')->toArray(),
+                    'completed_tasks' => $b->tasks->where('status', 'completed')->pluck('title')->toArray(),
                 ];
             })->toArray(),
             'latest_seo_audit' => $latestAudit ? [
                 'url' => $latestAudit->url,
-                'score' => $latestAudit->response_data['overall_score'] ?? null,
+                'score' => $latestAudit->response_data['overall_score'] ?? ($latestAudit->overall_score ?? null),
                 'recommendations' => array_slice($latestAudit->response_data['recommendations'] ?? [], 0, 2)
             ] : null,
         ];

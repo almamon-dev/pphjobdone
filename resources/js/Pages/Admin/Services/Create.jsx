@@ -1592,7 +1592,7 @@ export default function Create({ pricing_plans = [] }) {
 
                                 {data.video_source === "url" ? (
                                     <div className="space-y-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
-                                        <label className="block text-[11px] font-bold text-[#727586] uppercase tracking-wider">
+                                        <label className="block text-[11px] font-bold text-[#727586]">
                                             Video URL
                                         </label>
                                         <input
@@ -1611,7 +1611,7 @@ export default function Create({ pricing_plans = [] }) {
                                     </div>
                                 ) : (
                                     <div className="space-y-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
-                                        <label className="block text-[11px] font-bold text-[#727586] uppercase tracking-wider">
+                                        <label className="block text-[11px] font-bold text-[#727586]">
                                             Upload File
                                         </label>
                                         <div className="relative">

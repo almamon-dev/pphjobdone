@@ -1,20 +1,21 @@
 import React, { useState } from "react";
 import AdminLayout from "@/Layouts/AdminLayout";
-import { Head, Link, router } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import {
-    Home,
     Search,
     Trash2,
-    Check,
-    AlertCircle,
+    Users as UsersIcon,
     ChevronDown,
     ChevronLeft,
     ChevronRight,
-    ArrowUpDown,
     User as UserIcon,
     Shield,
+    Phone,
     Mail,
     Calendar,
+    ShoppingBag,
+    CheckCircle2,
+    XCircle,
 } from "lucide-react";
 
 export default function Index({ users, filters = {}, auth }) {
@@ -29,7 +30,7 @@ export default function Index({ users, filters = {}, auth }) {
         router.get(
             route("admin.users.index"),
             { ...filters, ...newFilters },
-            { preserveState: true, replace: true },
+            { preserveState: true, replace: true }
         );
     };
 
@@ -49,133 +50,172 @@ export default function Index({ users, filters = {}, auth }) {
 
     return (
         <AdminLayout>
-            <Head title="Users Management" />
+            <Head title="User Management" />
 
-            <div className="space-y-6 max-w-[1240px] mx-auto pb-20">
-                {/* Top Header */}
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <h1 className="text-[24px] font-bold text-[#2f3344] tracking-tight">
-                            User Management
-                        </h1>
-                        <div className="flex items-center gap-2 text-[13px] text-[#727586] mt-1">
-                            <Home size={16} className="text-[#727586]" />
-                            <span className="text-[#c3c4ca]">-</span>
-                            <span>Users portfolio</span>
+            <div className="space-y-4 max-w-[1600px] mx-auto pb-12">
+                {/* TOP HEADER */}
+                <div className="bg-white rounded-md p-5 border border-slate-200/80 shadow-2xs flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-md bg-[#0a66c2]/10 text-[#0a66c2] flex items-center justify-center border border-[#0a66c2]/20">
+                            <UsersIcon size={22} />
                         </div>
+                        <div>
+                            <h1 className="text-xl font-bold text-slate-900 leading-tight">
+                                User Management
+                            </h1>
+                            <p className="text-sm text-slate-600 mt-0.5">
+                                View, filter, and manage registered clients, administrators, and booking activity.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="text-sm font-semibold text-slate-700 bg-slate-100 px-3.5 py-1.5 rounded-md border border-slate-200">
+                        Total Users: <strong className="text-slate-900">{users.total || 0}</strong>
                     </div>
                 </div>
 
-                {/* Main Content Card */}
-                <div className="bg-white rounded-[12px] border border-[#e3e4e8] shadow-sm overflow-hidden">
-                    {/* Search Bar */}
-                    <div className="p-7">
-                        <div className="relative w-full">
-                            <div className="absolute left-5 top-1/2 -translate-y-1/2 text-[#a0a3af]">
-                                <Search size={22} />
+                {/* MAIN TABLE CONTAINER */}
+                <div className="bg-white rounded-md border border-slate-200/80 shadow-2xs overflow-hidden">
+                    {/* SEARCH & FILTER BAR */}
+                    <div className="p-4 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-3">
+                        <div className="relative w-full sm:w-[380px]">
+                            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+                                <Search size={17} />
                             </div>
                             <input
                                 type="text"
                                 value={search}
                                 onChange={(e) => handleSearch(e.target.value)}
-                                placeholder="Search users by name or email..."
-                                className="w-full h-[52px] pl-14 pr-6 bg-white border border-[#e3e4e8] rounded-[8px] text-[15px] focus:outline-none focus:border-[#673ab7] focus:ring-1 focus:ring-[#673ab7] transition-all"
+                                placeholder="Search by name, email, or phone..."
+                                className="w-full h-10 pl-10 pr-4 bg-white border border-slate-200 rounded-md text-sm font-medium focus:outline-none focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] transition-all text-slate-800 placeholder-slate-400"
                             />
+                        </div>
+
+                        <div className="flex items-center gap-2 text-sm text-slate-600 font-semibold self-end sm:self-auto">
+                            <span>Showing {users.from || 0} - {users.to || 0} of {users.total || 0} users</span>
                         </div>
                     </div>
 
-                    {/* Table Area */}
+                    {/* USERS TABLE WITH 7 EXTENDED COLUMNS & HIGH LEGIBILITY */}
                     <div className="overflow-x-auto">
-                        <table className="w-full">
+                        <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="border-b border-[#e3e4e8]">
-                                    <th className="text-left px-7 py-4 text-[13px] font-bold text-[#2f3344] uppercase tracking-wider">
-                                        User Information
-                                    </th>
-                                    <th className="text-left px-5 py-4 text-[13px] font-bold text-[#2f3344] uppercase tracking-wider">
-                                        Role & Permissions
-                                    </th>
-                                    <th className="text-left px-5 py-4 text-[13px] font-bold text-[#2f3344] uppercase tracking-wider">
-                                        Joined Date
-                                    </th>
-                                    <th className="px-7 py-4 text-right">
-                                        Actions
-                                    </th>
+                                <tr className="border-b border-slate-200 bg-slate-50 text-xs font-bold text-slate-700">
+                                    <th className="px-5 py-3">User Profile</th>
+                                    <th className="px-5 py-3">Contact Phone</th>
+                                    <th className="px-5 py-3">Role & Account</th>
+                                    <th className="px-5 py-3">Bookings</th>
+                                    <th className="px-5 py-3">Total Spent</th>
+                                    <th className="px-5 py-3">Joined Date</th>
+                                    <th className="px-5 py-3 text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-[#f1f2f4]">
+                            <tbody className="divide-y divide-slate-100 text-sm">
                                 {users.data.length > 0 ? (
-                                    users.data.map((user) => (
+                                    users.data.map((u) => (
                                         <tr
-                                            key={user.id}
-                                            className="hover:bg-[#fafbfc] transition-colors group"
+                                            key={u.id}
+                                            className="hover:bg-slate-50/80 transition-colors group"
                                         >
-                                            <td className="px-7 py-5">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="w-10 h-10 rounded-full bg-[#f4f0ff] flex items-center justify-center text-[#673ab7] border border-[#e9e3ff]">
-                                                        {user.profile_photo_url ? (
+                                            {/* Column 1: Profile (Photo, Name, Email) */}
+                                            <td className="px-5 py-3.5">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 rounded-full bg-[#0a66c2]/10 text-[#0a66c2] font-bold text-xs flex items-center justify-center border border-[#0a66c2]/20 shrink-0">
+                                                        {u.profile_photo_url ? (
                                                             <img
-                                                                src={
-                                                                    user.profile_photo_url
-                                                                }
+                                                                src={u.profile_photo_url}
                                                                 alt=""
                                                                 className="w-full h-full rounded-full object-cover"
                                                             />
                                                         ) : (
-                                                            <UserIcon
-                                                                size={20}
-                                                            />
+                                                            u.name ? u.name.slice(0, 2) : <UserIcon size={18} />
                                                         )}
                                                     </div>
                                                     <div>
-                                                        <p className="text-[14px] font-bold text-[#2f3344] group-hover:text-[#673ab7] transition-colors">
-                                                            {user.name}
+                                                        <p className="font-bold text-slate-900 group-hover:text-[#0a66c2] transition-colors leading-tight text-sm">
+                                                            {u.name}
                                                         </p>
-                                                        <div className="flex items-center gap-1.5 text-[12px] text-[#727586] font-medium mt-0.5">
-                                                            <Mail size={12} />
-                                                            {user.email}
+                                                        <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium mt-0.5">
+                                                            <Mail size={13} className="text-slate-400 shrink-0" />
+                                                            {u.email}
                                                         </div>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-5 py-5">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="px-2.5 py-1 rounded-full bg-slate-100 text-[#2f3344] text-[11px] font-bold flex items-center gap-1.5 ring-1 ring-slate-200">
-                                                        <Shield
-                                                            size={12}
-                                                            className="text-[#673ab7]"
-                                                        />
-                                                        Administrator
+
+                                            {/* Column 2: Phone & Verification */}
+                                            <td className="px-5 py-3.5">
+                                                <div className="space-y-1">
+                                                    <div className="flex items-center gap-1.5 text-slate-800 font-semibold text-xs">
+                                                        <Phone size={13} className="text-slate-400 shrink-0" />
+                                                        {u.phone || "N/A"}
+                                                    </div>
+                                                    <div>
+                                                        {u.is_verified ? (
+                                                            <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                                                                <CheckCircle2 size={11} /> Verified
+                                                            </span>
+                                                        ) : (
+                                                            <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+                                                                <XCircle size={11} /> Unverified
+                                                            </span>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-5 py-5">
-                                                <div className="flex flex-col">
-                                                    <div className="flex items-center gap-1.5 text-[13px] text-[#2f3344] font-medium">
-                                                        <Calendar
-                                                            size={14}
-                                                            className="text-[#a0a3af]"
-                                                        />
-                                                        {new Date(
-                                                            user.created_at,
-                                                        ).toLocaleDateString()}
-                                                    </div>
+
+                                            {/* Column 3: Role & Permissions */}
+                                            <td className="px-5 py-3.5">
+                                                {u.is_admin ? (
+                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-purple-50 text-purple-700 text-xs font-bold border border-purple-200">
+                                                        <Shield size={13} /> Administrator
+                                                    </span>
+                                                ) : (
+                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-bold border border-slate-200">
+                                                        <UserIcon size={13} /> Client / Customer
+                                                    </span>
+                                                )}
+                                            </td>
+
+                                            {/* Column 4: Bookings Count */}
+                                            <td className="px-5 py-3.5">
+                                                <div className="flex items-center gap-1.5 font-bold text-slate-900 text-sm">
+                                                    <ShoppingBag size={15} className="text-slate-400 shrink-0" />
+                                                    {u.bookings_count} Bookings
                                                 </div>
                                             </td>
-                                            <td className="px-7 py-5 text-right">
+
+                                            {/* Column 5: Total Spent */}
+                                            <td className="px-5 py-3.5">
+                                                <div className="flex items-center gap-1 font-bold text-slate-900 text-sm">
+                                                    ${Number(u.total_spent || 0).toFixed(2)}
+                                                </div>
+                                            </td>
+
+                                            {/* Column 6: Joined Date */}
+                                            <td className="px-5 py-3.5 text-slate-700">
+                                                <div className="flex items-center gap-1.5 text-xs font-medium">
+                                                    <Calendar size={13} className="text-slate-400 shrink-0" />
+                                                    {u.created_at
+                                                        ? new Date(u.created_at).toLocaleDateString("en-US", {
+                                                              month: "short",
+                                                              day: "numeric",
+                                                              year: "numeric",
+                                                          })
+                                                        : "N/A"}
+                                                </div>
+                                            </td>
+
+                                            {/* Column 7: Actions */}
+                                            <td className="px-5 py-3.5 text-right">
                                                 <div className="flex items-center justify-end gap-2">
-                                                    {user.id !==
-                                                        auth.user.id && (
+                                                    {u.id !== auth.user.id && (
                                                         <button
-                                                            onClick={() =>
-                                                                handleDelete(
-                                                                    user.id,
-                                                                )
-                                                            }
-                                                            className="w-[32px] h-[32px] flex items-center justify-center rounded-[6px] text-[#ef4444] bg-[#fee2e2]/50 hover:bg-[#ef4444] hover:text-white transition-all shadow-sm border border-transparent hover:border-[#ef4444]"
+                                                            onClick={() => handleDelete(u.id)}
+                                                            className="w-8 h-8 flex items-center justify-center rounded-md text-rose-600 hover:bg-rose-50 transition-all border border-slate-200 hover:border-rose-200"
                                                             title="Delete User"
                                                         >
-                                                            <Trash2 size={16} />
+                                                            <Trash2 size={15} />
                                                         </button>
                                                     )}
                                                 </div>
@@ -184,25 +224,8 @@ export default function Index({ users, filters = {}, auth }) {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td
-                                            colSpan="4"
-                                            className="px-7 py-20 text-center"
-                                        >
-                                            <div className="flex flex-col items-center gap-3 text-[#727586]">
-                                                <div className="w-16 h-16 bg-[#f8f9fa] rounded-full flex items-center justify-center mb-2">
-                                                    <UserIcon
-                                                        size={30}
-                                                        className="text-[#c3c4ca]"
-                                                    />
-                                                </div>
-                                                <p className="text-[16px] font-bold text-[#2f3344]">
-                                                    No users found
-                                                </p>
-                                                <p className="text-[14px]">
-                                                    Try adjusting your search to
-                                                    find users.
-                                                </p>
-                                            </div>
+                                        <td colSpan="7" className="px-5 py-14 text-center text-slate-400 text-sm">
+                                            No users found matching your query.
                                         </td>
                                     </tr>
                                 )}
@@ -210,52 +233,43 @@ export default function Index({ users, filters = {}, auth }) {
                         </table>
                     </div>
 
-                    {/* Pagination */}
-                    <div className="flex items-center justify-end gap-8 px-8 py-5 border-t border-[#e3e4e8]">
-                        <div className="flex items-center gap-3">
-                            <span className="text-[13px] text-[#727586]">
-                                Items per page:
-                            </span>
+                    {/* COMPACT PAGINATION FOOTER */}
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-5 py-3 border-t border-slate-200 bg-slate-50/50">
+                        <div className="flex items-center gap-2 text-xs text-slate-600">
+                            <span>Rows per page:</span>
                             <div className="relative">
                                 <select
                                     value={filters.per_page || 10}
                                     onChange={handlePerPageChange}
-                                    className="h-[38px] pl-4 pr-10 bg-white border border-[#e3e4e8] rounded-[6px] text-[13px] text-[#2f3344] font-medium appearance-none cursor-pointer focus:border-[#673ab7] outline-none"
+                                    className="h-8 pl-3 pr-8 bg-white border border-slate-200 rounded-md text-xs font-semibold text-slate-800 appearance-none cursor-pointer focus:border-[#0a66c2] outline-none"
                                 >
                                     <option value="5">5</option>
                                     <option value="10">10</option>
                                     <option value="20">20</option>
                                     <option value="50">50</option>
                                 </select>
-                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#727586]">
-                                    <ChevronDown size={14} />
-                                </div>
+                              
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-6">
-                            <span className="text-[13px] text-[#2f3344] font-medium">
-                                {users.from || 0} - {users.to || 0} of{" "}
-                                {users.total || 0}
+                        <div className="flex items-center gap-4 text-xs font-semibold text-slate-700">
+                            <span>
+                                {users.from || 0} - {users.to || 0} of {users.total || 0}
                             </span>
-                            <div className="flex gap-2">
+                            <div className="flex items-center gap-1">
                                 <button
-                                    onClick={() =>
-                                        handlePageChange(users.prev_page_url)
-                                    }
+                                    onClick={() => handlePageChange(users.prev_page_url)}
                                     disabled={!users.prev_page_url}
-                                    className="w-[34px] h-[34px] flex items-center justify-center rounded-full text-[#673ab7] hover:bg-[#673ab7]/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                                    className="w-8 h-8 flex items-center justify-center rounded-md border border-slate-200 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                                 >
-                                    <ChevronLeft size={20} />
+                                    <ChevronLeft size={16} />
                                 </button>
                                 <button
-                                    onClick={() =>
-                                        handlePageChange(users.next_page_url)
-                                    }
+                                    onClick={() => handlePageChange(users.next_page_url)}
                                     disabled={!users.next_page_url}
-                                    className="w-[34px] h-[34px] flex items-center justify-center rounded-full text-[#673ab7] hover:bg-[#673ab7]/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                                    className="w-8 h-8 flex items-center justify-center rounded-md border border-slate-200 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                                 >
-                                    <ChevronRight size={20} />
+                                    <ChevronRight size={16} />
                                 </button>
                             </div>
                         </div>

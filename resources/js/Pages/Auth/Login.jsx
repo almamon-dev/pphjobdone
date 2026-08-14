@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
-import { Loader2, Eye, EyeOff, ShieldCheck, Mail, Lock, ArrowRight } from 'lucide-react';
+import { Loader2, Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react';
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -26,110 +26,105 @@ export default function Login({ status, canResetPassword }) {
         <div className="min-h-screen flex items-center justify-center bg-slate-50 relative font-sans p-4">
             <Head title="Admin Portal | Secure Login" />
 
-            {/* Subtle background decoration */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                <div className="absolute -top-24 -right-24 w-96 h-96 bg-[#0a66c2]/5 rounded-full blur-3xl"></div>
-                <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl"></div>
-            </div>
-
-            <div className="w-full max-w-[400px] relative z-10">
-                {/* Admin Header Context */}
-                <div className="text-center mb-8">
-                    <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Admin Portal</h1>
-                    <p className="text-sm text-slate-500 mt-1">Sign in to access the control panel</p>
+            <div className="w-full max-w-[380px] relative z-10">
+                {/* BRAND LOGO & HEADER */}
+                <div className="text-center mb-6 flex flex-col items-center">
+                    <h1 className="text-lg font-bold text-slate-900 leading-tight">Admin Login</h1>
+                    <p className="text-xs text-slate-500 mt-0.5">Sign in to access your administrative control panel</p>
                 </div>
+                {/* COMPACT LOGIN CARD */}
+                <div className="bg-white rounded-[3px] border border-slate-200/80 shadow-2xs p-6">
+                    {status && (
+                        <div className="mb-4 text-xs font-semibold text-emerald-600 bg-emerald-50 p-2.5 rounded-[3px] border border-emerald-200">
+                            {status}
+                        </div>
+                    )}
 
-                {/* Login Card */}
-                <div className="bg-white rounded-md shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 p-8">
-                    <form onSubmit={submit} className="space-y-5">
-                        
-                        {/* Email Input */}
-                        <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-600 uppercase tracking-wider" htmlFor="email">
+                    <form onSubmit={submit} className="space-y-4">
+                        {/* EMAIL INPUT */}
+                        <div className="space-y-1">
+                            <label className="block text-xs font-bold text-slate-700" htmlFor="email">
                                 Email Address
                             </label>
                             <div className="relative group">
-                                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-[#0a66c2] transition-colors">
-                                    <Mail size={16} />
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-[#0a66c2]">
+                                    <Mail size={15} />
                                 </div>
                                 <input
                                     id="email"
                                     type="email"
                                     value={data.email}
                                     onChange={(e) => setData('email', e.target.value)}
-                                    className={`w-full bg-slate-50/50 border ${errors.email ? 'border-red-400' : 'border-slate-200'} rounded focus:bg-white focus:ring-2 focus:ring-[#0a66c2]/20 focus:border-[#0a66c2] pl-10 pr-4 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none transition-all`}
-                                    placeholder="admin@example.com"
+                                    className={`w-full h-9 bg-white border ${errors.email ? 'border-rose-400' : 'border-slate-200 focus:border-[#0a66c2]'} rounded-[3px] focus:outline-none focus:ring-0 pl-9 pr-3 text-xs text-slate-800 placeholder-slate-400`}
+                                    placeholder="Email"
                                     autoComplete="username"
                                     autoFocus
                                 />
                             </div>
                             {errors.email && (
-                                <p className="text-red-500 text-[11px] font-medium mt-1">{errors.email}</p>
+                                <p className="text-rose-600 text-[11px] font-medium mt-1">{errors.email}</p>
                             )}
                         </div>
 
-                        {/* Password Input */}
-                        <div className="space-y-1.5">
-                            <div className="flex justify-between items-center">
-                                <label className="text-xs font-bold text-slate-600 uppercase tracking-wider" htmlFor="password">
-                                    Password
-                                </label>
-                            </div>
+                        {/* PASSWORD INPUT */}
+                        <div className="space-y-1">
+                            <label className="block text-xs font-bold text-slate-700" htmlFor="password">
+                                Password
+                            </label>
                             <div className="relative group">
-                                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-[#0a66c2] transition-colors">
-                                    <Lock size={16} />
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-[#0a66c2]">
+                                    <Lock size={15} />
                                 </div>
                                 <input
                                     id="password"
                                     type={showPassword ? "text" : "password"}
                                     value={data.password}
                                     onChange={(e) => setData('password', e.target.value)}
-                                    className={`w-full bg-slate-50/50 border ${errors.password ? 'border-red-400' : 'border-slate-200'} rounded focus:bg-white focus:ring-2 focus:ring-[#0a66c2]/20 focus:border-[#0a66c2] pl-10 pr-10 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none transition-all`}
+                                    className={`w-full h-9 bg-white border ${errors.password ? 'border-rose-400' : 'border-slate-200 focus:border-[#0a66c2]'} rounded-[3px] focus:outline-none focus:ring-0 pl-9 pr-9 text-xs text-slate-800 placeholder-slate-400`}
                                     placeholder="••••••••"
                                     autoComplete="current-password"
                                 />
                                 
-                                {/* Password Visibility Toggle */}
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
+                                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
                                 >
-                                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                    {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
                                 </button>
                             </div>
                             {errors.password && (
-                                <p className="text-red-500 text-[11px] font-medium mt-1">{errors.password}</p>
+                                <p className="text-rose-600 text-[11px] font-medium mt-1">{errors.password}</p>
                             )}
                         </div>
 
-                        {/* Keep me logged in (Checkbox) */}
-                        <div className="flex items-center pt-1">
+                        {/* REMEMBER ME CHECKBOX */}
+                        <div className="flex items-center pt-0.5">
                             <label className="flex items-center cursor-pointer group">
                                 <input
                                     type="checkbox"
                                     checked={data.remember}
                                     onChange={(e) => setData('remember', e.target.checked)}
-                                    className="w-4 h-4 rounded border-slate-300 text-[#0a66c2] focus:ring-[#0a66c2]/30 transition-colors cursor-pointer"
+                                    className="w-4.5 h-4.5 rounded-[3px] border-slate-300 text-[#0a66c2] focus:ring-[#0a66c2]/20 transition-colors cursor-pointer"
                                 />
-                                <span className="ms-2 text-[12px] font-medium text-slate-500 group-hover:text-slate-700 transition-colors">
-                                    Keep me securely logged in
+                                <span className="ms-2 text-xs text-slate-600 group-hover:text-slate-900 transition-colors">
+                                    Keep me logged in
                                 </span>
                             </label>
                         </div>
 
-                        {/* Submit Button */}
-                        <div className="pt-3">
+                        {/* SUBMIT BUTTON */}
+                        <div className="pt-2">
                             <button
                                 disabled={processing}
-                                className="w-full bg-[#0a66c2] hover:bg-[#0855a3] text-white font-bold py-3 rounded transition-all duration-300 disabled:opacity-60 flex items-center justify-center gap-2 shadow-lg shadow-[#0a66c2]/20 group"
+                                className="w-full h-9 bg-[#0a66c2] hover:bg-[#084e96] text-white font-semibold rounded-[3px] text-xs transition-all disabled:opacity-50 flex items-center justify-center gap-1.5 shadow-2xs group"
                             >
                                 {processing ? (
-                                    <Loader2 size={18} className="animate-spin" />
+                                    <Loader2 size={15} className="animate-spin" />
                                 ) : (
                                     <>
-                                        <span className="text-[14px] tracking-wide">Enter Admin Portal</span>
-                                        <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                                        <span>Enter Admin Portal</span>
+                                        <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
                                     </>
                                 )}
                             </button>

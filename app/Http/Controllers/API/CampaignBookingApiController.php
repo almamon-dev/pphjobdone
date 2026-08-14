@@ -23,10 +23,16 @@ class CampaignBookingApiController extends Controller
         $request->validate([
             'campaign_tier_id' => 'required|exists:campaign_tiers,id',
             'campaign_details' => 'nullable|array',
+            'website_url'     => 'nullable|string|max:500',
+            'target_keywords' => 'nullable|string',
         ]);
 
         $tier = CampaignTier::with('campaign.service')->findOrFail($request->campaign_tier_id);
         $service = $tier->campaign->service;
+
+        $campaignDetails = $request->campaign_details ?? [];
+        $websiteUrl = $request->website_url ?? ($campaignDetails['website_url'] ?? ($campaignDetails['links'] ?? null));
+        $targetKeywords = $request->target_keywords ?? ($campaignDetails['target_keywords'] ?? ($campaignDetails['keywords'] ?? null));
 
         // 1. Create Booking
         $booking = Booking::create([
@@ -38,7 +44,9 @@ class CampaignBookingApiController extends Controller
             'status' => 'pending',
             'payment_status' => 'pending',
             'is_campaign' => true,
-            'campaign_details' => $request->campaign_details,
+            'campaign_details' => $campaignDetails,
+            'website_url' => $websiteUrl,
+            'target_keywords' => $targetKeywords,
         ]);
 
         $responseData = [

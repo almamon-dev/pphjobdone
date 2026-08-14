@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import AdminLayout from "@/Layouts/AdminLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import {
-    Home,
     Zap,
     Plus,
     Search,
@@ -28,7 +27,7 @@ export default function Index({ campaigns, filters = {} }) {
         router.get(
             route("admin.campaigns.index"),
             { ...filters, ...newFilters },
-            { preserveState: true, replace: true },
+            { preserveState: true, replace: true }
         );
     };
 
@@ -54,138 +53,134 @@ export default function Index({ campaigns, filters = {} }) {
         <AdminLayout>
             <Head title="Campaign Management" />
 
-            <div className="space-y-6 max-w-full mx-auto pb-20">
-                {/* Top Header */}
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <h1 className="text-[24px] font-bold text-[#2f3344] tracking-tight">
-                            Campaign Management
-                        </h1>
-                        <div className="flex items-center gap-2 text-[13px] text-[#727586] mt-1">
-                            <Home size={16} className="text-[#727586]" />
-                            <span className="text-[#c3c4ca]">-</span>
-                            <span>Service campaigns group</span>
+            <div className="space-y-4 max-w-[1600px] mx-auto pb-12">
+                {/* COMPACT TOP HEADER */}
+                <div className="bg-white rounded-md p-5 border border-slate-200/80 shadow-2xs flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-md bg-[#0a66c2]/10 text-[#0a66c2] flex items-center justify-center border border-[#0a66c2]/20">
+                            <Zap size={22} />
+                        </div>
+                        <div>
+                            <h1 className="text-xl font-bold text-slate-900 leading-tight">
+                                Campaign Management
+                            </h1>
+                            <p className="text-sm text-slate-600 mt-0.5">
+                                Manage promotional campaign groups, tier pricing, and feature bundles.
+                            </p>
                         </div>
                     </div>
+
                     <Link
                         href={route("admin.campaigns.create")}
-                        className="bg-[#673ab7] text-white px-6 py-2.5 rounded-[8px] text-[13px] font-bold hover:bg-[#5e35b1] transition-all flex items-center gap-2 shadow-sm"
+                        className="px-4 py-2 bg-[#0a66c2] hover:bg-[#084e96] text-white rounded-md text-sm font-semibold transition-all flex items-center gap-1.5 shadow-2xs"
                     >
-                        <Plus size={18} />
-                        Add New Campaign
+                        <Plus size={16} /> Add New Campaign
                     </Link>
                 </div>
 
-                {/* Main Content Card */}
-                <div className="bg-white rounded-[12px] border border-[#e3e4e8] shadow-sm overflow-hidden">
-                    {/* Search Bar */}
-                    <div className="p-7">
-                        <div className="relative w-full">
-                            <div className="absolute left-5 top-1/2 -translate-y-1/2 text-[#a0a3af]">
-                                <Search size={22} />
+                {/* MAIN TABLE CONTAINER */}
+                <div className="bg-white rounded-md border border-slate-200/80 shadow-2xs overflow-hidden">
+                    {/* SEARCH & FILTER BAR */}
+                    <div className="p-4 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-3">
+                        <div className="relative w-full sm:w-[350px]">
+                            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+                                <Search size={17} />
                             </div>
                             <input
                                 type="text"
                                 value={search}
                                 onChange={(e) => handleSearch(e.target.value)}
                                 placeholder="Search campaigns by title or group..."
-                                className="w-full h-[52px] pl-14 pr-6 bg-white border border-[#e3e4e8] rounded-[8px] text-[15px] focus:outline-none focus:border-[#673ab7] focus:ring-1 focus:ring-[#673ab7] transition-all"
+                                className="w-full h-10 pl-10 pr-4 bg-white border border-slate-200 rounded-md text-sm font-medium focus:outline-none focus:border-[#0a66c2] focus:ring-1 focus:ring-[#0a66c2] transition-all text-slate-800 placeholder-slate-400"
                             />
+                        </div>
+
+                        <div className="text-sm text-slate-600 font-semibold self-end sm:self-auto">
+                            Total Campaigns: <strong className="text-slate-900">{campaigns.total || 0}</strong>
                         </div>
                     </div>
 
-                    {/* Table Area */}
+                    {/* COMPACT TABLE WITH CLEAR FONT SIZES */}
                     <div className="overflow-x-auto">
-                        <table className="w-full">
+                        <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="border-b border-[#e3e4e8]">
-                                    <th className="text-left px-7 py-4 text-[13px] font-bold text-[#2f3344] uppercase tracking-wider bg-[#fafbfc]">
-                                        Campaign Group
-                                    </th>
-                                    <th className="text-left px-5 py-4 text-[13px] font-bold text-[#2f3344] uppercase tracking-wider bg-[#fafbfc]">
-                                        Service
-                                    </th>
-                                    <th className="text-left px-5 py-4 text-[13px] font-bold text-[#2f3344] uppercase tracking-wider bg-[#fafbfc]">
-                                        Price Tiers
-                                    </th>
-                                    <th className="text-left px-5 py-4 text-[13px] font-bold text-[#2f3344] uppercase tracking-wider bg-[#fafbfc]">
-                                        Status
-                                    </th>
-                                    <th className="px-7 py-4 text-right bg-[#fafbfc]">
-                                        Actions
-                                    </th>
+                                <tr className="border-b border-slate-200 bg-slate-50 text-xs font-bold text-slate-700">
+                                    <th className="px-5 py-3">Campaign Title</th>
+                                    <th className="px-5 py-3">Assigned Service</th>
+                                    <th className="px-5 py-3">Pricing Tiers</th>
+                                    <th className="px-5 py-3">Status</th>
+                                    <th className="px-5 py-3 text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-[#f1f2f4]">
+                            <tbody className="divide-y divide-slate-100 text-sm">
                                 {campaigns.data.length > 0 ? (
                                     campaigns.data.map((campaign) => (
                                         <tr
                                             key={campaign.id}
-                                            className="hover:bg-[#fafbfc] transition-colors group"
+                                            className="hover:bg-slate-50/80 transition-colors group"
                                         >
-                                            <td className="px-7 py-5">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="w-10 h-10 rounded-lg bg-[#f4f0ff] flex items-center justify-center text-[#673ab7] border border-[#e9e3ff]">
-                                                        <Zap size={20} />
+                                            <td className="px-5 py-3.5">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-9 h-9 rounded-md bg-[#0a66c2]/10 text-[#0a66c2] flex items-center justify-center border border-[#0a66c2]/20 shrink-0">
+                                                        <Zap size={18} />
                                                     </div>
-                                                    <div>
-                                                        <p className="text-[14px] font-bold text-[#2f3344] group-hover:text-[#673ab7] transition-colors">
+                                                    <div className="min-w-0">
+                                                        <p className="font-bold text-slate-900 group-hover:text-[#0a66c2] transition-colors leading-tight text-sm">
                                                             {campaign.title}
                                                         </p>
-                                                        <p className="text-[12px] text-[#727586] font-medium mt-0.5 line-clamp-1 max-w-[250px]">
-                                                            {campaign.subtitle}
-                                                        </p>
+                                                        {campaign.subtitle && (
+                                                            <p className="text-xs text-slate-500 truncate mt-0.5 max-w-[280px]">
+                                                                {campaign.subtitle}
+                                                            </p>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-5 py-5">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="px-2.5 py-1 rounded-full bg-slate-100 text-[#2f3344] text-[11px] font-bold flex items-center gap-1.5 ring-1 ring-slate-200">
-                                                        <Briefcase size={12} className="text-[#673ab7]" />
-                                                        {campaign.service?.title}
-                                                    </div>
+                                            <td className="px-5 py-3.5">
+                                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-800 text-xs font-semibold border border-slate-200">
+                                                    <Briefcase size={13} className="text-[#0a66c2]" />
+                                                    {campaign.service?.title || "N/A"}
                                                 </div>
                                             </td>
-                                            <td className="px-5 py-5">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="px-2.5 py-1 rounded-lg bg-[#fafbfc] text-[#2f3344] text-[12px] font-bold border border-[#e3e4e8] flex items-center gap-2">
-                                                        <Layers size={14} className="text-[#a0a3af]" />
-                                                        {campaign.tiers?.length || 0} Tiers
-                                                    </div>
+                                            <td className="px-5 py-3.5">
+                                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-800 text-xs font-semibold border border-slate-200">
+                                                    <Layers size={13} className="text-slate-400" />
+                                                    {campaign.tiers?.length || 0} Tiers
                                                 </div>
                                             </td>
-                                            <td className="px-5 py-5">
+                                            <td className="px-5 py-3.5">
                                                 <span
-                                                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${campaign.status
-                                                            ? "bg-green-50 text-green-600 border-green-100"
-                                                            : "bg-red-50 text-red-600 border-red-100"
-                                                        }`}
+                                                    className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-bold ${
+                                                        campaign.status
+                                                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                                                            : "bg-slate-100 text-slate-700 border border-slate-200"
+                                                    }`}
                                                 >
                                                     {campaign.status ? "Active" : "Inactive"}
                                                 </span>
                                             </td>
-                                            <td className="px-7 py-5 text-right">
+                                            <td className="px-5 py-3.5 text-right">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <button
                                                         onClick={() => handleDuplicate(campaign.id)}
-                                                        className="w-[32px] h-[32px] flex items-center justify-center rounded-[6px] text-[#673ab7] bg-[#f4f0ff] hover:bg-[#673ab7] hover:text-white transition-all shadow-sm border border-transparent"
+                                                        className="w-8 h-8 flex items-center justify-center rounded-md text-[#0a66c2] hover:bg-[#0a66c2]/10 border border-slate-200 hover:border-[#0a66c2]/20 transition-all"
                                                         title="Duplicate"
                                                     >
-                                                        <Copy size={16} />
+                                                        <Copy size={15} />
                                                     </button>
                                                     <Link
                                                         href={route("admin.campaigns.edit", campaign.id)}
-                                                        className="w-[32px] h-[32px] flex items-center justify-center rounded-[6px] text-[#fbbf24] bg-[#fffbeb] hover:bg-[#fbbf24] hover:text-white transition-all shadow-sm border border-transparent"
+                                                        className="w-8 h-8 flex items-center justify-center rounded-md text-amber-600 hover:bg-amber-50 border border-slate-200 hover:border-amber-200 transition-all"
                                                         title="Edit"
                                                     >
-                                                        <Edit2 size={16} />
+                                                        <Edit2 size={15} />
                                                     </Link>
                                                     <button
                                                         onClick={() => handleDelete(campaign.id)}
-                                                        className="w-[32px] h-[32px] flex items-center justify-center rounded-[6px] text-[#ef4444] bg-[#fee2e2]/50 hover:bg-[#ef4444] hover:text-white transition-all shadow-sm border border-transparent"
+                                                        className="w-8 h-8 flex items-center justify-center rounded-md text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 transition-all"
                                                         title="Delete"
                                                     >
-                                                        <Trash2 size={16} />
+                                                        <Trash2 size={15} />
                                                     </button>
                                                 </div>
                                             </td>
@@ -193,14 +188,8 @@ export default function Index({ campaigns, filters = {} }) {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="5" className="px-7 py-24 text-center">
-                                            <div className="flex flex-col items-center gap-3 text-[#727586]">
-                                                <div className="w-16 h-16 bg-[#f8f9fa] rounded-full flex items-center justify-center mb-2">
-                                                    <Zap size={30} className="text-[#c3c4ca]" />
-                                                </div>
-                                                <p className="text-[16px] font-bold text-[#2f3344]">No campaigns found</p>
-                                                <p className="text-[14px]">Try creating a new campaign group.</p>
-                                            </div>
+                                        <td colSpan="5" className="px-5 py-14 text-center text-slate-400 text-sm">
+                                            No campaigns found matching your query.
                                         </td>
                                     </tr>
                                 )}
@@ -208,44 +197,43 @@ export default function Index({ campaigns, filters = {} }) {
                         </table>
                     </div>
 
-                    {/* Pagination */}
-                    <div className="flex items-center justify-end gap-8 px-8 py-5 border-t border-[#e3e4e8]">
-                        <div className="flex items-center gap-3">
-                            <span className="text-[13px] text-[#727586]">Items per page:</span>
+                    {/* COMPACT PAGINATION FOOTER */}
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-5 py-3 border-t border-slate-200 bg-slate-50/50">
+                        <div className="flex items-center gap-2 text-xs text-slate-600">
+                            <span>Rows per page:</span>
                             <div className="relative">
                                 <select
                                     value={filters.per_page || 10}
                                     onChange={handlePerPageChange}
-                                    className="h-[38px] pl-4 pr-10 bg-white border border-[#e3e4e8] rounded-[6px] text-[13px] text-[#2f3344] font-medium appearance-none cursor-pointer focus:border-[#673ab7] outline-none"
+                                    className="h-8 pl-3 pr-8 bg-white border border-slate-200 rounded-md text-xs font-semibold text-slate-800 appearance-none cursor-pointer focus:border-[#0a66c2] outline-none"
                                 >
+                                    <option value="5">5</option>
                                     <option value="10">10</option>
-                                    <option value="25">25</option>
+                                    <option value="20">20</option>
                                     <option value="50">50</option>
                                 </select>
-                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[#727586]">
-                                    <ChevronDown size={14} />
-                                </div>
+                               
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-6">
-                            <span className="text-[13px] text-[#2f3344] font-medium">
+                        <div className="flex items-center gap-4 text-xs font-semibold text-slate-700">
+                            <span>
                                 {campaigns.from || 0} - {campaigns.to || 0} of {campaigns.total || 0}
                             </span>
-                            <div className="flex gap-2">
+                            <div className="flex items-center gap-1">
                                 <button
                                     onClick={() => handlePageChange(campaigns.prev_page_url)}
                                     disabled={!campaigns.prev_page_url}
-                                    className="w-[34px] h-[34px] flex items-center justify-center rounded-full text-[#673ab7] hover:bg-[#673ab7]/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                                    className="w-8 h-8 flex items-center justify-center rounded-md border border-slate-200 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                                 >
-                                    <ChevronLeft size={20} />
+                                    <ChevronLeft size={16} />
                                 </button>
                                 <button
                                     onClick={() => handlePageChange(campaigns.next_page_url)}
                                     disabled={!campaigns.next_page_url}
-                                    className="w-[34px] h-[34px] flex items-center justify-center rounded-full text-[#673ab7] hover:bg-[#673ab7]/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                                    className="w-8 h-8 flex items-center justify-center rounded-md border border-slate-200 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                                 >
-                                    <ChevronRight size={20} />
+                                    <ChevronRight size={16} />
                                 </button>
                             </div>
                         </div>

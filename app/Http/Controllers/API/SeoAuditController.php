@@ -9,7 +9,8 @@ use App\Services\WebsiteService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SeoAuditReportMail;
 class SeoAuditController extends Controller
 {
     use ApiResponse;
@@ -122,6 +123,15 @@ class SeoAuditController extends Controller
                     'status' => 'completed',
                     'due_date' => now(),
                 ]);
+            }
+        }
+
+        // Send Email to User/Lead
+        if ($auditEmail) {
+            try {
+                Mail::to($auditEmail)->send(new SeoAuditReportMail($storedAudit));
+            } catch (\Exception $e) {
+                Log::error('Failed to send SEO Audit email: ' . $e->getMessage());
             }
         }
 

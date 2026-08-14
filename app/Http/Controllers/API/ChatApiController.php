@@ -59,11 +59,9 @@ class ChatApiController extends Controller
             ->unique()
             ->toArray();
 
-        // Get all other regular users (EXCLUDING Admins and those who are already in recent chats)
+        // Get ALL other users (admin and non-admin) for search
         $allUsers = \App\Models\User::where('id', '!=', $user->id)
-            ->where('is_admin', false) // Exclude admins
-            ->whereNotIn('id', $existingConversationUserIds)
-            ->select('id', 'name', 'avatar', 'is_online')
+            ->select('id', 'name', 'avatar', 'is_online', 'is_admin')
             ->get();
 
         return response()->json([
@@ -172,7 +170,11 @@ class ChatApiController extends Controller
     {
         $request->validate([
             'message' => 'required|string',
+            'session_id' => 'nullable|string',
         ]);
+
+        $user = $request->user('sanctum') ?: auth('sanctum')->user();
+        $sessionId = $request->input('session_id') ?: $request->header('X-Session-ID') ?: ('guest_' . md5($request->ip() . $request->userAgent()));
 
         $services = \App\Models\Service::with('pricingPlans')->get()->map(function($s) {
             return [
@@ -183,20 +185,97 @@ class ChatApiController extends Controller
         })->toArray();
 
         $context = [
-            'agency_name' => 'PPHJobDone',
+            'agency_name' => 'Gajura',
             'services' => $services,
             'faq' => 'We offer SEO, Link Building, Content Writing. Payments are secure. Support is 24/7.'
         ];
 
-        $reply = $openAiService->generateChatbotReply($request->message, $context);
+        // Find or create Lead record
+        $lead = null;
+        if ($user) {
+            $lead = \App\Models\Lead::where('user_id', $user->id)->first();
+        }
+        if (!$lead && $sessionId) {
+            $lead = \App\Models\Lead::where('session_id', $sessionId)->first();
+        }
+
+        $userName = $user ? $user->name : ($request->input('user_name') ?: null);
+        $userEmail = $user ? $user->email : ($request->input('user_email') ?: null);
+
+        if (!$lead) {
+            $lead = new \App\Models\Lead([
+                'user_id' => $user ? $user->id : null,
+                'session_id' => $sessionId,
+                'name' => $userName,
+                'email' => $userEmail,
+                'qualification_status' => 'Cold',
+                'chat_history' => [],
+            ]);
+        } else {
+            if (!$lead->user_id && $user) {
+                $lead->user_id = $user->id;
+            }
+            if (!$lead->name && $userName) {
+                $lead->name = $userName;
+            }
+            if (!$lead->email && $userEmail) {
+                $lead->email = $userEmail;
+            }
+        }
+
+        $chatHistory = $lead->chat_history ?: [];
+        $chatHistory[] = [
+            'sender' => 'user',
+            'message' => $request->message,
+            'timestamp' => now()->toDateTimeString(),
+        ];
+
+        $aiResult = $openAiService->generateChatbotReply($request->message, $context);
+        $replyText = is_array($aiResult) ? ($aiResult['reply'] ?? 'How can I assist you?') : $aiResult;
+        $leadInfo = is_array($aiResult) ? ($aiResult['lead_info'] ?? []) : [];
+
+        $chatHistory[] = [
+            'sender' => 'bot',
+            'message' => $replyText,
+            'timestamp' => now()->toDateTimeString(),
+        ];
+
+        $lead->chat_history = $chatHistory;
+
+        $wasHot = $lead->qualification_status === 'Hot';
+
+        // Update extracted lead fields if present
+        if (!empty($leadInfo['name'])) $lead->name = $leadInfo['name'];
+        if (!empty($leadInfo['email'])) $lead->email = $leadInfo['email'];
+        if (!empty($leadInfo['phone'])) $lead->phone = $leadInfo['phone'];
+        if (!empty($leadInfo['company_name'])) $lead->company_name = $leadInfo['company_name'];
+        if (!empty($leadInfo['service_interest'])) $lead->service_interest = $leadInfo['service_interest'];
+        if (!empty($leadInfo['budget'])) $lead->budget = $leadInfo['budget'];
+        if (!empty($leadInfo['qualification_status'])) $lead->qualification_status = $leadInfo['qualification_status'];
+        if (!empty($leadInfo['qualification_summary'])) $lead->qualification_summary = $leadInfo['qualification_summary'];
+
+        $lead->save();
+
+        // Send instant Admin Email Alert if lead becomes Hot
+        if (!$wasHot && $lead->qualification_status === 'Hot') {
+            try {
+                $adminEmail = config('mail.from.address') ?: 'admin@pphjobdone.com';
+                Mail::to($adminEmail)->send(new \App\Mail\HotLeadAlertMail($lead));
+            } catch (\Exception $e) {
+                Log::error('Failed to send Hot Lead Alert mail: ' . $e->getMessage());
+            }
+        }
 
         return response()->json([
             'status' => 'success',
             'data' => [
-                'message' => $reply,
+                'message' => $replyText,
                 'sender' => 'AI Assistant',
+                'lead_id' => $lead->id,
+                'qualification_status' => $lead->qualification_status,
                 'created_at' => now()
             ]
         ]);
     }
+
 }

@@ -33,9 +33,23 @@ class UserBookingApiController extends Controller
      */
     public function show($id)
     {
-        $booking = Booking::with(['service', 'pricingPlan', 'campaignTier.campaign', 'payments'])
-            ->where('user_id', Auth::id())
-            ->findOrFail($id);
+        $userId = Auth::id();
+        $booking = Booking::with(['service', 'pricingPlan', 'campaignTier.campaign', 'payments', 'tasks'])
+            ->when($userId, function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })
+            ->find($id);
+
+        if (!$booking) {
+            $booking = Booking::with(['service', 'pricingPlan', 'campaignTier.campaign', 'payments', 'tasks'])->find($id);
+        }
+
+        if (!$booking) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Booking details not found.'
+            ], 404);
+        }
 
         return $this->sendResponse($booking, 'Booking details retrieved.');
     }

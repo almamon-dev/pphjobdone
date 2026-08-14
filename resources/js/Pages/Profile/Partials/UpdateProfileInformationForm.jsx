@@ -4,6 +4,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Transition } from '@headlessui/react';
 import { Link, useForm, usePage } from '@inertiajs/react';
+import { Info } from 'lucide-react';
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
@@ -26,13 +27,13 @@ export default function UpdateProfileInformation({
 
     return (
         <section className={className}>
-            <header>
-                <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+            <header className="border-b border-slate-100 pb-3">
+                <h2 className="text-base font-bold text-slate-900">
                     Profile Information
                 </h2>
 
-                <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                    Update your account's profile information and email address.
+                <p className="mt-0.5 text-xs text-slate-500">
+                    Update your account's profile details and email address.
                 </p>
             </header>
 
@@ -102,12 +103,20 @@ export default function UpdateProfileInformation({
                         leave="transition ease-in-out"
                         leaveTo="opacity-0"
                     >
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Saved.
+                        <p className="text-xs font-semibold text-emerald-600">
+                            Saved successfully.
                         </p>
                     </Transition>
                 </div>
             </form>
+
+            {/* HELPFUL NOTE */}
+            <div className="mt-5 p-3 bg-slate-50 border border-slate-200 rounded-md flex items-start gap-2.5 text-xs text-slate-600">
+                <Info size={16} className="text-[#0a66c2] shrink-0 mt-0.5" />
+                <div>
+                    <strong className="font-bold text-slate-800">Note:</strong> Changing your email address will update your primary account login credentials and system notification recipient.
+                </div>
+            </div>
         </section>
     );
 }

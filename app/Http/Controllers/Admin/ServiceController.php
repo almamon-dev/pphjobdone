@@ -34,7 +34,7 @@ class ServiceController extends Controller
         }
 
         return Inertia::render('Admin/Services/Index', [
-            'services' => $query->latest()->paginate($request->per_page ?? 15)->withQueryString(),
+            'services' => $query->latest()->paginate($request->per_page ?? 10)->withQueryString(),
             'filters' => $request->only(['search', 'per_page', 'min_price', 'max_price']),
         ]);
     }

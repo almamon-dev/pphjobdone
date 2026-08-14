@@ -32,6 +32,8 @@ import {
     BarChart,
     Utensils,
     Zap,
+    Bot,
+    Flame,
 } from "lucide-react";
 // Fallback translations if LanguageContext is missing
 const t = {
@@ -167,6 +169,18 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
             route: "admin.bookings.*",
         },
         {
+            label: "Case Studies",
+            path: "/admin/case-studies",
+            icon: <Briefcase size={18} />,
+            route: "admin.case-studies.*",
+        },
+        {
+            label: "AI Leads",
+            path: "/admin/leads",
+            icon: <Bot size={18} />,
+            route: "admin.leads.*",
+        },
+        {
             label: "Contacts",
             path: "/admin/contacts",
             icon: <Mail size={18} />,
@@ -217,17 +231,14 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
 
         const content = (
             <>
-                {/* Active Indicator Bar */}
-                {!isCollapsed && active && (
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-md bg-[#0a66c2]" />
-                )}
-
                 {/* Icon */}
                 <div
-                    className={`${isCollapsed ? "mb-1" : "mr-3"} transition-transform duration-200 group-hover:scale-110 ${active || isOpen ? "text-[#0a66c2]" : "text-slate-400 group-hover:text-[#0a66c2]"}`}
+                    className={`${isCollapsed ? "mb-1" : "mr-3"} transition-transform duration-200 group-hover:scale-105 ${
+                        active || isOpen ? "text-[#0a66c2]" : "text-slate-400 group-hover:text-[#0a66c2]"
+                    }`}
                 >
                     {React.cloneElement(item.icon, {
-                        size: isCollapsed ? 24 : 18,
+                        size: isCollapsed ? 22 : 18,
                         strokeWidth: active || isOpen ? 2.5 : 1.5,
                     })}
                 </div>
@@ -236,30 +247,35 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
                 {!isCollapsed && (
                     <div className="flex-1 flex items-center justify-between overflow-hidden">
                         <span
-                            className={`leading-tight transition-all duration-300 text-[14px] truncate
-                            ${active || isOpen ? "text-[#0a66c2] font-bold" : "text-slate-600 font-medium"}`}
+                            className={`leading-tight transition-all duration-200 text-sm truncate ${
+                                active || isOpen
+                                    ? "text-[#0a66c2] font-bold"
+                                    : "text-slate-700 font-medium group-hover:text-slate-900"
+                            }`}
                         >
                             {item.label}
                         </span>
                         {item.badge && (
-                            <span className="ml-2 px-1.5 py-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-[#f44336] text-white text-[10px] font-black rounded-full shadow-sm animate-pulse">
+                            <span className="ml-2 px-1.5 py-0.5 min-w-[18px] h-[18px] flex items-center justify-center bg-rose-500 text-white text-[10px] font-bold rounded-full shadow-xs">
                                 {item.badge}
                             </span>
                         )}
                     </div>
                 )}
 
-                {/* Chevron for expandable or just as a visual guide */}
+                {/* Chevron for expandable */}
                 {!isCollapsed && !isLogout && (
                     <ChevronRight
                         size={14}
-                        className={`transition-all duration-200 text-slate-300 group-hover:text-slate-500 ${isOpen ? "rotate-90" : ""} ${item.children ? "" : "opacity-60"}`}
+                        className={`transition-all duration-200 ${
+                            active || isOpen ? "text-[#0a66c2]" : "text-slate-300 group-hover:text-slate-500"
+                        } ${isOpen ? "rotate-90" : ""} ${item.children ? "" : "opacity-60"}`}
                     />
                 )}
 
                 {/* Tooltip for Collapsed State */}
                 {isCollapsed && (
-                    <div className="absolute left-full ml-4 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
+                    <div className="absolute left-full ml-4 px-2.5 py-1 bg-slate-900 text-white text-xs rounded-md shadow-md opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
                         {item.label}
                     </div>
                 )}
@@ -276,16 +292,16 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
                                 [item.key]: !prev[item.key],
                             }))
                         }
-                        className={`w-full flex transition-all duration-200 group relative rounded-lg
+                        className={`w-full flex transition-all duration-200 group relative rounded-md
                             ${
                                 isCollapsed
-                                    ? "flex-col items-center justify-center py-4 px-1"
-                                    : "flex-row items-center py-2.5 px-4"
+                                    ? "flex-col items-center justify-center py-3.5 px-1"
+                                    : "flex-row items-center py-2.5 px-3.5"
                             }
                             ${
                                 active || isOpen
-                                    ? "bg-gradient-to-r from-[#0a66c2]/10 via-[#0a66c2]/5 to-transparent text-[#0a66c2]"
-                                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                                    ? "bg-slate-100 text-[#0a66c2] font-bold"
+                                    : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
                             }`}
                     >
                         {content}
@@ -293,39 +309,38 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
 
                     {/* Sub-menu items */}
                     {!isCollapsed && isOpen && (
-                        <div className="ml-4 mt-1">
-                            {item.children.map((child) => (
-                                <Link
-                                    key={child.label}
-                                    href={child.path}
-                                    className={`flex items-center gap-3 py-2 px-3 rounded-lg text-[13px] transition-all hover:bg-slate-50 relative overflow-hidden
-                                        ${
-                                            currentPath === child.path ||
-                                            (child.route &&
-                                                typeof route !== "undefined" &&
-                                                route().current(child.route))
-                                                ? "text-[#0a66c2] bg-[#0a66c2]/5 font-bold"
-                                                : "text-slate-500 hover:text-slate-900"
+                        <div className="ml-4 mt-1 space-y-0.5">
+                            {item.children.map((child) => {
+                                const isChildActive =
+                                    currentPath === child.path ||
+                                    (child.route &&
+                                        typeof route !== "undefined" &&
+                                        route().current(child.route));
+                                return (
+                                    <Link
+                                        key={child.label}
+                                        href={child.path}
+                                        className={`flex items-center gap-3 py-2 px-3 rounded-md text-xs transition-all relative overflow-hidden ${
+                                            isChildActive
+                                                ? "text-[#0a66c2] bg-slate-100 font-bold"
+                                                : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                                         }`}
-                                >
-                                    {(currentPath === child.path ||
-                                        (child.route &&
-                                            typeof route !== "undefined" &&
-                                            route().current(child.route))) && (
-                                        <div className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-0.5 rounded-r bg-[#0a66c2]" />
-                                    )}
-                                    {child.icon ? (
-                                        React.cloneElement(child.icon, {
-                                            size: 14,
-                                        })
-                                    ) : (
-                                        <div
-                                            className={`w-1.5 h-1.5 rounded-full ${currentPath === child.path || (child.route && typeof route !== "undefined" && route().current(child.route)) ? "bg-[#0a66c2]" : "bg-slate-300"}`}
-                                        />
-                                    )}
-                                    <span>{child.label}</span>
-                                </Link>
-                            ))}
+                                    >
+                                        {child.icon ? (
+                                            React.cloneElement(child.icon, {
+                                                size: 14,
+                                            })
+                                        ) : (
+                                            <div
+                                                className={`w-1.5 h-1.5 rounded-full ${
+                                                    isChildActive ? "bg-[#0a66c2]" : "bg-slate-400"
+                                                }`}
+                                            />
+                                        )}
+                                        <span>{child.label}</span>
+                                    </Link>
+                                );
+                            })}
                         </div>
                     )}
                 </div>
@@ -339,16 +354,16 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
                     href={item.path}
                     method="post"
                     as="button"
-                    className={`w-full flex transition-all duration-200 group relative rounded-lg
+                    className={`w-full flex transition-all duration-200 group relative rounded-md
                         ${
                             isCollapsed
-                                ? "flex-col items-center justify-center py-4 px-1"
-                                : "flex-row items-center py-2.5 px-4"
+                                ? "flex-col items-center justify-center py-3.5 px-1"
+                                : "flex-row items-center py-2.5 px-3.5"
                         }
                         ${
                             active
-                                ? "bg-gradient-to-r from-[#0a66c2]/10 via-[#0a66c2]/5 to-transparent text-[#0a66c2]"
-                                : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                                ? "bg-slate-100 text-[#0a66c2] font-bold"
+                                : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
                         }`}
                 >
                     {content}
@@ -360,16 +375,16 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
             <Link
                 key={item.label}
                 href={item.path}
-                className={`w-full flex transition-all duration-200 group relative rounded-lg
+                className={`w-full flex transition-all duration-200 group relative rounded-md
                     ${
                         isCollapsed
-                            ? "flex-col items-center justify-center py-4 px-1"
-                            : "flex-row items-center py-2.5 px-4"
+                            ? "flex-col items-center justify-center py-3.5 px-1"
+                            : "flex-row items-center py-2.5 px-3.5"
                     }
                     ${
                         active
-                            ? "bg-gradient-to-r from-[#0a66c2]/10 via-[#0a66c2]/5 to-transparent text-[#0a66c2]"
-                            : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                            ? "bg-slate-100 text-[#0a66c2] font-bold"
+                            : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
                     }`}
             >
                 {content}
@@ -391,21 +406,21 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
             </button>
 
             {/* Logo Section */}
-            <div
-                className={`h-[70px] flex items-center px-6 transition-all duration-300 ${isCollapsed ? "justify-center px-0" : "justify-start"}`}
+            <Link
+                href="/dashboard"
+                className={`h-[70px] flex items-center px-5 transition-all duration-300 ${isCollapsed ? "justify-center px-0" : "justify-start"}`}
             >
-                <div className="min-w-[35px] w-[35px] h-[35px] bg-[#0a66c2] rounded-lg flex items-center justify-center text-white shadow-sm">
-                    <Cloud size={20} fill="currentColor" />
-                </div>
-                {!isCollapsed && (
-                    <span className="ml-3 font-bold text-slate-800 text-lg tracking-tight animate-in fade-in duration-500">
-                        {t.nav.admin_panel}
-                    </span>
-                )}
-            </div>
+                <img
+                    src="/logo.png"
+                    alt="Logo"
+                    className={`${isCollapsed ? "max-h-8 max-w-[32px]" : "max-h-9 max-w-[160px]"} object-contain transition-all`}
+                />
+            </Link>
 
-            {/* Navigation */}
-            <nav className="flex-1 flex flex-col pt-4 overflow-y-auto no-scrollbar px-2">
+            <nav
+                className="flex-1 flex flex-col pt-4 overflow-y-auto no-scrollbar px-2"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
                 {/* Legacy Items */}
                 <div className="space-y-1 mb-6">
                     {filteredLegacyItems.map((item) => renderMenuItem(item))}

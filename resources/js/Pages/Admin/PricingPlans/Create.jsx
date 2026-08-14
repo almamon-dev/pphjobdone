@@ -1,15 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import AdminLayout from "@/Layouts/AdminLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 import {
-    Home,
     DollarSign,
-    Briefcase,
     Plus,
     Trash2,
-    MinusCircle,
     CheckCircle2,
     Settings,
+    CircleDollarSign,
+    ArrowLeft,
 } from "lucide-react";
 
 export default function Create({ services }) {
@@ -44,7 +43,7 @@ export default function Create({ services }) {
         if (currentIds.includes(id)) {
             setData(
                 "service_ids",
-                currentIds.filter((i) => i !== id),
+                currentIds.filter((i) => i !== id)
             );
         } else {
             setData("service_ids", [...currentIds, id]);
@@ -60,144 +59,132 @@ export default function Create({ services }) {
         <AdminLayout>
             <Head title="Create Pricing Plan" />
 
-            <div className="space-y-4 max-w-[1000px] mx-auto pb-20">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <h1 className="text-[24px] font-bold text-[#2f3344] tracking-tight">
-                            Add New Pricing Plan
-                        </h1>
-                        <div className="flex items-center gap-2 text-[13px] text-[#727586] mt-1">
-                            <Home size={16} className="text-[#727586]" />
-                            <span className="text-[#c3c4ca]">-</span>
-                            <Link
-                                href={route("admin.pricing-plans.index")}
-                                className="hover:text-[#673ab7] transition-colors"
-                            >
-                                Pricing Plans
-                            </Link>
-                            <span className="text-[#c3c4ca]">-</span>
-                            <span>Create</span>
+            <div className="space-y-4 max-w-[1200px] mx-auto pb-12">
+                {/* COMPACT TOP HEADER */}
+                <div className="bg-white rounded-md p-4 border border-slate-200/80 shadow-2xs flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <CircleDollarSign size={20} className="text-[#0a66c2]" />
+                        <div>
+                            <h1 className="text-lg font-bold text-slate-800 leading-tight">
+                                Add New Pricing Plan
+                            </h1>
+                            <p className="text-xs text-slate-500 mt-0.5">
+                                Define pricing tier features, assigned services, and billing rate.
+                            </p>
                         </div>
                     </div>
+
+                    <Link
+                        href={route("admin.pricing-plans.index")}
+                        className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-md text-xs font-semibold transition-all flex items-center gap-1.5"
+                    >
+                        <ArrowLeft size={14} /> Back to Plans
+                    </Link>
                 </div>
 
-                <form
-                    onSubmit={handleSubmit}
-                    className="grid grid-cols-12 gap-5 items-start"
-                >
+                <form onSubmit={handleSubmit} className="grid grid-cols-12 gap-4 items-start">
                     {/* Left Column: Basic Info & Features */}
-                    <div className="col-span-12 lg:col-span-8 space-y-5">
-                        <div className="bg-white rounded-[10px] border border-[#e3e4e8] shadow-sm p-6">
-                            <div className="flex items-center gap-2.5 mb-6">
-                                <DollarSign
-                                    size={20}
-                                    className="text-[#673ab7]"
-                                />
-                                <h2 className="text-[16px] font-bold text-[#2f3344]">
-                                    Plan Details
+                    <div className="col-span-12 lg:col-span-8 space-y-4">
+                        {/* Plan Details */}
+                        <div className="bg-white rounded-md border border-slate-200/80 shadow-2xs p-5">
+                            <div className="flex items-center gap-2 mb-4 pb-2 border-b border-slate-100">
+                                <DollarSign size={16} className="text-[#0a66c2]" />
+                                <h2 className="text-xs font-bold text-slate-800">
+                                    Plan Details & Services
                                 </h2>
                             </div>
 
-                            <div className="space-y-4">
-                                <div className="space-y-1.5">
-                                    <label className="block text-[13px] font-bold text-[#2f3344]">
-                                        Select Services{" "}
-                                        <span className="text-red-500">*</span>
+                            <div className="space-y-3.5">
+                                {/* Services Selection Checkboxes */}
+                                <div className="space-y-1">
+                                    <label className="block text-xs font-bold text-slate-700">
+                                        Assigned Services <span className="text-rose-500">*</span>
                                     </label>
-                                    <div className="flex flex-wrap gap-4 p-4 border border-[#e3e4e8] rounded-lg bg-[#fcfcfd]">
+                                    <div className="flex flex-wrap gap-2 p-3 border border-slate-200 rounded-md bg-slate-50/50">
                                         {services.map((service) => (
                                             <label
                                                 key={service.id}
-                                                className="flex items-center gap-2.5 cursor-pointer group whitespace-nowrap"
+                                                className={`flex items-center gap-2 px-2.5 py-1 rounded-md border text-xs font-medium cursor-pointer transition-all ${
+                                                    data.service_ids.includes(service.id)
+                                                        ? "bg-[#0a66c2]/10 border-[#0a66c2]/30 text-[#0a66c2]"
+                                                        : "bg-white border-slate-200 text-slate-700 hover:bg-slate-100"
+                                                }`}
                                             >
                                                 <input
                                                     type="checkbox"
-                                                    checked={data.service_ids.includes(
-                                                        service.id,
-                                                    )}
-                                                    onChange={() =>
-                                                        handleServiceToggle(
-                                                            service.id,
-                                                        )
-                                                    }
-                                                    className="w-4 h-4 rounded border-gray-300 text-[#673ab7] focus:ring-[#673ab7] flex-shrink-0"
+                                                    checked={data.service_ids.includes(service.id)}
+                                                    onChange={() => handleServiceToggle(service.id)}
+                                                    className="w-3.5 h-3.5 rounded border-slate-300 text-[#0a66c2] focus:ring-[#0a66c2]"
                                                 />
-                                                <span className="text-[13px] text-[#2f3344] group-hover:text-[#673ab7] transition-colors">
-                                                    {service.title}
-                                                </span>
+                                                <span>{service.title}</span>
                                             </label>
                                         ))}
                                     </div>
                                     {errors.service_ids && (
-                                        <p className="text-red-500 text-[11px] mt-1">
+                                        <p className="text-rose-500 text-[11px] mt-0.5">
                                             {errors.service_ids}
                                         </p>
                                     )}
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-1.5">
-                                        <label className="block text-[13px] font-bold text-[#2f3344]">
-                                            Plan Name{" "}
-                                            <span className="text-red-500">
-                                                *
-                                            </span>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    {/* Plan Name */}
+                                    <div className="space-y-1">
+                                        <label className="block text-xs font-bold text-slate-700">
+                                            Plan Name <span className="text-rose-500">*</span>
                                         </label>
                                         <input
                                             type="text"
                                             value={data.name}
-                                            onChange={(e) =>
-                                                setData("name", e.target.value)
-                                            }
-                                            placeholder="e.g., Enterprise Plan"
-                                            className={`w-full h-[44px] px-4 border ${errors.name ? "border-red-500" : "border-[#e3e4e8]"} rounded-[8px] focus:ring-1 focus:ring-[#673ab7] outline-none transition-all text-[14px]`}
+                                            onChange={(e) => setData("name", e.target.value)}
+                                            placeholder="e.g., Starter Plan"
+                                            className={`w-full h-9 px-3 border ${
+                                                errors.name ? "border-rose-500" : "border-slate-200"
+                                            } rounded-md text-xs focus:ring-1 focus:ring-[#0a66c2] focus:border-[#0a66c2] outline-none transition-all`}
                                         />
                                         {errors.name && (
-                                            <p className="text-red-500 text-[11px] mt-1">
+                                            <p className="text-rose-500 text-[11px] mt-0.5">
                                                 {errors.name}
                                             </p>
                                         )}
                                     </div>
 
-                                    <div className="space-y-1.5">
-                                        <label className="block text-[13px] font-bold text-[#2f3344]">
-                                            Price{" "}
-                                            <span className="text-red-500">
-                                                *
-                                            </span>
+                                    {/* Price */}
+                                    <div className="space-y-1">
+                                        <label className="block text-xs font-bold text-slate-700">
+                                            Price <span className="text-rose-500">*</span>
                                         </label>
                                         <input
                                             type="text"
                                             value={data.price}
-                                            onChange={(e) =>
-                                                setData("price", e.target.value)
-                                            }
-                                            placeholder="e.g., $19.99/mo"
-                                            className={`w-full h-[44px] px-4 border ${errors.price ? "border-red-500" : "border-[#e3e4e8]"} rounded-[8px] focus:ring-1 focus:ring-[#673ab7] outline-none transition-all text-[14px]`}
+                                            onChange={(e) => setData("price", e.target.value)}
+                                            placeholder="e.g., 299 or $19.99/mo"
+                                            className={`w-full h-9 px-3 border ${
+                                                errors.price ? "border-rose-500" : "border-slate-200"
+                                            } rounded-md text-xs focus:ring-1 focus:ring-[#0a66c2] focus:border-[#0a66c2] outline-none transition-all`}
                                         />
                                         {errors.price && (
-                                            <p className="text-red-500 text-[11px] mt-1">
+                                            <p className="text-rose-500 text-[11px] mt-0.5">
                                                 {errors.price}
                                             </p>
                                         )}
                                     </div>
                                 </div>
 
-                                <div className="space-y-1.5">
-                                    <label className="block text-[13px] font-bold text-[#2f3344]">
+                                {/* Subtitle */}
+                                <div className="space-y-1">
+                                    <label className="block text-xs font-bold text-slate-700">
                                         Subtitle
                                     </label>
                                     <input
                                         type="text"
                                         value={data.subtitle}
-                                        onChange={(e) =>
-                                            setData("subtitle", e.target.value)
-                                        }
-                                        placeholder="e.g., Best for growing businesses"
-                                        className="w-full h-[44px] px-4 border border-[#e3e4e8] rounded-[8px] focus:ring-1 focus:ring-[#673ab7] outline-none text-[14px]"
+                                        onChange={(e) => setData("subtitle", e.target.value)}
+                                        placeholder="e.g., Ideal for small businesses"
+                                        className="w-full h-9 px-3 border border-slate-200 rounded-md text-xs focus:ring-1 focus:ring-[#0a66c2] focus:border-[#0a66c2] outline-none"
                                     />
                                     {errors.subtitle && (
-                                        <p className="text-red-500 text-[11px] mt-1">
+                                        <p className="text-rose-500 text-[11px] mt-0.5">
                                             {errors.subtitle}
                                         </p>
                                     )}
@@ -205,51 +192,42 @@ export default function Create({ services }) {
                             </div>
                         </div>
 
-                        {/* Features Section */}
-                        <div className="bg-white rounded-[10px] border border-[#e3e4e8] shadow-sm p-6">
-                            <div className="flex items-center justify-between mb-6">
-                                <div className="flex items-center gap-2.5">
-                                    <CheckCircle2
-                                        size={20}
-                                        className="text-[#673ab7]"
-                                    />
-                                    <h2 className="text-[16px] font-bold text-[#2f3344]">
-                                        Plan Features
+                        {/* Plan Features */}
+                        <div className="bg-white rounded-md border border-slate-200/80 shadow-2xs p-5">
+                            <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
+                                <div className="flex items-center gap-2">
+                                    <CheckCircle2 size={16} className="text-[#0a66c2]" />
+                                    <h2 className="text-xs font-bold text-slate-800">
+                                        Included Plan Features
                                     </h2>
                                 </div>
                                 <button
                                     type="button"
                                     onClick={addFeature}
-                                    className="text-[#673ab7] text-[13px] font-bold hover:underline flex items-center gap-1"
+                                    className="text-[#0a66c2] text-xs font-semibold hover:underline flex items-center gap-1"
                                 >
-                                    <Plus size={16} /> Add Feature
+                                    <Plus size={14} /> Add Feature
                                 </button>
                             </div>
 
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                                 {data.features.map((feature, index) => (
-                                    <div key={index} className="flex gap-2">
+                                    <div key={index} className="flex gap-2 items-center">
                                         <input
                                             type="text"
                                             value={feature}
-                                            onChange={(e) =>
-                                                updateFeature(
-                                                    index,
-                                                    e.target.value,
-                                                )
-                                            }
-                                            placeholder="e.g., 24/7 Support"
-                                            className="flex-1 h-[40px] px-4 border border-[#e3e4e8] rounded-lg text-[14px] focus:border-[#673ab7] outline-none"
+                                            onChange={(e) => updateFeature(index, e.target.value)}
+                                            placeholder="e.g., 24/7 Priority Support"
+                                            className="flex-1 h-8 px-3 border border-slate-200 rounded-md text-xs focus:border-[#0a66c2] outline-none"
                                         />
                                         {data.features.length > 1 && (
                                             <button
                                                 type="button"
-                                                onClick={() =>
-                                                    removeFeature(index)
-                                                }
-                                                className="text-red-400 hover:text-red-600 px-1"
+                                                onClick={() => removeFeature(index)}
+                                                className="w-8 h-8 flex items-center justify-center rounded-md text-rose-500 hover:bg-rose-50 border border-slate-200 transition-all shrink-0"
+                                                title="Remove feature"
                                             >
-                                                <Trash2 size={18} />
+                                                <Trash2 size={14} />
                                             </button>
                                         )}
                                     </div>
@@ -259,101 +237,85 @@ export default function Create({ services }) {
                     </div>
 
                     {/* Right Column: Settings & Publish */}
-                    <div className="col-span-12 lg:col-span-4 space-y-5">
-                        <div className="bg-white rounded-[10px] border border-[#e3e4e8] shadow-sm p-6">
-                            <div className="flex items-center gap-2.5 mb-6">
-                                <Settings
-                                    size={20}
-                                    className="text-[#673ab7]"
-                                />
-                                <h2 className="text-[16px] font-bold text-[#2f3344]">
-                                    Settings
+                    <div className="col-span-12 lg:col-span-4 space-y-4">
+                        <div className="bg-white rounded-md border border-slate-200/80 shadow-2xs p-5">
+                            <div className="flex items-center gap-2 mb-4 pb-2 border-b border-slate-100">
+                                <Settings size={16} className="text-[#0a66c2]" />
+                                <h2 className="text-xs font-bold text-slate-800">
+                                    Plan Settings
                                 </h2>
                             </div>
 
-                            <div className="space-y-5">
-                                <div className="space-y-1.5">
-                                    <label className="block text-[13px] font-bold text-[#2f3344]">
-                                        Button Text
+                            <div className="space-y-4">
+                                {/* Button Text */}
+                                <div className="space-y-1">
+                                    <label className="block text-xs font-bold text-slate-700">
+                                        Action Button Text
                                     </label>
                                     <input
                                         type="text"
                                         value={data.button_text}
-                                        onChange={(e) =>
-                                            setData(
-                                                "button_text",
-                                                e.target.value,
-                                            )
-                                        }
-                                        className="w-full h-[40px] px-3 border border-[#e3e4e8] rounded-lg outline-none text-[14px]"
+                                        onChange={(e) => setData("button_text", e.target.value)}
+                                        className="w-full h-8 px-3 border border-slate-200 rounded-md text-xs outline-none focus:border-[#0a66c2]"
                                     />
                                     {errors.button_text && (
-                                        <p className="text-red-500 text-[11px] mt-1">
+                                        <p className="text-rose-500 text-[11px] mt-0.5">
                                             {errors.button_text}
                                         </p>
                                     )}
                                 </div>
 
-                                <div className="flex items-center justify-between p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
-                                    <span className="text-[13px] font-bold text-[#2f3344]">
+                                {/* Mark as Popular */}
+                                <div className="flex items-center justify-between p-2.5 bg-slate-50 rounded-md border border-slate-200">
+                                    <span className="text-xs font-semibold text-slate-800">
                                         Mark as Popular
                                     </span>
                                     <label className="relative inline-flex items-center cursor-pointer">
                                         <input
                                             type="checkbox"
                                             checked={data.is_popular}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "is_popular",
-                                                    e.target.checked,
-                                                )
-                                            }
+                                            onChange={(e) => setData("is_popular", e.target.checked)}
                                             className="sr-only peer"
                                         />
-                                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#673ab7]"></div>
+                                        <div className="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#0a66c2]"></div>
                                     </label>
                                 </div>
 
-                                <div className="flex items-center justify-between p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
-                                    <span className="text-[13px] font-bold text-[#2f3344]">
+                                {/* Status Active */}
+                                <div className="flex items-center justify-between p-2.5 bg-slate-50 rounded-md border border-slate-200">
+                                    <span className="text-xs font-semibold text-slate-800">
                                         Status (Active)
                                     </span>
                                     <label className="relative inline-flex items-center cursor-pointer">
                                         <input
                                             type="checkbox"
                                             checked={data.status}
-                                            onChange={(e) =>
-                                                setData(
-                                                    "status",
-                                                    e.target.checked,
-                                                )
-                                            }
+                                            onChange={(e) => setData("status", e.target.checked)}
                                             className="sr-only peer"
                                         />
-                                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#673ab7]"></div>
+                                        <div className="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#0a66c2]"></div>
                                     </label>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-[10px] border border-[#e3e4e8] shadow-sm p-6">
-                                <button
-                                    type="submit"
-                                    disabled={processing}
-                                    className="w-full h-[46px] bg-[#673ab7] text-white rounded-lg text-[14px] font-bold hover:bg-[#5e35b1] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                                >
-                                    {processing
-                                        ? "Creating..."
-                                        : "Create Pricing Plan"}
-                                </button>
-                                <Link
-                                    href={route("admin.pricing-plans.index")}
-                                    className="w-full h-[46px] mt-3 flex items-center justify-center text-[13px] font-bold text-[#727586] hover:text-[#2f3344] transition-colors"
-                                >
-                                    Cancel
-                                </Link>
-                            </div>
+                        {/* Save Actions */}
+                        <div className="bg-white rounded-md border border-slate-200/80 shadow-2xs p-4 space-y-2">
+                            <button
+                                type="submit"
+                                disabled={processing}
+                                className="w-full h-9 bg-[#0a66c2] hover:bg-[#084e96] text-white rounded-md text-xs font-semibold transition-all flex items-center justify-center gap-1.5 shadow-2xs disabled:opacity-50"
+                            >
+                                {processing ? "Saving..." : "Create Pricing Plan"}
+                            </button>
+                            <Link
+                                href={route("admin.pricing-plans.index")}
+                                className="w-full h-8 flex items-center justify-center text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+                            >
+                                Cancel
+                            </Link>
                         </div>
+                    </div>
                 </form>
             </div>
         </AdminLayout>
