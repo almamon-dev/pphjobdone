@@ -25,6 +25,7 @@ Route::get('services/{slug}', [\App\Http\Controllers\API\ServiceApiController::c
 Route::get('services/details/{slug}', [\App\Http\Controllers\API\ServiceApiController::class, 'show']);
 Route::get('services/proposal/{slug}', [\App\Http\Controllers\API\ServiceApiController::class, 'proposal']);
 Route::post('services/proposal/generate', [\App\Http\Controllers\API\ServiceApiController::class, 'generateAiProposal']);
+Route::get('services/proposal/{id}/download', [\App\Http\Controllers\API\ServiceApiController::class, 'downloadProposalPdf']);
 Route::get('pricing-plans', [\App\Http\Controllers\API\PricingPlanApiController::class, 'index']);
 
 // Case Studies
@@ -45,6 +46,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('campaign-bookings/create', [\App\Http\Controllers\API\CampaignBookingApiController::class, 'store']);
     Route::post('subscription-bookings/create', [\App\Http\Controllers\API\SubscriptionBookingApiController::class, 'store']);
     Route::post('subscription-bookings/upgrade', [\App\Http\Controllers\API\SubscriptionBookingApiController::class, 'upgrade']);
+    Route::get('user/subscription', [\App\Http\Controllers\API\SubscriptionBookingApiController::class, 'getUserSubscription']);
+    Route::post('user/subscription/toggle-auto-renew', [\App\Http\Controllers\API\SubscriptionBookingApiController::class, 'toggleAutoRenewal']);
     Route::prefix('payments')->group(function () {
         Route::get('list', [\App\Http\Controllers\API\PaymentApiController::class, 'index']);
     });
@@ -63,8 +66,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('user/dashboard/ai-insights', [\App\Http\Controllers\API\UserDashboardApiController::class, 'getAiInsights']);
     // User Services & Bookings & Tasks
     Route::get('user/services', [\App\Http\Controllers\API\UserServicesApiController::class, 'index']);
+    Route::get('user/proposals', [\App\Http\Controllers\API\ServiceApiController::class, 'getUserProposals']);
     Route::get('user/reports', [\App\Http\Controllers\API\UserReportsApiController::class, 'index']);
     Route::get('user/reports/ai-summary', [\App\Http\Controllers\API\UserReportsApiController::class, 'getAiReportSummary']);
+    Route::get('user/analytics/google-overview', [\App\Http\Controllers\API\UserReportsApiController::class, 'getGoogleAnalyticsOverview']);
+    Route::get('user/onboarding', [\App\Http\Controllers\API\OnboardingApiController::class, 'getStatus']);
+    Route::post('user/onboarding/step', [\App\Http\Controllers\API\OnboardingApiController::class, 'updateStep']);
     Route::get('user/tasks', [\App\Http\Controllers\API\UserTasksApiController::class, 'index']);
     Route::post('tasks/{task}/update-progress', [\App\Http\Controllers\API\UserTasksApiController::class, 'updateProgress']);
     Route::get('user/bookings', [\App\Http\Controllers\API\UserBookingApiController::class, 'index']);
@@ -74,6 +81,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('conversations', [\App\Http\Controllers\API\ChatApiController::class, 'getConversations']);
     Route::get('conversations/{id}/messages', [\App\Http\Controllers\API\ChatApiController::class, 'getMessages']);
     Route::post('conversations/send', [\App\Http\Controllers\API\ChatApiController::class, 'sendMessage']);
+    Route::put('conversations/messages/{id}', [\App\Http\Controllers\API\ChatApiController::class, 'updateMessage']);
+    Route::delete('conversations/messages/{id}', [\App\Http\Controllers\API\ChatApiController::class, 'deleteMessage']);
 
     // User Search
     Route::get('users/search', function (\Illuminate\Http\Request $request) {
@@ -90,3 +99,4 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return response()->json(['status' => 'success', 'data' => $users]);
     });
 });
+

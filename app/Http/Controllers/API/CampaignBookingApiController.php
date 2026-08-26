@@ -54,6 +54,27 @@ class CampaignBookingApiController extends Controller
             'client_secret' => null,
         ];
 
+        // Auto Sync Lead to CRM Database (Mark as Converted)
+        $user = Auth::user();
+        if ($user) {
+            try {
+                \App\Models\Lead::updateOrCreate(
+                    ['email' => $user->email],
+                    [
+                        'user_id' => $user->id,
+                        'name' => $user->name,
+                        'service_interest' => $booking->plan_name,
+                        'budget' => '$' . $booking->price,
+                        'qualification_status' => 'Hot',
+                        'qualification_summary' => 'Converted Client - Placed Campaign Order BKG-' . $booking->id,
+                        'status' => 'converted',
+                    ]
+                );
+            } catch (\Exception $e) {
+                Log::warning('Booking Lead Sync Warning: ' . $e->getMessage());
+            }
+        }
+
         // 2. Stripe Logic (One-Time PaymentIntent)
         if ($booking->price > 0) {
             try {

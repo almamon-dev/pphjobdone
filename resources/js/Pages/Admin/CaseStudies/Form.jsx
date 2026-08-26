@@ -37,7 +37,7 @@ export default function Form({ caseStudy = null }) {
 
             <div className="space-y-5 max-w-[1200px] mx-auto pb-12">
                 {/* HEADER */}
-                <div className="bg-white rounded-md p-5 border border-slate-200/80 shadow-2xs flex items-center justify-between">
+                <div className="bg-white rounded-md p-5 border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
                         <Link
                             href={route("admin.case-studies.index")}
@@ -58,10 +58,10 @@ export default function Form({ caseStudy = null }) {
 
                 {/* FORM */}
                 <form onSubmit={handleSubmit} className="bg-white rounded-md border border-slate-200/80 shadow-2xs p-6 space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-6">
                         {/* Title */}
                         <div>
-                            <label className="block text-xs font-bold text-slate-700 uppercase mb-2">
+                            <label className="block text-xs font-bold text-slate-700 mb-2">
                                 Project Subtitle / Services Title *
                             </label>
                             <input
@@ -77,7 +77,7 @@ export default function Form({ caseStudy = null }) {
 
                         {/* Highlighted Stat */}
                         <div>
-                            <label className="block text-xs font-bold text-slate-700 uppercase mb-2">
+                            <label className="block text-xs font-bold text-slate-700 mb-2">
                                 Highlighted Stat / Main Result *
                             </label>
                             <input
@@ -93,7 +93,7 @@ export default function Form({ caseStudy = null }) {
 
                         {/* Category */}
                         <div>
-                            <label className="block text-xs font-bold text-slate-700 uppercase mb-2">
+                            <label className="block text-xs font-bold text-slate-700 mb-2">
                                 Industry Category *
                             </label>
                             <input
@@ -109,7 +109,7 @@ export default function Form({ caseStudy = null }) {
 
                         {/* Image Path or File */}
                         <div>
-                            <label className="block text-xs font-bold text-slate-700 uppercase mb-2">
+                            <label className="block text-xs font-bold text-slate-700 mb-2">
                                 Thumbnail Image URL / Path
                             </label>
                             <input
@@ -123,7 +123,7 @@ export default function Form({ caseStudy = null }) {
 
                         {/* Client Type */}
                         <div>
-                            <label className="block text-xs font-bold text-slate-700 uppercase mb-2">
+                            <label className="block text-xs font-bold text-slate-700 mb-2">
                                 Client Type
                             </label>
                             <input
@@ -137,7 +137,7 @@ export default function Form({ caseStudy = null }) {
 
                         {/* Location */}
                         <div>
-                            <label className="block text-xs font-bold text-slate-700 uppercase mb-2">
+                            <label className="block text-xs font-bold text-slate-700 mb-2">
                                 Location
                             </label>
                             <input
@@ -151,7 +151,7 @@ export default function Form({ caseStudy = null }) {
 
                         {/* Service Provided */}
                         <div>
-                            <label className="block text-xs font-bold text-slate-700 uppercase mb-2">
+                            <label className="block text-xs font-bold text-slate-700 mb-2">
                                 Service Provided Description
                             </label>
                             <input
@@ -165,7 +165,7 @@ export default function Form({ caseStudy = null }) {
 
                         {/* Duration */}
                         <div>
-                            <label className="block text-xs font-bold text-slate-700 uppercase mb-2">
+                            <label className="block text-xs font-bold text-slate-700 mb-2">
                                 Duration
                             </label>
                             <input
@@ -181,7 +181,7 @@ export default function Form({ caseStudy = null }) {
                     {/* Descriptions */}
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-xs font-bold text-slate-700 uppercase mb-2">
+                            <label className="block text-xs font-bold text-slate-700 mb-2">
                                 Challenge Description
                             </label>
                             <textarea
@@ -194,7 +194,7 @@ export default function Form({ caseStudy = null }) {
                         </div>
 
                         <div>
-                            <label className="block text-xs font-bold text-slate-700 uppercase mb-2">
+                            <label className="block text-xs font-bold text-slate-700 mb-2">
                                 Approach Description
                             </label>
                             <textarea
@@ -207,7 +207,7 @@ export default function Form({ caseStudy = null }) {
                         </div>
 
                         <div>
-                            <label className="block text-xs font-bold text-slate-700 uppercase mb-2">
+                            <label className="block text-xs font-bold text-slate-700 mb-2">
                                 Results Summary
                             </label>
                             <textarea

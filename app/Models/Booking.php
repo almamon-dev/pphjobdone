@@ -19,12 +19,19 @@ class Booking extends Model
         'campaign_details',
         'website_url',
         'target_keywords',
+        'stripe_subscription_id',
+        'stripe_customer_id',
+        'stripe_status',
+        'current_period_end',
+        'cancel_at_period_end',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
         'campaign_details' => 'array',
         'is_campaign' => 'boolean',
+        'cancel_at_period_end' => 'boolean',
+        'current_period_end' => 'datetime',
     ];
 
     public function user()

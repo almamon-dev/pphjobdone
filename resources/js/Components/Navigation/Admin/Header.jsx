@@ -170,16 +170,25 @@ const Header = ({ onMenuClick }) => {
     };
 
     return (
-        <header className="h-[64px] bg-white border-b border-slate-200/80 sticky top-0 z-50 flex items-center justify-between px-4 md:px-6 shadow-2xs">
+        <header className="h-[64px] bg-white border-b border-slate-200/80 sticky top-0 z-[150] flex items-center justify-between px-3 md:px-6 shadow-2xs">
             {/* LEFT: Toggle, Page Title & Pill Search Bar */}
-            <div className="flex items-center gap-3 md:gap-6 flex-1 min-w-0">
-              
-                <h1 className="text-base md:text-lg font-bold text-[#1e293b] tracking-tight shrink-0">
+            <div className="flex items-center gap-2 sm:gap-4 md:gap-6 flex-1 min-w-0">
+                {/* Mobile Menu Hamburger Button (No Background) */}
+                <button
+                    type="button"
+                    onClick={onMenuClick}
+                    className="lg:hidden p-1.5 text-slate-700 hover:text-[#0a66c2] bg-transparent border-0 shrink-0 transition-colors cursor-pointer"
+                    title="Open Navigation Menu"
+                >
+                    <Menu size={22} />
+                </button>
+
+                <h1 className="text-sm sm:text-base md:text-lg font-bold text-[#1e293b] tracking-tight shrink-0 truncate max-w-[120px] sm:max-w-none">
                     {pageTitle}
                 </h1>
 
                 {/* Pill Search Bar (Placed right next to Page Title) */}
-                <div className="w-[240px] sm:w-[280px] md:w-[320px] lg:w-[360px] relative" ref={searchRef}>
+                <div className="w-[180px] sm:w-[240px] md:w-[320px] lg:w-[360px] relative hidden sm:block" ref={searchRef}>
                     <div className="relative group">
                         <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#0a66c2] transition-colors pointer-events-none">
                             {isSearching ? (

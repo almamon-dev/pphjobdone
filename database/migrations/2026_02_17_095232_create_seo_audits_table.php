@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('url');
             $table->json('response_data');
+            $table->integer('follow_up_step')->default(0);
+            $table->timestamp('last_follow_up_at')->nullable();
             $table->timestamps();
         });
     }

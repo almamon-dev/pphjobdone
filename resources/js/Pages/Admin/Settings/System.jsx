@@ -99,7 +99,7 @@ export default function SystemSettings({ settings }) {
                                 <h3 className="text-xs font-bold text-slate-800 border-b border-slate-100 pb-2">
                                     SMTP Server Details
                                 </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div className="space-y-1">
                                         <label className="block text-xs font-bold text-slate-700">
                                             Mail Driver
@@ -162,7 +162,7 @@ export default function SystemSettings({ settings }) {
                                 <h3 className="text-xs font-bold text-slate-800 border-b border-slate-100 pb-2">
                                     Authentication & Sender Identity
                                 </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div className="space-y-1">
                                         <label className="block text-xs font-bold text-slate-700">
                                             Username

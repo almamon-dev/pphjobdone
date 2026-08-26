@@ -81,7 +81,11 @@ class ChatApiController extends Controller
         $messages = Message::where('conversation_id', $conversationId)
             ->with(['sender', 'receiver'])
             ->oldest()
-            ->get();
+            ->get()
+            ->map(function ($msg) {
+                $msg->file_url = $msg->file_path ? \App\Helpers\Helper::generateURL($msg->file_path) : null;
+                return $msg;
+            });
 
         // Mark as read
         Message::where('conversation_id', $conversationId)
@@ -129,7 +133,7 @@ class ChatApiController extends Controller
 
         if ($request->hasFile('file')) {
             $file = $request->file('file');
-            $file_path = $file->store('chat_files', 'public');
+            $file_path = \App\Helpers\Helper::uploadFile('chat_files', $file);
             $extension = $file->getClientOriginalExtension();
             if (in_array($extension, ['jpeg','png','jpg','gif','svg'])) {
                 $type = 'image';
@@ -278,4 +282,41 @@ class ChatApiController extends Controller
         ]);
     }
 
+    public function updateMessage(Request $request, $id)
+    {
+        $request->validate([
+            'message' => 'required|string',
+        ]);
+
+        $message = Message::where('id', $id)
+            ->where('sender_id', auth()->id())
+            ->firstOrFail();
+
+        $message->update([
+            'message' => $request->message,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $message,
+        ]);
+    }
+
+    public function deleteMessage($id)
+    {
+        $message = Message::where('id', $id)
+            ->where('sender_id', auth()->id())
+            ->firstOrFail();
+
+        if ($message->file_path) {
+            \App\Helpers\Helper::deleteFile($message->file_path);
+        }
+
+        $message->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Message deleted successfully',
+        ]);
+    }
 }

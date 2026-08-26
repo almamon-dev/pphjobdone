@@ -14,6 +14,9 @@ class PricingPlan extends Model
         'features',
         'button_text',
         'status',
+        'stripe_product_id',
+        'stripe_price_id',
+        'billing_interval',
     ];
 
     protected $casts = [

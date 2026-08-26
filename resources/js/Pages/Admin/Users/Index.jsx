@@ -54,7 +54,7 @@ export default function Index({ users, filters = {}, auth }) {
 
             <div className="space-y-4 max-w-[1600px] mx-auto pb-12">
                 {/* TOP HEADER */}
-                <div className="bg-white rounded-md p-5 border border-slate-200/80 shadow-2xs flex items-center justify-between">
+                <div className="bg-white rounded-md p-5 border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-md bg-[#0a66c2]/10 text-[#0a66c2] flex items-center justify-center border border-[#0a66c2]/20">
                             <UsersIcon size={22} />
@@ -97,17 +97,17 @@ export default function Index({ users, filters = {}, auth }) {
                     </div>
 
                     {/* USERS TABLE WITH 7 EXTENDED COLUMNS & HIGH LEGIBILITY */}
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
+                    <div className="w-full overflow-x-auto overflow-y-hidden touch-pan-x">
+                        <table className="w-full min-w-[750px] text-left border-collapse">
                             <thead>
                                 <tr className="border-b border-slate-200 bg-slate-50 text-xs font-bold text-slate-700">
-                                    <th className="px-5 py-3">User Profile</th>
-                                    <th className="px-5 py-3">Contact Phone</th>
-                                    <th className="px-5 py-3">Role & Account</th>
-                                    <th className="px-5 py-3">Bookings</th>
-                                    <th className="px-5 py-3">Total Spent</th>
-                                    <th className="px-5 py-3">Joined Date</th>
-                                    <th className="px-5 py-3 text-right">Actions</th>
+                                    <th className="px-5 py-3 whitespace-nowrap">User Profile</th>
+                                    <th className="px-5 py-3 whitespace-nowrap">Contact Phone</th>
+                                    <th className="px-5 py-3 whitespace-nowrap">Role & Account</th>
+                                    <th className="px-5 py-3 whitespace-nowrap">Bookings</th>
+                                    <th className="px-5 py-3 whitespace-nowrap">Total Spent</th>
+                                    <th className="px-5 py-3 whitespace-nowrap">Joined Date</th>
+                                    <th className="px-5 py-3 text-right whitespace-nowrap">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 text-sm">
@@ -118,7 +118,7 @@ export default function Index({ users, filters = {}, auth }) {
                                             className="hover:bg-slate-50/80 transition-colors group"
                                         >
                                             {/* Column 1: Profile (Photo, Name, Email) */}
-                                            <td className="px-5 py-3.5">
+                                            <td className="px-5 py-3.5 whitespace-nowrap">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-10 h-10 rounded-full bg-[#0a66c2]/10 text-[#0a66c2] font-bold text-xs flex items-center justify-center border border-[#0a66c2]/20 shrink-0">
                                                         {u.profile_photo_url ? (
@@ -144,7 +144,7 @@ export default function Index({ users, filters = {}, auth }) {
                                             </td>
 
                                             {/* Column 2: Phone & Verification */}
-                                            <td className="px-5 py-3.5">
+                                            <td className="px-5 py-3.5 whitespace-nowrap">
                                                 <div className="space-y-1">
                                                     <div className="flex items-center gap-1.5 text-slate-800 font-semibold text-xs">
                                                         <Phone size={13} className="text-slate-400 shrink-0" />
@@ -165,7 +165,7 @@ export default function Index({ users, filters = {}, auth }) {
                                             </td>
 
                                             {/* Column 3: Role & Permissions */}
-                                            <td className="px-5 py-3.5">
+                                            <td className="px-5 py-3.5 whitespace-nowrap">
                                                 {u.is_admin ? (
                                                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-purple-50 text-purple-700 text-xs font-bold border border-purple-200">
                                                         <Shield size={13} /> Administrator
@@ -178,7 +178,7 @@ export default function Index({ users, filters = {}, auth }) {
                                             </td>
 
                                             {/* Column 4: Bookings Count */}
-                                            <td className="px-5 py-3.5">
+                                            <td className="px-5 py-3.5 whitespace-nowrap">
                                                 <div className="flex items-center gap-1.5 font-bold text-slate-900 text-sm">
                                                     <ShoppingBag size={15} className="text-slate-400 shrink-0" />
                                                     {u.bookings_count} Bookings
@@ -186,14 +186,14 @@ export default function Index({ users, filters = {}, auth }) {
                                             </td>
 
                                             {/* Column 5: Total Spent */}
-                                            <td className="px-5 py-3.5">
+                                            <td className="px-5 py-3.5 whitespace-nowrap">
                                                 <div className="flex items-center gap-1 font-bold text-slate-900 text-sm">
                                                     ${Number(u.total_spent || 0).toFixed(2)}
                                                 </div>
                                             </td>
 
                                             {/* Column 6: Joined Date */}
-                                            <td className="px-5 py-3.5 text-slate-700">
+                                            <td className="px-5 py-3.5 text-slate-700 whitespace-nowrap">
                                                 <div className="flex items-center gap-1.5 text-xs font-medium">
                                                     <Calendar size={13} className="text-slate-400 shrink-0" />
                                                     {u.created_at
@@ -207,7 +207,7 @@ export default function Index({ users, filters = {}, auth }) {
                                             </td>
 
                                             {/* Column 7: Actions */}
-                                            <td className="px-5 py-3.5 text-right">
+                                            <td className="px-5 py-3.5 text-right whitespace-nowrap">
                                                 <div className="flex items-center justify-end gap-2">
                                                     {u.id !== auth.user.id && (
                                                         <button

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AdminLayout from "@/Layouts/AdminLayout";
-import { Head, router } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import {
     Search,
     Trash2,
@@ -16,13 +16,29 @@ import {
     Bot,
     UserCheck,
     DollarSign,
-    CheckCircle2
+    CheckCircle2,
+    ExternalLink,
+    ChevronDown
 } from "lucide-react";
 
 export default function Index({ leads, filters = {}, stats = {} }) {
     const [search, setSearch] = useState(filters.search || "");
     const [qualificationFilter, setQualificationFilter] = useState(filters.qualification || "all");
     const [selectedChatLead, setSelectedChatLead] = useState(null);
+
+    const getStatusSelectStyle = (status) => {
+        switch (status) {
+            case "contacted":
+                return "bg-amber-50 text-amber-800 border-amber-300 focus:ring-amber-500/20";
+            case "converted":
+                return "bg-emerald-50 text-emerald-800 border-emerald-300 focus:ring-emerald-500/20";
+            case "closed":
+                return "bg-slate-100 text-slate-700 border-slate-300 focus:ring-slate-500/20";
+            default: // new
+                return "bg-blue-50 text-blue-700 border-blue-300 focus:ring-blue-500/20";
+        }
+    };
+
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -162,115 +178,144 @@ export default function Index({ leads, filters = {}, stats = {} }) {
                     </div>
 
                     {/* TABLE */}
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
+                    <div className="w-full overflow-x-auto overflow-y-hidden touch-pan-x">
+                        <table className="w-full min-w-[800px] text-left border-collapse">
                             <thead>
                                 <tr className="border-b border-slate-200 bg-slate-50 text-xs font-bold text-slate-700">
-                                    <th className="px-5 py-3">Lead Details</th>
-                                    <th className="px-5 py-3">Qualification & Score</th>
-                                    <th className="px-5 py-3">Extracted Needs / Budget</th>
-                                    <th className="px-5 py-3">Lead Status</th>
-                                    <th className="px-5 py-3 text-right">Actions</th>
+                                    <th className="px-4 py-3 whitespace-nowrap">Lead Info</th>
+                                    <th className="px-4 py-3 whitespace-nowrap">Interest & Budget</th>
+                                    <th className="px-4 py-3 whitespace-nowrap">AI Qualification & Summary</th>
+                                    <th className="px-4 py-3 whitespace-nowrap">Status</th>
+                                    <th className="px-4 py-3 text-right whitespace-nowrap">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 text-sm">
                                 {leads.data && leads.data.length > 0 ? (
                                     leads.data.map((lead) => (
                                         <tr key={lead.id} className="hover:bg-slate-50/80 transition-colors">
-                                            {/* Lead Contact Info */}
-                                            <td className="px-5 py-4 align-top">
-                                                <div className="flex items-start gap-3">
-                                                    <div className="w-9 h-9 rounded-full bg-[#AC6CFF]/10 text-[#AC6CFF] flex items-center justify-center border border-[#AC6CFF]/20 font-bold shrink-0">
-                                                        <UserIcon size={18} />
+                                            {/* 1. Lead Info (Name, Email, Phone) */}
+                                            <td className="px-4 py-3.5 whitespace-nowrap">
+                                                <div className="flex items-center gap-2.5">
+                                                    <div className="w-9 h-9 rounded-full bg-[#AC6CFF]/10 text-[#AC6CFF] flex items-center justify-center border border-[#AC6CFF]/20 font-bold shrink-0 text-xs shadow-2xs">
+                                                        {lead.name ? lead.name.charAt(0).toUpperCase() : "G"}
                                                     </div>
-                                                    <div>
-                                                        <p className="font-bold text-slate-900 text-sm">
-                                                            {lead.name || "Anonymous Guest"}
+                                                    <div className="space-y-0.5">
+                                                        <p className="font-bold text-slate-900 text-sm leading-tight">
+                                                            {lead.name || "Anonymous Lead"}
                                                         </p>
-                                                        <div className="flex flex-col gap-1 mt-1 text-xs text-slate-600">
-                                                            {lead.email && (
-                                                                <span className="flex items-center gap-1.5 font-medium text-slate-700">
-                                                                    <Mail size={13} className="text-slate-400" />
+                                                        {lead.email && (
+                                                            <div className="flex items-center gap-1 text-xs text-slate-500 font-medium">
+                                                                <Mail size={12} className="text-slate-400 shrink-0" />
+                                                                <a href={`mailto:${lead.email}`} className="hover:text-[#AC6CFF] hover:underline truncate max-w-[160px]">
                                                                     {lead.email}
-                                                                </span>
-                                                            )}
-                                                            {lead.phone && (
-                                                                <span className="flex items-center gap-1.5 font-medium text-slate-600">
-                                                                    <Phone size={13} className="text-slate-400" />
+                                                                </a>
+                                                            </div>
+                                                        )}
+                                                        {lead.phone && (
+                                                            <div className="flex items-center gap-1 text-xs text-slate-500 font-medium">
+                                                                <Phone size={12} className="text-slate-400 shrink-0" />
+                                                                <a href={`tel:${lead.phone}`} className="hover:text-[#AC6CFF] hover:underline">
                                                                     {lead.phone}
-                                                                </span>
-                                                            )}
-                                                            {lead.company_name && (
-                                                                <span className="flex items-center gap-1.5 font-medium text-slate-500">
-                                                                    <Building size={13} className="text-slate-400" />
-                                                                    {lead.company_name}
-                                                                </span>
-                                                            )}
-                                                        </div>
+                                                                </a>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </td>
 
-                                            {/* Qualification */}
-                                            <td className="px-5 py-4 align-top">
+                                            {/* 2. Interest & Budget */}
+                                            <td className="px-4 py-3.5 whitespace-nowrap">
                                                 <div className="space-y-1.5">
-                                                    <div>{getQualificationBadge(lead.qualification_status)}</div>
-                                                    <p className="text-xs text-slate-600 max-w-[260px] leading-relaxed">
-                                                        {lead.qualification_summary || "No qualification summary generated."}
-                                                    </p>
-                                                </div>
-                                            </td>
-
-                                            {/* Needs & Budget */}
-                                            <td className="px-5 py-4 align-top">
-                                                <div className="space-y-1 text-xs font-medium">
-                                                    {lead.service_interest && (
-                                                        <div className="flex items-center gap-1.5 text-slate-900 font-semibold">
-                                                            <CheckCircle2 size={13} className="text-emerald-600" />
+                                                    {lead.service_interest ? (
+                                                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-semibold bg-slate-100 text-slate-800 border border-slate-200">
+                                                            <CheckCircle2 size={11} className="text-emerald-600 shrink-0" />
                                                             {lead.service_interest}
-                                                        </div>
+                                                        </span>
+                                                    ) : (
+                                                        <span className="text-xs text-slate-400 italic">No service selected</span>
                                                     )}
                                                     {lead.budget && (
-                                                        <div className="flex items-center gap-1.5 text-indigo-700 font-bold">
-                                                            <DollarSign size={13} className="text-indigo-600" />
-                                                            Budget: {lead.budget}
+                                                        <div>
+                                                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                                                <DollarSign size={11} className="text-indigo-600 shrink-0" />
+                                                                {lead.budget}
+                                                            </span>
                                                         </div>
-                                                    )}
-                                                    {!lead.service_interest && !lead.budget && (
-                                                        <span className="text-slate-400 font-normal">Pending details</span>
                                                     )}
                                                 </div>
                                             </td>
 
-                                            {/* Lead Status */}
-                                            <td className="px-5 py-4 align-top">
-                                                <select
-                                                    value={lead.status || "new"}
-                                                    onChange={(e) => handleStatusChange(lead.id, e.target.value)}
-                                                    className="h-8 px-2.5 bg-slate-50 border border-slate-200 rounded-md text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#AC6CFF]"
-                                                >
-                                                    <option value="new">New</option>
-                                                    <option value="contacted">Contacted</option>
-                                                    <option value="converted">Converted</option>
-                                                    <option value="closed">Closed</option>
-                                                </select>
+                                            {/* 3. AI Qualification & Summary */}
+                                            <td className="px-4 py-3.5">
+                                                <div className="space-y-1 max-w-[280px]">
+                                                    <div className="flex items-center gap-2">
+                                                        {getQualificationBadge(lead.qualification_status)}
+                                                        {(() => {
+                                                            const match = (lead.qualification_summary || "").match(/(https?:\/\/[^\s\)]+)/i);
+                                                            if (match) {
+                                                                return (
+                                                                    <a
+                                                                        href={match[0]}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        className="inline-flex items-center gap-1 text-[11px] font-bold text-[#AC6CFF] hover:underline"
+                                                                    >
+                                                                        <ExternalLink size={11} /> Target Link
+                                                                    </a>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })()}
+                                                    </div>
+                                                    {lead.qualification_summary && (
+                                                        <p className="text-xs text-slate-600 leading-relaxed truncate">
+                                                            {lead.qualification_summary.replace(/https?:\/\/[^\s\)]+/gi, '').trim()}
+                                                        </p>
+                                                    )}
+                                                </div>
                                             </td>
 
-                                            {/* Actions */}
-                                            <td className="px-5 py-4 text-right align-top">
+                                            {/* 4. Status */}
+                                            <td className="px-4 py-3.5 whitespace-nowrap">
+                                                <div className="relative inline-block min-w-[125px]">
+                                                    <select
+                                                        value={lead.status || "new"}
+                                                        onChange={(e) => handleStatusChange(lead.id, e.target.value)}
+                                                        className={`w-full h-8 pl-3 pr-8 rounded-lg text-xs font-bold border transition-all appearance-none cursor-pointer focus:outline-none focus:ring-2 shadow-2xs ${getStatusSelectStyle(lead.status)}`}
+                                                    >
+                                                        <option value="new" className="bg-white text-slate-800 font-semibold py-1">New</option>
+                                                        <option value="contacted" className="bg-white text-slate-800 font-semibold py-1">Contacted</option>
+                                                        <option value="converted" className="bg-white text-slate-800 font-semibold py-1">Converted</option>
+                                                        <option value="closed" className="bg-white text-slate-800 font-semibold py-1">Closed</option>
+                                                    </select>
+                                                    <ChevronDown size={13} className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none opacity-60" />
+                                                </div>
+                                            </td>
+
+
+                                            {/* 5. Actions */}
+                                            <td className="px-4 py-3.5 text-right whitespace-nowrap">
                                                 <div className="flex items-center justify-end gap-2">
+                                                    <Link
+                                                        href={lead.user_id ? `/admin/messages?user_id=${lead.user_id}` : '/admin/messages'}
+                                                        className="px-2.5 py-1.5 rounded-md text-xs font-bold bg-[#0084ff]/10 text-[#0084ff] hover:bg-[#0084ff] hover:text-white border border-[#0084ff]/30 transition-all flex items-center gap-1 shadow-2xs cursor-pointer"
+                                                        title="Open Messenger Chat with Lead"
+                                                    >
+                                                        <MessageSquare size={13} /> Live Chat
+                                                    </Link>
                                                     <button
                                                         onClick={() => setSelectedChatLead(lead)}
-                                                        className="px-3 py-1.5 rounded-md text-xs font-bold bg-[#AC6CFF]/10 text-[#AC6CFF] hover:bg-[#AC6CFF]/20 border border-[#AC6CFF]/30 transition-all flex items-center gap-1.5"
+                                                        className="px-2 py-1.5 rounded-md text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200 transition-all flex items-center gap-1 cursor-pointer"
+                                                        title="View AI Chatbot Transcript"
                                                     >
-                                                        <MessageSquare size={14} /> View Chat
+                                                        Transcript
                                                     </button>
                                                     <button
                                                         onClick={() => handleDelete(lead.id)}
-                                                        className="w-8 h-8 flex items-center justify-center rounded-md text-rose-600 hover:bg-rose-50 border border-slate-200 transition-all"
+                                                        className="w-7 h-7 flex items-center justify-center rounded-md text-rose-600 hover:bg-rose-50 border border-slate-200 transition-all cursor-pointer"
                                                         title="Delete Lead"
                                                     >
-                                                        <Trash2 size={15} />
+                                                        <Trash2 size={14} />
                                                     </button>
                                                 </div>
                                             </td>
@@ -294,7 +339,7 @@ export default function Index({ leads, filters = {}, stats = {} }) {
                 <div className="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
                     <div className="bg-white rounded-xl shadow-2xl border border-slate-200 w-full max-w-2xl overflow-hidden flex flex-col max-h-[85vh]">
                         {/* Modal Header */}
-                        <div className="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+                        <div className="p-4 border-b border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-[#AC6CFF]/10 text-[#AC6CFF] flex items-center justify-center border border-[#AC6CFF]/30">
                                     <Bot size={20} />
@@ -349,10 +394,17 @@ export default function Index({ leads, filters = {}, stats = {} }) {
                         </div>
 
                         {/* Modal Footer */}
-                        <div className="p-3 border-t border-slate-200 bg-white flex justify-end">
+                        <div className="p-3.5 border-t border-slate-200 bg-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <Link
+                                href={selectedChatLead.user_id ? `/admin/messages?user_id=${selectedChatLead.user_id}` : '/admin/messages'}
+                                className="px-4 py-2 bg-gradient-to-r from-[#0084ff] to-[#00c6ff] text-white rounded-lg text-xs font-extrabold hover:opacity-90 transition-all inline-flex items-center gap-1.5 shadow-2xs"
+                            >
+                                <MessageSquare size={14} /> Open Live Messenger Chat ↗
+                            </Link>
+
                             <button
                                 onClick={() => setSelectedChatLead(null)}
-                                className="px-4 py-2 bg-slate-100 text-slate-700 rounded-md text-xs font-bold hover:bg-slate-200 transition-colors"
+                                className="px-4 py-2 bg-white text-slate-700 border border-slate-200 rounded-lg text-xs font-bold hover:bg-slate-100 transition-colors"
                             >
                                 Close Transcript
                             </button>

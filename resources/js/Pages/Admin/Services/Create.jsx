@@ -237,7 +237,7 @@ export default function Create({ pricing_plans = [] }) {
             <Head title="Add Service" />
 
             <div className="space-y-4 max-w-full mx-auto pb-20">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-4">
                         <h1 className="text-[24px] font-bold text-[#2f3344] tracking-tight">
                             Add New Service
@@ -275,7 +275,7 @@ export default function Create({ pricing_plans = [] }) {
                                 </h2>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
                                     <label className="block text-[13px] font-bold text-[#2f3344]">
                                         Service Title{" "}
@@ -368,7 +368,7 @@ export default function Create({ pricing_plans = [] }) {
 
                         {/* Benefits Section */}
                         <div className="bg-white rounded-[12px] border border-[#e3e4e8] shadow-sm p-5 md:p-6">
-                            <div className="flex items-center justify-between mb-6">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
                                 <div className="flex items-center gap-3">
                                     <CheckCircle2
                                         size={22}
@@ -409,7 +409,7 @@ export default function Create({ pricing_plans = [] }) {
                                                 </button>
                                             )}
                                         </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                             <div className="md:col-span-2 space-y-4">
                                                 <div className="space-y-1">
                                                     <label className="text-[12px] font-bold text-[#727586]">
@@ -448,7 +448,7 @@ export default function Create({ pricing_plans = [] }) {
                                                 </div>
                                                 {/* Points */}
                                                 <div className="space-y-2">
-                                                    <div className="flex items-center justify-between">
+                                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                                         <label className="text-[12px] font-bold text-[#727586]">Bullet Points (optional)</label>
                                                         <button
                                                             type="button"
@@ -543,7 +543,7 @@ export default function Create({ pricing_plans = [] }) {
                         {/* Secondary Features Section */}
                         {data.has_secondary_features && (
                             <div className="bg-white rounded-[12px] border border-[#e3e4e8] shadow-sm p-5 md:p-6">
-                                <div className="flex items-center justify-between mb-6">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
                                     <div className="flex items-center gap-3">
                                         <Zap
                                             size={22}
@@ -584,7 +584,7 @@ export default function Create({ pricing_plans = [] }) {
                                                     </button>
                                                 )}
                                             </div>
-                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                            <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                                 <div className="md:col-span-2 space-y-4">
                                                     <div className="space-y-1">
                                                         <label className="text-[12px] font-bold text-[#727586]">
@@ -688,7 +688,7 @@ export default function Create({ pricing_plans = [] }) {
                         {/* FAQ Section */}
                         {data.has_faq && (
                             <div className="bg-white rounded-[12px] border border-[#e3e4e8] shadow-sm p-5 md:p-6 relative overflow-hidden">
-                                <div className="flex items-center justify-between mb-6">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
                                     <div className="flex items-center gap-3">
                                         <HelpCircle
                                             size={22}
@@ -777,7 +777,7 @@ export default function Create({ pricing_plans = [] }) {
                                 </div>
 
                                 <div className="grid grid-cols-1 gap-4">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div className="space-y-1">
                                             <label className="block text-[13px] font-bold text-[#2f3344]">
                                                 Title
@@ -833,7 +833,7 @@ export default function Create({ pricing_plans = [] }) {
                                         />
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div className="space-y-1">
                                             <label className="block text-[13px] font-bold text-[#2f3344]">
                                                 Button Text
@@ -854,9 +854,9 @@ export default function Create({ pricing_plans = [] }) {
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div className="space-y-3">
-                                            <div className="flex items-center justify-between">
+                                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                                 <label className="block text-[13px] font-bold text-[#2f3344]">
                                                     Key Points
                                                 </label>
@@ -966,7 +966,7 @@ export default function Create({ pricing_plans = [] }) {
                                 </div>
 
                                 <div className="grid grid-cols-1 gap-4">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div className="space-y-1">
                                             <label className="block text-[13px] font-bold text-[#2f3344]">
                                                 Title
@@ -1042,9 +1042,9 @@ export default function Create({ pricing_plans = [] }) {
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div className="space-y-3">
-                                            <div className="flex items-center justify-between">
+                                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                                 <label className="block text-[13px] font-bold text-[#2f3344]">
                                                     Key Points
                                                 </label>
@@ -1143,7 +1143,7 @@ export default function Create({ pricing_plans = [] }) {
                         {/* Expected Results Section */}
                         {data.has_expect_result && (
                             <div className="bg-white rounded-[12px] border border-[#e3e4e8] shadow-sm p-5 md:p-6">
-                                <div className="flex items-center justify-between mb-6">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
                                     <div className="flex items-center gap-3">
                                         <TrendingUp
                                             size={22}
@@ -1182,7 +1182,7 @@ export default function Create({ pricing_plans = [] }) {
                                                     </button>
                                                 )}
                                             </div>
-                                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                            <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                                                 <div className="space-y-1">
                                                     <label className="text-[12px] font-bold text-[#727586]">
                                                         Stat Value (e.g. 100%, 3%, 15m)
@@ -1229,7 +1229,7 @@ export default function Create({ pricing_plans = [] }) {
                         {/* Brand Logos Section */}
                         {data.has_brands && (
                             <div className="bg-white rounded-[12px] border border-[#e3e4e8] shadow-sm p-5 md:p-6">
-                                <div className="flex items-center justify-between mb-6">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
                                     <div className="flex items-center gap-3">
                                         <BarChart3
                                             size={22}
@@ -1268,7 +1268,7 @@ export default function Create({ pricing_plans = [] }) {
                                                     </button>
                                                 )}
                                             </div>
-                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                            <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                                 <div className="md:col-span-2 space-y-1">
                                                     <label className="text-[12px] font-bold text-[#727586]">
                                                         Brand Name
@@ -1376,7 +1376,7 @@ export default function Create({ pricing_plans = [] }) {
 
                             <div className="space-y-3.5 pt-4 border-t border-[#f1f2f4]">
                                 {/* Toggle Status */}
-                                <div className="flex items-center justify-between p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
                                     <div className="space-y-0.5">
                                         <span className="text-[13px] font-bold text-[#2f3344] block">
                                             Service Status
@@ -1395,7 +1395,7 @@ export default function Create({ pricing_plans = [] }) {
                                 </div>
 
                                 {/* Toggle Campaign */}
-                                <div className="flex items-center justify-between p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
                                     <div className="space-y-0.5">
                                         <span className="text-[13px] font-bold text-[#2f3344] block">
                                             Is Campaign?
@@ -1414,7 +1414,7 @@ export default function Create({ pricing_plans = [] }) {
                                 </div>
 
                                 {/* Toggle FAQ */}
-                                <div className="flex items-center justify-between p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
                                     <div className="space-y-0.5">
                                         <span className="text-[13px] font-bold text-[#2f3344] block">
                                             Enable FAQ?
@@ -1433,7 +1433,7 @@ export default function Create({ pricing_plans = [] }) {
                                 </div>
 
                                 {/* Toggle Secondary Features */}
-                                <div className="flex items-center justify-between p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
                                     <div className="space-y-0.5">
                                         <span className="text-[13px] font-bold text-[#2f3344] block">
                                             Secondary Features?
@@ -1452,7 +1452,7 @@ export default function Create({ pricing_plans = [] }) {
                                 </div>
 
                                 {/* Toggle Benefits Section */}
-                                <div className="flex items-center justify-between p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
                                     <div className="space-y-0.5">
                                         <span className="text-[13px] font-bold text-[#2f3344] block">
                                             Benefits Section?
@@ -1471,7 +1471,7 @@ export default function Create({ pricing_plans = [] }) {
                                 </div>
 
                                 {/* Toggle Why Us Section */}
-                                <div className="flex items-center justify-between p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
                                     <div className="space-y-0.5">
                                         <span className="text-[13px] font-bold text-[#2f3344] block">
                                             Why Us Section?
@@ -1490,7 +1490,7 @@ export default function Create({ pricing_plans = [] }) {
                                 </div>
 
                                 {/* Toggle Brands Section */}
-                                <div className="flex items-center justify-between p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
                                     <div className="space-y-0.5">
                                         <span className="text-[13px] font-bold text-[#2f3344] block">
                                             Brands Section?
@@ -1509,7 +1509,7 @@ export default function Create({ pricing_plans = [] }) {
                                 </div>
 
                                 {/* Toggle Expected Results Section */}
-                                <div className="flex items-center justify-between p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-[#f8f9fc] rounded-lg border border-[#e3e4e8]">
                                     <div className="space-y-0.5">
                                         <span className="text-[13px] font-bold text-[#2f3344] block">
                                             Expected Results?
@@ -1629,7 +1629,7 @@ export default function Create({ pricing_plans = [] }) {
                                             />
                                             <label
                                                 htmlFor="video_file"
-                                                className="flex items-center justify-between w-full h-[38px] px-3 border border-[#e3e4e8] border-dashed rounded-lg cursor-pointer hover:border-[#673ab7] hover:bg-[#fcfaff] transition-all group"
+                                                className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full h-[38px] px-3 border border-[#e3e4e8] border-dashed rounded-lg cursor-pointer hover:border-[#673ab7] hover:bg-[#fcfaff] transition-all group"
                                             >
                                                 <span className="text-[12px] text-[#a0a3af] group-hover:text-[#673ab7] truncate pr-2">
                                                     {data.video_file
@@ -1653,7 +1653,7 @@ export default function Create({ pricing_plans = [] }) {
 
                                 {data.video_file &&
                                     data.video_source === "upload" && (
-                                        <div className="p-2.5 bg-green-50 rounded-lg flex items-center justify-between border border-green-100">
+                                        <div className="p-2.5 bg-green-50 rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3 border border-green-100">
                                             <span className="text-[11px] font-medium text-green-700 truncate mr-2">
                                                 Ready: {data.video_file.name}
                                             </span>

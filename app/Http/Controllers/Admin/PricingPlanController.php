@@ -5,11 +5,19 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\PricingPlan;
 use App\Models\Service;
+use App\Services\StripePlanService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class PricingPlanController extends Controller
 {
+    protected StripePlanService $stripePlanService;
+
+    public function __construct(StripePlanService $stripePlanService)
+    {
+        $this->stripePlanService = $stripePlanService;
+    }
+
     public function index(Request $request)
     {
         $query = PricingPlan::query()->with('services');
@@ -18,8 +26,6 @@ class PricingPlanController extends Controller
             $query->where('name', 'like', "%{$request->search}%")
                 ->orWhere('subtitle', 'like', "%{$request->search}%");
         }
-
-        // Query removed
 
         if ($request->min_price) {
             $query->where('price', '>=', $request->min_price);
@@ -49,6 +55,7 @@ class PricingPlanController extends Controller
             'service_ids.*' => 'exists:services,id',
             'name' => 'required|string|max:255',
             'price' => 'required|string|max:255',
+            'billing_interval' => 'required|string|in:month,year',
             'subtitle' => 'nullable|string|max:255',
             'is_popular' => 'boolean',
             'features' => 'nullable|array',
@@ -59,7 +66,14 @@ class PricingPlanController extends Controller
         $plan = PricingPlan::create($validated);
         $plan->services()->sync($request->service_ids);
 
-        return redirect()->route('admin.pricing-plans.index')->with('success', 'Pricing plan created successfully.');
+        // Auto Sync with Stripe Product & Price
+        $synced = $this->stripePlanService->syncPlanToStripe($plan);
+
+        $message = $synced
+            ? 'Pricing plan created and synced with Stripe successfully.'
+            : 'Pricing plan created locally. (Stripe sync skipped or pending credentials)';
+
+        return redirect()->route('admin.pricing-plans.index')->with('success', $message);
     }
 
     public function edit(PricingPlan $pricingPlan)
@@ -77,6 +91,7 @@ class PricingPlanController extends Controller
             'service_ids.*' => 'exists:services,id',
             'name' => 'required|string|max:255',
             'price' => 'required|string|max:255',
+            'billing_interval' => 'required|string|in:month,year',
             'subtitle' => 'nullable|string|max:255',
             'is_popular' => 'boolean',
             'features' => 'nullable|array',
@@ -87,13 +102,32 @@ class PricingPlanController extends Controller
         $pricingPlan->update($validated);
         $pricingPlan->services()->sync($request->service_ids);
 
-        return redirect()->route('admin.pricing-plans.index')->with('success', 'Pricing plan updated successfully.');
+        // Auto Sync with Stripe Product & Price
+        $synced = $this->stripePlanService->syncPlanToStripe($pricingPlan);
+
+        $message = $synced
+            ? 'Pricing plan updated and synced with Stripe successfully.'
+            : 'Pricing plan updated locally. (Stripe sync skipped or pending credentials)';
+
+        return redirect()->route('admin.pricing-plans.index')->with('success', $message);
     }
 
     public function destroy(PricingPlan $pricingPlan)
     {
+        $this->stripePlanService->archiveStripePlan($pricingPlan);
         $pricingPlan->delete();
 
-        return redirect()->route('admin.pricing-plans.index')->with('success', 'Pricing plan deleted successfully.');
+        return redirect()->route('admin.pricing-plans.index')->with('success', 'Pricing plan deleted and archived in Stripe successfully.');
+    }
+
+    public function resync(PricingPlan $pricingPlan)
+    {
+        $synced = $this->stripePlanService->syncPlanToStripe($pricingPlan);
+
+        if ($synced) {
+            return back()->with('success', 'Pricing plan synced with Stripe successfully.');
+        }
+
+        return back()->with('error', 'Failed to sync plan with Stripe. Please check your Stripe credentials.');
     }
 }

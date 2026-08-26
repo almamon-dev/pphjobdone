@@ -49,7 +49,7 @@ export default function Index({ services, filters = {}, auth }) {
 
             <div className="space-y-4 max-w-[1600px] mx-auto pb-12">
                 {/* TOP HEADER */}
-                <div className="bg-white rounded-md p-5 border border-slate-200/80 shadow-2xs flex items-center justify-between">
+                <div className="bg-white rounded-md p-5 border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-md bg-[#0a66c2]/10 text-[#0a66c2] flex items-center justify-center border border-[#0a66c2]/20">
                             <Briefcase size={22} />
@@ -96,14 +96,15 @@ export default function Index({ services, filters = {}, auth }) {
 
                     {/* TABLE WITH CLEAR FONT SIZES */}
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
+<div className="w-full overflow-x-auto overflow-y-hidden touch-pan-x border border-slate-200/80 rounded-xl shadow-2xs mb-4">
+                        <table className="w-full min-w-[850px] text-left border-collapse">
                             <thead>
                                 <tr className="border-b border-slate-200 bg-slate-50 text-xs font-bold text-slate-700">
-                                    <th className="px-5 py-3">Service Name & Slug</th>
-                                    <th className="px-5 py-3">Subtitle</th>
-                                    <th className="px-5 py-3">Type</th>
-                                    <th className="px-5 py-3">Status</th>
-                                    <th className="px-5 py-3 text-right">Actions</th>
+                                    <th className="px-5 py-3 whitespace-nowrap">Service Name & Slug</th>
+                                    <th className="px-5 py-3 whitespace-nowrap">Subtitle</th>
+                                    <th className="px-5 py-3 whitespace-nowrap">Type</th>
+                                    <th className="px-5 py-3 whitespace-nowrap">Status</th>
+                                    <th className="px-5 py-3 text-right whitespace-nowrap">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 text-sm">
@@ -113,7 +114,7 @@ export default function Index({ services, filters = {}, auth }) {
                                             key={service.id}
                                             className="hover:bg-slate-50/80 transition-colors group"
                                         >
-                                            <td className="px-5 py-3.5">
+                                            <td className="px-5 py-3.5 whitespace-nowrap">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-9 h-9 rounded-md bg-[#0a66c2]/10 text-[#0a66c2] flex items-center justify-center border border-[#0a66c2]/20 overflow-hidden shrink-0">
                                                         {service.icon ? (
@@ -136,12 +137,12 @@ export default function Index({ services, filters = {}, auth }) {
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-5 py-3.5 text-slate-700">
+                                            <td className="px-5 py-3.5 text-slate-700 whitespace-nowrap">
                                                 <span className="truncate max-w-[300px] block text-sm">
                                                     {service.subtitle || "N/A"}
                                                 </span>
                                             </td>
-                                            <td className="px-5 py-3.5">
+                                            <td className="px-5 py-3.5 whitespace-nowrap">
                                                 {service.is_campaign ? (
                                                     <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-amber-50 text-amber-800 text-xs font-bold border border-amber-200">
                                                         <Zap size={12} /> Campaign
@@ -152,7 +153,7 @@ export default function Index({ services, filters = {}, auth }) {
                                                     </span>
                                                 )}
                                             </td>
-                                            <td className="px-5 py-3.5">
+                                            <td className="px-5 py-3.5 whitespace-nowrap">
                                                 <span
                                                     className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-bold ${
                                                         service.status
@@ -163,7 +164,7 @@ export default function Index({ services, filters = {}, auth }) {
                                                     {service.status ? "Active" : "Draft"}
                                                 </span>
                                             </td>
-                                            <td className="px-5 py-3.5 text-right">
+                                            <td className="px-5 py-3.5 text-right whitespace-nowrap">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <Link
                                                         href={route("admin.campaigns.create", { service_id: service.id })}
@@ -199,6 +200,7 @@ export default function Index({ services, filters = {}, auth }) {
                                 )}
                             </tbody>
                         </table>
+</div>
                     </div>
 
                     {/* COMPACT PAGINATION FOOTER */}

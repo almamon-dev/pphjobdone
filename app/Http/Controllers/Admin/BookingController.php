@@ -7,12 +7,13 @@ use App\Models\Booking;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Stripe\Stripe;
 
 class BookingController extends Controller
 {
     public function index()
     {
-        $bookings = Booking::with('user', 'service')
+        $bookings = Booking::with('user', 'service', 'pricingPlan')
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -23,13 +24,40 @@ class BookingController extends Controller
 
     public function show(Booking $booking)
     {
-        $booking->load(['user', 'service', 'tasks' => function ($q) {
+        $booking->load(['user', 'service', 'pricingPlan', 'tasks' => function ($q) {
             $q->orderBy('created_at', 'asc');
         }]);
 
         return Inertia::render('Admin/Bookings/Show', [
             'booking' => $booking
         ]);
+    }
+
+    public function toggleAutoRenew(Booking $booking)
+    {
+        $shouldCancel = !$booking->cancel_at_period_end;
+        $stripeSecret = config('services.stripe.secret') ?? env('STRIPE_SECRET');
+
+        if ($booking->stripe_subscription_id && $stripeSecret) {
+            try {
+                Stripe::setApiKey($stripeSecret);
+                $sub = \Stripe\Subscription::update($booking->stripe_subscription_id, [
+                    'cancel_at_period_end' => $shouldCancel,
+                ]);
+                $booking->update([
+                    'cancel_at_period_end' => (bool) $sub->cancel_at_period_end,
+                    'stripe_status' => $sub->status,
+                    'current_period_end' => isset($sub->current_period_end) ? date('Y-m-d H:i:s', $sub->current_period_end) : $booking->current_period_end,
+                ]);
+            } catch (\Exception $e) {
+                return back()->with('error', 'Stripe update error: ' . $e->getMessage());
+            }
+        } else {
+            $booking->update(['cancel_at_period_end' => $shouldCancel]);
+        }
+
+        $msg = $shouldCancel ? 'Auto-renewal disabled for this booking.' : 'Auto-renewal enabled for this booking.';
+        return back()->with('success', $msg);
     }
 
     public function storeTask(Request $request, Booking $booking)

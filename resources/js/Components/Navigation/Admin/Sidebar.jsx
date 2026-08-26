@@ -108,7 +108,6 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
         {
             title: "Settings",
             items: [
-
                 {
                     label: "System Settings",
                     icon: <Cog size={18} />,
@@ -124,7 +123,7 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
                 {
                     label: "Logout",
                     path: "/logout",
-                    icon: <LogOut />,
+                    icon: <LogOut size={18} />,
                     method: "post",
                 },
             ],
@@ -135,7 +134,7 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
         {
             label: t.nav.home,
             path: "/dashboard",
-            icon: <Home />,
+            icon: <Home size={18} />,
             route: "dashboard",
         },
         {
@@ -181,12 +180,20 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
             route: "admin.leads.*",
         },
         {
+            label: "Live Messages",
+            path: "/admin/messages",
+            icon: <MessageSquare size={18} />,
+            route: "admin.messages.*",
+        },
+        {
             label: "Contacts",
             path: "/admin/contacts",
             icon: <Mail size={18} />,
             route: "admin.contacts.*",
         },
     ];
+
+
 
     const hasPermission = (permission) => {
         if (!permission) return true;
@@ -394,10 +401,10 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
 
     return (
         <div className="flex flex-col h-full bg-white relative">
-            {/* Collapse Toggle Button */}
+            {/* Collapse Toggle Button (Desktop Only) */}
             <button
                 onClick={toggleCollapse}
-                className="absolute -right-3.5 top-5 z-50 w-7 h-7 bg-white border border-slate-200 rounded-full flex items-center justify-center text-slate-500 hover:text-[#0a66c2] shadow-sm transition-transform duration-300"
+                className="hidden lg:flex absolute -right-3.5 top-5 z-[200] w-7 h-7 bg-white border border-slate-200 rounded-full items-center justify-center text-slate-500 hover:text-[#0a66c2] shadow-md transition-transform duration-300 cursor-pointer"
                 style={{
                     transform: isCollapsed ? "rotate(180deg)" : "rotate(0deg)",
                 }}
@@ -405,10 +412,10 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
                 <ChevronsLeft size={14} strokeWidth={3} />
             </button>
 
-            {/* Logo Section */}
+            {/* Logo Section (Fixed Top - Never Shrinks) */}
             <Link
                 href="/dashboard"
-                className={`h-[70px] flex items-center px-5 transition-all duration-300 ${isCollapsed ? "justify-center px-0" : "justify-start"}`}
+                className={`h-[70px] shrink-0 flex items-center px-5 border-b border-slate-100/80 transition-all duration-300 ${isCollapsed ? "justify-center px-0" : "justify-start"}`}
             >
                 <img
                     src="/logo.png"
@@ -416,6 +423,7 @@ const Sidebar = ({ isCollapsed, toggleCollapse }) => {
                     className={`${isCollapsed ? "max-h-8 max-w-[32px]" : "max-h-9 max-w-[160px]"} object-contain transition-all`}
                 />
             </Link>
+
 
             <nav
                 className="flex-1 flex flex-col pt-4 overflow-y-auto no-scrollbar px-2"

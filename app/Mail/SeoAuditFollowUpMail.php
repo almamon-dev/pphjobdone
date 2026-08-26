@@ -32,9 +32,12 @@ class SeoAuditFollowUpMail extends Mailable
      */
     public function envelope(): Envelope
     {
-        $subject = $this->step === 1 
-            ? 'Checking in: Any questions about your SEO Audit?' 
-            : 'Let\'s review your SEO recommendations';
+        $subject = match ($this->step) {
+            1 => 'Checking in: Any questions about your SEO Audit?',
+            2 => 'Let\'s review your SEO recommendations',
+            3 => 'Final Follow-up: Ready to boost your SEO rankings?',
+            default => 'SEO Audit Follow-up',
+        };
 
         return new Envelope(
             subject: $subject,

@@ -165,6 +165,9 @@ class PaymentApiController extends Controller
                             Log::error('Failed sending invoice email: ' . $e->getMessage());
                         }
 
+                        // Trigger Post-Payment Onboarding Pipeline & Welcome Email
+                        $this->triggerPostPaymentOnboarding($booking);
+
                         Log::info('Successfully processed Stripe payment for Booking ID: ' . $booking->id);
                     }
                 }
@@ -207,6 +210,9 @@ class PaymentApiController extends Controller
                                     Log::error('Failed sending invoice email: ' . $e->getMessage());
                                 }
                                 
+                                // Trigger Post-Payment Onboarding Pipeline & Welcome Email
+                                $this->triggerPostPaymentOnboarding($booking);
+
                                 Log::info('Successfully processed Payment Intent for Booking ID: ' . $bookingId);
                             } else {
                                 Log::info('Payment already exists for Transaction ID: ' . $transactionId);
@@ -222,11 +228,44 @@ class PaymentApiController extends Controller
                 }
                 break;
                 
+            case 'customer.subscription.updated':
+            case 'customer.subscription.deleted':
+                $sub = $event->data->object;
+                $booking = Booking::where('stripe_subscription_id', $sub->id)->first();
+                if (!$booking && isset($sub->metadata->booking_id)) {
+                    $booking = Booking::find($sub->metadata->booking_id);
+                }
+                if ($booking) {
+                    $booking->update([
+                        'stripe_status' => $sub->status,
+                        'current_period_end' => isset($sub->current_period_end) ? date('Y-m-d H:i:s', $sub->current_period_end) : $booking->current_period_end,
+                        'cancel_at_period_end' => (bool) ($sub->cancel_at_period_end ?? false),
+                    ]);
+                    Log::info('Updated subscription status for Booking ID: ' . $booking->id . ' Status: ' . $sub->status);
+                }
+                break;
+
             default:
                 Log::info('Unhandled webhook event type: ' . $event->type);
                 break;
         }
 
         return response()->json(['status' => 'success']);
+    }
+
+    /**
+     * Trigger post-payment onboarding workflow & welcome email
+     */
+    protected function triggerPostPaymentOnboarding(Booking $booking): void
+    {
+        try {
+            if ($booking->user) {
+                $onboardingService = app(\App\Services\OnboardingService::class);
+                $onboardingService->initializeWorkflow($booking->user, $booking);
+                Log::info('Successfully initialized post-payment onboarding workflow & welcome email for user: ' . $booking->user->email);
+            }
+        } catch (\Exception $e) {
+            Log::error('Failed initializing post-payment onboarding workflow: ' . $e->getMessage());
+        }
     }
 }

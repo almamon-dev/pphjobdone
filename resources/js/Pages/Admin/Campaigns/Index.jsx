@@ -55,7 +55,7 @@ export default function Index({ campaigns, filters = {} }) {
 
             <div className="space-y-4 max-w-[1600px] mx-auto pb-12">
                 {/* COMPACT TOP HEADER */}
-                <div className="bg-white rounded-md p-5 border border-slate-200/80 shadow-2xs flex items-center justify-between">
+                <div className="bg-white rounded-md p-5 border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-md bg-[#0a66c2]/10 text-[#0a66c2] flex items-center justify-center border border-[#0a66c2]/20">
                             <Zap size={22} />
@@ -102,14 +102,15 @@ export default function Index({ campaigns, filters = {} }) {
 
                     {/* COMPACT TABLE WITH CLEAR FONT SIZES */}
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
+<div className="w-full overflow-x-auto overflow-y-hidden touch-pan-x border border-slate-200/80 rounded-xl shadow-2xs mb-4">
+                        <table className="w-full min-w-[850px] text-left border-collapse">
                             <thead>
                                 <tr className="border-b border-slate-200 bg-slate-50 text-xs font-bold text-slate-700">
-                                    <th className="px-5 py-3">Campaign Title</th>
-                                    <th className="px-5 py-3">Assigned Service</th>
-                                    <th className="px-5 py-3">Pricing Tiers</th>
-                                    <th className="px-5 py-3">Status</th>
-                                    <th className="px-5 py-3 text-right">Actions</th>
+                                    <th className="px-5 py-3 whitespace-nowrap">Campaign Title</th>
+                                    <th className="px-5 py-3 whitespace-nowrap">Assigned Service</th>
+                                    <th className="px-5 py-3 whitespace-nowrap">Pricing Tiers</th>
+                                    <th className="px-5 py-3 whitespace-nowrap">Status</th>
+                                    <th className="px-5 py-3 text-right whitespace-nowrap">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 text-sm">
@@ -119,7 +120,7 @@ export default function Index({ campaigns, filters = {} }) {
                                             key={campaign.id}
                                             className="hover:bg-slate-50/80 transition-colors group"
                                         >
-                                            <td className="px-5 py-3.5">
+                                            <td className="px-5 py-3.5 whitespace-nowrap">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-9 h-9 rounded-md bg-[#0a66c2]/10 text-[#0a66c2] flex items-center justify-center border border-[#0a66c2]/20 shrink-0">
                                                         <Zap size={18} />
@@ -136,19 +137,19 @@ export default function Index({ campaigns, filters = {} }) {
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-5 py-3.5">
+                                            <td className="px-5 py-3.5 whitespace-nowrap">
                                                 <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-800 text-xs font-semibold border border-slate-200">
                                                     <Briefcase size={13} className="text-[#0a66c2]" />
                                                     {campaign.service?.title || "N/A"}
                                                 </div>
                                             </td>
-                                            <td className="px-5 py-3.5">
+                                            <td className="px-5 py-3.5 whitespace-nowrap">
                                                 <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-800 text-xs font-semibold border border-slate-200">
                                                     <Layers size={13} className="text-slate-400" />
                                                     {campaign.tiers?.length || 0} Tiers
                                                 </div>
                                             </td>
-                                            <td className="px-5 py-3.5">
+                                            <td className="px-5 py-3.5 whitespace-nowrap">
                                                 <span
                                                     className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-bold ${
                                                         campaign.status
@@ -159,7 +160,7 @@ export default function Index({ campaigns, filters = {} }) {
                                                     {campaign.status ? "Active" : "Inactive"}
                                                 </span>
                                             </td>
-                                            <td className="px-5 py-3.5 text-right">
+                                            <td className="px-5 py-3.5 text-right whitespace-nowrap">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <button
                                                         onClick={() => handleDuplicate(campaign.id)}
@@ -195,6 +196,7 @@ export default function Index({ campaigns, filters = {} }) {
                                 )}
                             </tbody>
                         </table>
+</div>
                     </div>
 
                     {/* COMPACT PAGINATION FOOTER */}

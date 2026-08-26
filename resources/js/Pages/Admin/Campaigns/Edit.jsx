@@ -119,7 +119,7 @@ export default function Edit({ campaign, services }) {
                             </div>
 
                             <div className="p-4 space-y-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="space-y-1">
                                         <label className="text-[12px] font-bold text-[#2f3344]">Campaign Title *</label>
                                         <input
@@ -146,7 +146,7 @@ export default function Edit({ campaign, services }) {
 
                         {/* Tiers */}
                         <div className="space-y-3">
-                            <div className="flex items-center justify-between px-2">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-2">
                                 <h2 className="text-[14px] font-bold text-[#2f3344] flex items-center gap-2">
                                     <Layers size={16} className="text-[#673ab7]" />
                                     Price Tiers
@@ -163,7 +163,7 @@ export default function Edit({ campaign, services }) {
                             <div className="space-y-3">
                                 {data.tiers.map((tier, tIdx) => (
                                     <div key={tier.id || `new-${tIdx}`} className="bg-white rounded-[10px] border border-[#e3e4e8] shadow-sm overflow-hidden transition-all hover:border-[#673ab7]/30">
-                                        <div className="px-4 py-2 border-b border-[#f1f2f4] bg-[#fafbfc] flex items-center justify-between">
+                                        <div className="px-4 py-2 border-b border-[#f1f2f4] bg-[#fafbfc] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                             <div className="flex items-center gap-3">
                                                 <span className="text-[11px] font-bold text-[#2f3344] uppercase tracking-wider">Tier {tIdx + 1} Price ($)</span>
                                                 <input
@@ -186,7 +186,7 @@ export default function Edit({ campaign, services }) {
 
                                         <div className="p-4">
                                             <div className="space-y-2">
-                                                <div className="flex items-center justify-between mb-1">
+                                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-1">
                                                     <label className="text-[11px] font-bold text-[#727586] uppercase">Features</label>
                                                     <button
                                                         type="button"
@@ -223,7 +223,7 @@ export default function Edit({ campaign, services }) {
                                                                    </div>
                                                                    
                                                                    <div className="pl-6 space-y-1.5 border-l-2 border-[#f1f2f4] ml-2">
-                                                                       <div className="flex items-center justify-between mb-1">
+                                                                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-1">
                                                                            <span className="text-[10px] font-bold text-[#727586] uppercase tracking-tighter">Sub-Details</span>
                                                                            <button
                                                                                type="button"
@@ -288,7 +288,7 @@ export default function Edit({ campaign, services }) {
                                     {errors.service_id && <p className="text-red-500 text-[11px] mt-1 font-bold">{errors.service_id}</p>}
                                 </div>
 
-                                <div className="flex items-center justify-between p-3 rounded-lg bg-[#fafbfc] border border-[#e3e4e8]">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-lg bg-[#fafbfc] border border-[#e3e4e8]">
                                     <span className="text-[12px] font-bold text-[#2f3344] uppercase">Status</span>
                                     <label className="relative inline-flex items-center cursor-pointer">
                                         <input

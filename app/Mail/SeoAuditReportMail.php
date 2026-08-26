@@ -33,6 +33,15 @@ class SeoAuditReportMail extends Mailable
     {
         return new Envelope(
             subject: 'Your AI SEO Audit Report is Ready!',
+            replyTo: [
+                config('mail.from.address', 'support@pphjobdone.com')
+            ],
+            using: [
+                function (\Symfony\Component\Mime\Email $email) {
+                    $email->getHeaders()->addTextHeader('X-Auto-Response-Suppress', 'OOF, AutoReply');
+                    $email->getHeaders()->addTextHeader('X-Mailer', 'PPHJobDone SEO System');
+                }
+            ]
         );
     }
 
@@ -43,6 +52,7 @@ class SeoAuditReportMail extends Mailable
     {
         return new Content(
             view: 'emails.seo-audit-report',
+            text: 'emails.seo-audit-report-text',
         );
     }
 

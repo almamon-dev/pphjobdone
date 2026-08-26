@@ -14,11 +14,18 @@ class UserReportsApiController extends Controller
         $userId = $user->id;
         $userEmail = $user->email;
 
+        $hasActiveBooking = \App\Models\Booking::where('user_id', $userId)->exists() || $user->is_subscribed;
+
         $seoReports = SeoAudit::where('user_id', $userId)
             ->orWhereRaw('LOWER(email) = ?', [strtolower($userEmail)])
             ->latest()
             ->get()
-            ->map(function ($audit) {
+            ->map(function ($audit) use ($hasActiveBooking) {
+                $reportData = is_array($audit->response_data) ? $audit->response_data : (json_decode($audit->response_data, true) ?? []);
+                // Logged-in dashboard users viewing their reports get full unlocked report data
+                $reportData['is_subscribed'] = true;
+                $reportData['has_active_service'] = true;
+
                 return [
                     'id' => 'seo_' . $audit->id,
                     'title' => ($audit->url ? parse_url($audit->url, PHP_URL_HOST) : 'SEO') . ' Analysis',
@@ -28,27 +35,26 @@ class UserReportsApiController extends Controller
                     'created_at' => $audit->created_at->toISOString(),
                     'download_link' => url("/api/seo-audit/download?audit_id=" . $audit->id),
                     'view_link' => '#',
-                    'data' => $audit->response_data,
+                    'data' => $reportData,
                 ];
             });
 
-        $bookingReports = \App\Models\Booking::with('service')
+        $bookingReports = \App\Models\Booking::with(['service', 'tasks'])
             ->where('user_id', $userId)
-            ->whereIn('status', ['ongoing', 'active'])
-            ->where('payment_status', 'paid')
             ->latest()
             ->get()
             ->map(function ($booking) {
                 $serviceTitle = $booking->service?->title ?? ($booking->plan_name . ' Service');
                 return [
                     'id' => 'bkg_' . $booking->id,
-                    'title' => $serviceTitle . ' - Progress Report',
+                    'title' => $serviceTitle . ' - Deliverables & Progress',
                     'type' => 'Campaign Report',
                     'status' => 'Available',
-                    'date' => now()->format('Y-m-d'),
-                    'created_at' => now()->toISOString(),
+                    'date' => $booking->created_at ? $booking->created_at->format('Y-m-d') : now()->format('Y-m-d'),
+                    'created_at' => $booking->created_at ? $booking->created_at->toISOString() : now()->toISOString(),
                     'download_link' => url("/api/campaign-report/download?booking_id=" . $booking->id),
-                    'view_link' => '/dashboard/progress-tasks',
+                    'view_link' => '/dashboard/my-campaigns/' . $booking->id,
+                    'booking' => $booking,
                 ];
             });
 
@@ -58,7 +64,6 @@ class UserReportsApiController extends Controller
         $totalProgress = 0;
         $taskCount = 0;
         $activeBookingsForStats = \App\Models\Booking::where('user_id', $userId)
-            ->whereIn('status', ['ongoing', 'active'])
             ->with('tasks')
             ->get();
             
@@ -162,4 +167,66 @@ class UserReportsApiController extends Controller
             'data' => $parsedData
         ]);
     }
+
+    /**
+     * Get Combined GA4 & Google Search Console Report with AI Insights
+     */
+    public function getGoogleAnalyticsOverview(
+        Request $request,
+        \App\Services\GoogleAnalyticsService $gaService,
+        \App\Services\GoogleSearchConsoleService $gscService,
+        \App\Services\OpenAiService $openAiService
+    ) {
+        $user = auth()->user();
+        $websiteUrl = $request->query('url');
+
+        if (!$websiteUrl) {
+            $latestAudit = SeoAudit::where('user_id', $user->id)->latest()->first();
+            $websiteUrl = $latestAudit?->url;
+        }
+
+        $gaData = $gaService->getAnalyticsOverview($websiteUrl);
+        $gscData = $gscService->getSearchConsoleOverview($websiteUrl);
+
+        $reportMetrics = [
+            'ga4' => $gaData,
+            'gsc' => $gscData,
+        ];
+
+        // Generate AI Summary & Recommendations using OpenAiService
+        $aiPromptData = [
+            'website_url' => $websiteUrl ?? 'client-site.com',
+            'ga4_sessions' => $gaData['sessions'],
+            'ga4_users' => $gaData['active_users'],
+            'ga4_bounce_rate' => $gaData['bounce_rate'],
+            'gsc_clicks' => $gscData['total_clicks'],
+            'gsc_impressions' => $gscData['total_impressions'],
+            'gsc_top_keywords' => $gscData['top_keywords'],
+        ];
+
+        $aiSummary = $openAiService->generateReportSummary($aiPromptData);
+
+        if (isset($aiSummary['error'])) {
+            $aiSummary = [
+                'executive_summary' => "Over the past 30 days, your site recorded {$gaData['sessions']} sessions and {$gscData['total_clicks']} organic clicks from Search Console. Keyword performance shows positive search visibility.",
+                'key_achievements' => [
+                    "Recorded {$gaData['active_users']} active users with an organic bounce rate of {$gaData['bounce_rate']}.",
+                    "Generated {$gscData['total_impressions']} organic impressions on Google Search.",
+                ],
+                'suggested_actions' => [
+                    "Optimize page titles for top keywords like '" . ($gscData['top_keywords'][0]['keyword'] ?? 'SEO') . "'.",
+                    "Enhance landing page content to boost conversion rates.",
+                ],
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'website_url' => $websiteUrl,
+            'analytics' => $reportMetrics,
+            'ai_insights' => $aiSummary,
+            'message' => 'GA4 and Google Search Console report with AI recommendations fetched successfully',
+        ]);
+    }
 }
+

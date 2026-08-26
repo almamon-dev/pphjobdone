@@ -36,7 +36,17 @@ class OtpMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->purpose . ' - OTP',
+            subject: 'Your Verification Code: ' . $this->otp . ' (' . $this->purpose . ')',
+            replyTo: [
+                config('mail.from.address', 'support@pphjobdone.com')
+            ],
+            using: [
+                function (\Symfony\Component\Mime\Email $email) {
+                    $email->getHeaders()->addTextHeader('X-Auto-Response-Suppress', 'OOF, AutoReply');
+                    $email->getHeaders()->addTextHeader('X-Mailer', 'PPHJobDone Security System');
+                    $email->getHeaders()->addTextHeader('X-Priority', '1 (Highest)');
+                }
+            ]
         );
     }
 
@@ -47,6 +57,7 @@ class OtpMail extends Mailable
     {
         return new Content(
             view: 'emails.otp',
+            text: 'emails.otp-text',
         );
     }
 

@@ -16,6 +16,7 @@ export default function Create({ services }) {
         service_ids: [],
         name: "",
         price: "",
+        billing_interval: "month",
         subtitle: "",
         is_popular: false,
         features: [""],
@@ -61,7 +62,7 @@ export default function Create({ services }) {
 
             <div className="space-y-4 max-w-[1200px] mx-auto pb-12">
                 {/* COMPACT TOP HEADER */}
-                <div className="bg-white rounded-md p-4 border border-slate-200/80 shadow-2xs flex items-center justify-between">
+                <div className="bg-white rounded-md p-4 border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
                         <CircleDollarSign size={20} className="text-[#0a66c2]" />
                         <div>
@@ -116,7 +117,7 @@ export default function Create({ services }) {
                                                     onChange={() => handleServiceToggle(service.id)}
                                                     className="w-3.5 h-3.5 rounded border-slate-300 text-[#0a66c2] focus:ring-[#0a66c2]"
                                                 />
-                                                <span>{service.title}</span>
+                                                <span>{service.title ? service.title.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()) : ''}</span>
                                             </label>
                                         ))}
                                     </div>
@@ -127,9 +128,9 @@ export default function Create({ services }) {
                                     )}
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                     {/* Plan Name */}
-                                    <div className="space-y-1">
+                                    <div className="space-y-1 sm:col-span-1">
                                         <label className="block text-xs font-bold text-slate-700">
                                             Plan Name <span className="text-rose-500">*</span>
                                         </label>
@@ -152,13 +153,13 @@ export default function Create({ services }) {
                                     {/* Price */}
                                     <div className="space-y-1">
                                         <label className="block text-xs font-bold text-slate-700">
-                                            Price <span className="text-rose-500">*</span>
+                                            Price ($) <span className="text-rose-500">*</span>
                                         </label>
                                         <input
                                             type="text"
                                             value={data.price}
                                             onChange={(e) => setData("price", e.target.value)}
-                                            placeholder="e.g., 299 or $19.99/mo"
+                                            placeholder="e.g., 299"
                                             className={`w-full h-9 px-3 border ${
                                                 errors.price ? "border-rose-500" : "border-slate-200"
                                             } rounded-md text-xs focus:ring-1 focus:ring-[#0a66c2] focus:border-[#0a66c2] outline-none transition-all`}
@@ -166,6 +167,26 @@ export default function Create({ services }) {
                                         {errors.price && (
                                             <p className="text-rose-500 text-[11px] mt-0.5">
                                                 {errors.price}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    {/* Billing Interval */}
+                                    <div className="space-y-1">
+                                        <label className="block text-xs font-bold text-slate-700">
+                                            Stripe Billing Cycle <span className="text-rose-500">*</span>
+                                        </label>
+                                        <select
+                                            value={data.billing_interval || "month"}
+                                            onChange={(e) => setData("billing_interval", e.target.value)}
+                                            className="w-full h-9 px-3 border border-slate-200 rounded-md text-xs focus:ring-1 focus:ring-[#0a66c2] focus:border-[#0a66c2] outline-none bg-white font-medium text-slate-800"
+                                        >
+                                            <option value="month">Monthly Recurring (/mo)</option>
+                                            <option value="year">Yearly Recurring (/yr)</option>
+                                        </select>
+                                        {errors.billing_interval && (
+                                            <p className="text-rose-500 text-[11px] mt-0.5">
+                                                {errors.billing_interval}
                                             </p>
                                         )}
                                     </div>
@@ -194,7 +215,7 @@ export default function Create({ services }) {
 
                         {/* Plan Features */}
                         <div className="bg-white rounded-md border border-slate-200/80 shadow-2xs p-5">
-                            <div className="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-2 border-b border-slate-100">
                                 <div className="flex items-center gap-2">
                                     <CheckCircle2 size={16} className="text-[#0a66c2]" />
                                     <h2 className="text-xs font-bold text-slate-800">
@@ -266,7 +287,7 @@ export default function Create({ services }) {
                                 </div>
 
                                 {/* Mark as Popular */}
-                                <div className="flex items-center justify-between p-2.5 bg-slate-50 rounded-md border border-slate-200">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-2.5 bg-slate-50 rounded-md border border-slate-200">
                                     <span className="text-xs font-semibold text-slate-800">
                                         Mark as Popular
                                     </span>
@@ -282,7 +303,7 @@ export default function Create({ services }) {
                                 </div>
 
                                 {/* Status Active */}
-                                <div className="flex items-center justify-between p-2.5 bg-slate-50 rounded-md border border-slate-200">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-2.5 bg-slate-50 rounded-md border border-slate-200">
                                     <span className="text-xs font-semibold text-slate-800">
                                         Status (Active)
                                     </span>

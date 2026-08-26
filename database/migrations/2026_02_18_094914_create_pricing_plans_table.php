@@ -21,6 +21,9 @@ return new class extends Migration
             $table->json('features')->nullable();
             $table->string('button_text')->default('Get Started');
             $table->boolean('status')->default(true);
+            $table->string('stripe_product_id')->nullable();
+            $table->string('stripe_price_id')->nullable();
+            $table->string('billing_interval')->default('month');
             $table->timestamps();
         });
     }

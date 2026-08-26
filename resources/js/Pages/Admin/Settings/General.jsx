@@ -100,7 +100,7 @@ export default function General({ settings }) {
                         </div>
 
                         <div className="space-y-8">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <label className="text-[14px] font-bold text-[#2f3344]">
                                         Site Name{" "}
@@ -211,7 +211,7 @@ export default function General({ settings }) {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-8">
                             <div className="space-y-6">
                                 <div className="space-y-2">
                                     <label className="text-[14px] font-bold text-[#2f3344]">
@@ -333,7 +333,7 @@ export default function General({ settings }) {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                        <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-12">
                             <div className="space-y-4">
                                 <label className="text-[14px] font-bold text-[#2f3344]">
                                     Profile Image

@@ -140,7 +140,7 @@ export default function Dashboard({
 
             <div className="space-y-4 max-w-[1600px] mx-auto pb-12">
                 {/* PAGE HEADER */}
-                <div className="bg-white rounded-md p-5 border border-slate-200/80 shadow-2xs flex items-center justify-between">
+                <div className="bg-white rounded-md p-5 border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
                         <h1 className="text-xl font-bold text-slate-900 leading-tight">
                             Welcome back, {user?.name || "Admin"}
@@ -195,7 +195,7 @@ export default function Dashboard({
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
                     {/* LEFT CHART: Filterable Booking Volume */}
                     <div className="lg:col-span-7 bg-white rounded-md border border-slate-200/80 p-5 shadow-2xs">
-                        <div className="flex items-center justify-between mb-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                             <div>
                                 <h3 className="text-sm font-bold text-slate-900">
                                     Booking Volume Trend
@@ -326,7 +326,7 @@ export default function Dashboard({
 
                     {/* RIGHT CHART: Sleek Gradient Bar Chart */}
                     <div className="lg:col-span-5 bg-white rounded-md border border-slate-200/80 p-5 shadow-2xs flex flex-col justify-between">
-                        <div className="flex items-center justify-between mb-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                             <div>
                                 <h3 className="text-sm font-bold text-slate-900">
                                     Weekly Booking Rate (Last 5 Weeks)
@@ -377,7 +377,7 @@ export default function Dashboard({
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {/* RECENT BOOKINGS TABLE */}
                     <div className="bg-white rounded-md border border-slate-200/80 shadow-2xs overflow-hidden">
-                        <div className="p-4 border-b border-slate-200 bg-slate-50/50 flex items-center justify-between">
+                        <div className="p-4 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <div className="flex items-center gap-2">
                                 <FolderKanban size={17} className="text-[#0a66c2]" />
                                 <h3 className="text-sm font-bold text-slate-900">Recent Client Bookings</h3>
@@ -391,21 +391,22 @@ export default function Dashboard({
                         </div>
 
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
+<div className="w-full overflow-x-auto overflow-y-hidden touch-pan-x border border-slate-200/80 rounded-xl shadow-2xs mb-4">
+                            <table className="w-full min-w-[850px] text-left border-collapse">
                                 <thead>
                                     <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-bold text-slate-700">
-                                        <th className="px-4 py-2">Client</th>
-                                        <th className="px-4 py-2">Service / Plan</th>
-                                        <th className="px-4 py-2">Price</th>
-                                        <th className="px-4 py-2">Payment</th>
-                                        <th className="px-4 py-2 text-right">Action</th>
+                                        <th className="px-4 py-2 whitespace-nowrap">Client</th>
+                                        <th className="px-4 py-2 whitespace-nowrap">Service / Plan</th>
+                                        <th className="px-4 py-2 whitespace-nowrap">Price</th>
+                                        <th className="px-4 py-2 whitespace-nowrap">Payment</th>
+                                        <th className="px-4 py-2 text-right whitespace-nowrap">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100 text-xs">
                                     {recentBookings.length > 0 ? (
                                         recentBookings.map((b) => (
                                             <tr key={b.id} className="hover:bg-slate-50/80 transition-colors">
-                                                <td className="px-4 py-2.5">
+                                                <td className="px-4 py-2.5 whitespace-nowrap">
                                                     <div className="font-bold text-slate-900">
                                                         {b.user?.name || "Client #" + b.user_id}
                                                     </div>
@@ -415,13 +416,13 @@ export default function Dashboard({
                                                         </div>
                                                     )}
                                                 </td>
-                                                <td className="px-4 py-2.5 text-slate-800 font-medium">
+                                                <td className="px-4 py-2.5 text-slate-800 font-medium whitespace-nowrap">
                                                     {b.service?.title || b.plan_name || "Custom Service"}
                                                 </td>
-                                                <td className="px-4 py-2.5 font-bold text-slate-900">
+                                                <td className="px-4 py-2.5 font-bold text-slate-900 whitespace-nowrap">
                                                     ${Number(b.price || 0).toFixed(2)}
                                                 </td>
-                                                <td className="px-4 py-2.5">
+                                                <td className="px-4 py-2.5 whitespace-nowrap">
                                                      <span
                                                         className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold border capitalize ${
                                                             b.payment_status === "paid" || b.payment_status === "succeeded"
@@ -434,7 +435,7 @@ export default function Dashboard({
                                                         {b.payment_status || "Pending"}
                                                     </span>
                                                 </td>
-                                                <td className="px-4 py-2.5 text-right">
+                                                <td className="px-4 py-2.5 text-right whitespace-nowrap">
                                                     <Link
                                                         href={route("admin.bookings.index")}
                                                         className="w-7 h-7 inline-flex items-center justify-center rounded-md text-[#0a66c2] hover:bg-[#0a66c2]/10 border border-slate-200 transition-all"
@@ -454,12 +455,13 @@ export default function Dashboard({
                                     )}
                                 </tbody>
                             </table>
+</div>
                         </div>
                     </div>
 
                     {/* RECENT CONTACT MESSAGES TABLE */}
                     <div className="bg-white rounded-md border border-slate-200/80 shadow-2xs overflow-hidden">
-                        <div className="p-4 border-b border-slate-200 bg-slate-50/50 flex items-center justify-between">
+                        <div className="p-4 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <div className="flex items-center gap-2">
                                 <Mail size={17} className="text-[#0a66c2]" />
                                 <h3 className="text-sm font-bold text-slate-900">Recent Inquiries & Messages</h3>
@@ -473,29 +475,30 @@ export default function Dashboard({
                         </div>
 
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
+<div className="w-full overflow-x-auto overflow-y-hidden touch-pan-x border border-slate-200/80 rounded-xl shadow-2xs mb-4">
+                            <table className="w-full min-w-[850px] text-left border-collapse">
                                 <thead>
                                     <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-bold text-slate-700">
-                                        <th className="px-4 py-2">Sender</th>
-                                        <th className="px-4 py-2">Email</th>
-                                        <th className="px-4 py-2">Message Snippet</th>
-                                        <th className="px-4 py-2 text-right">Action</th>
+                                        <th className="px-4 py-2 whitespace-nowrap">Sender</th>
+                                        <th className="px-4 py-2 whitespace-nowrap">Email</th>
+                                        <th className="px-4 py-2 whitespace-nowrap">Message Snippet</th>
+                                        <th className="px-4 py-2 text-right whitespace-nowrap">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100 text-xs">
                                     {recentContacts.length > 0 ? (
                                         recentContacts.map((c) => (
                                             <tr key={c.id} className="hover:bg-slate-50/80 transition-colors">
-                                                <td className="px-4 py-2.5 font-bold text-slate-900 truncate max-w-[120px]">
+                                                <td className="px-4 py-2.5 font-bold text-slate-900 truncate max-w-[120px] whitespace-nowrap">
                                                     {c.first_name ? `${c.first_name} ${c.last_name || ""}` : "Contact"}
                                                 </td>
-                                                <td className="px-4 py-2.5 text-slate-600 font-medium truncate max-w-[140px]">
+                                                <td className="px-4 py-2.5 text-slate-600 font-medium truncate max-w-[140px] whitespace-nowrap">
                                                     {c.email}
                                                 </td>
-                                                <td className="px-4 py-2.5 text-slate-800 truncate max-w-[180px]">
+                                                <td className="px-4 py-2.5 text-slate-800 truncate max-w-[180px] whitespace-nowrap">
                                                     {c.message || c.subject || "Inquiry"}
                                                 </td>
-                                                <td className="px-4 py-2.5 text-right">
+                                                <td className="px-4 py-2.5 text-right whitespace-nowrap">
                                                     <Link
                                                         href={route("admin.contacts.index")}
                                                         className="w-7 h-7 inline-flex items-center justify-center rounded-md text-[#0a66c2] hover:bg-[#0a66c2]/10 border border-slate-200 transition-all"
@@ -515,6 +518,7 @@ export default function Dashboard({
                                     )}
                                 </tbody>
                             </table>
+</div>
                         </div>
                     </div>
                 </div>

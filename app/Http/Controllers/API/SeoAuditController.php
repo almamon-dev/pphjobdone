@@ -88,12 +88,8 @@ class SeoAuditController extends Controller
         }
 
         if ($user) {
-            $hasActiveBooking = \App\Models\Booking::where('user_id', $user->id)
-                ->whereIn('status', ['active', 'ongoing'])
-                ->where('payment_status', 'paid')
-                ->exists();
-                
-            $isSubscribed = $user->is_subscribed || $hasActiveBooking;
+            $hasActiveBooking = \App\Models\Booking::where('user_id', $user->id)->exists();
+            $isSubscribed = (bool) ($user->is_subscribed || $hasActiveBooking);
         }
 
         // 6. Store in Database
@@ -104,8 +100,28 @@ class SeoAuditController extends Controller
             'response_data' => $audit,
         ]);
 
+        // Auto Sync Lead to CRM Database
+        if ($auditEmail) {
+            try {
+                \App\Models\Lead::updateOrCreate(
+                    ['email' => $auditEmail],
+                    [
+                        'user_id' => $userId,
+                        'name' => $user?->name ?? (explode('@', $auditEmail)[0]),
+                        'service_interest' => 'SEO Audit (' . parse_url($baseUrl, PHP_URL_HOST) . ')',
+                        'qualification_status' => 'Hot',
+                        'qualification_summary' => 'Generated AI SEO Audit for ' . $baseUrl . ' (Overall Score: ' . ($audit['overall_score'] ?? 0) . '%)',
+                        'status' => 'new',
+                    ]
+                );
+            } catch (\Exception $e) {
+                Log::warning('Lead CRM Sync Warning: ' . $e->getMessage());
+            }
+        }
+
         $audit['audit_id'] = $storedAudit->id;
         $audit['is_subscribed'] = $isSubscribed;
+        $audit['has_active_service'] = $isSubscribed;
         $audit['download_pdf'] = url('/api/seo-audit/download?audit_id=' . $storedAudit->id);
 
         // NEW: Link Audit with Booking Tasks

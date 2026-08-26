@@ -36,7 +36,7 @@ export default function Index({ caseStudies, filters = {} }) {
 
             <div className="space-y-4 max-w-[1600px] mx-auto pb-12">
                 {/* HEADER BANNER */}
-                <div className="bg-white rounded-md p-5 border border-slate-200/80 shadow-2xs flex items-center justify-between">
+                <div className="bg-white rounded-md p-5 border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-md bg-[#0a66c2]/10 text-[#0a66c2] flex items-center justify-center border border-[#0a66c2]/20 font-bold shrink-0">
                             <Layers size={22} />
@@ -62,7 +62,7 @@ export default function Index({ caseStudies, filters = {} }) {
                 {/* TABLE CONTAINER */}
                 <div className="bg-white rounded-md border border-slate-200/80 shadow-2xs overflow-hidden">
                     {/* SEARCH & FILTERS */}
-                    <div className="p-4 border-b border-slate-200 bg-slate-50/50 flex items-center justify-between">
+                    <div className="p-4 border-b border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <form onSubmit={handleSearch} className="relative w-full sm:w-[350px]">
                             <Search size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                             <input
@@ -81,14 +81,15 @@ export default function Index({ caseStudies, filters = {} }) {
 
                     {/* TABLE */}
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
+<div className="w-full overflow-x-auto overflow-y-hidden touch-pan-x border border-slate-200/80 rounded-xl shadow-2xs mb-4">
+                        <table className="w-full min-w-[850px] text-left border-collapse">
                             <thead>
                                 <tr className="border-b border-slate-200 bg-slate-50 text-xs font-bold text-slate-700">
-                                    <th className="px-5 py-3">Project / Image</th>
-                                    <th className="px-5 py-3">Category</th>
-                                    <th className="px-5 py-3">Highlighted Stat</th>
-                                    <th className="px-5 py-3">Client & Location</th>
-                                    <th className="px-5 py-3 text-right">Actions</th>
+                                    <th className="px-5 py-3 whitespace-nowrap">Project / Image</th>
+                                    <th className="px-5 py-3 whitespace-nowrap">Category</th>
+                                    <th className="px-5 py-3 whitespace-nowrap">Highlighted Stat</th>
+                                    <th className="px-5 py-3 whitespace-nowrap">Client & Location</th>
+                                    <th className="px-5 py-3 text-right whitespace-nowrap">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 text-sm">
@@ -96,7 +97,7 @@ export default function Index({ caseStudies, filters = {} }) {
                                     caseStudies.data.map((study) => (
                                         <tr key={study.id} className="hover:bg-slate-50/80 transition-colors">
                                             {/* Image & Title */}
-                                            <td className="px-5 py-3.5 align-top">
+                                            <td className="px-5 py-3.5 align-top whitespace-nowrap">
                                                 <div className="flex items-center gap-3">
                                                     <img
                                                         src={study.image}
@@ -115,27 +116,27 @@ export default function Index({ caseStudies, filters = {} }) {
                                             </td>
 
                                             {/* Category */}
-                                            <td className="px-5 py-3.5 align-top">
+                                            <td className="px-5 py-3.5 align-top whitespace-nowrap">
                                                 <span className="px-2.5 py-1 bg-slate-100 text-slate-800 text-xs font-bold rounded-full border border-slate-200">
                                                     {study.category}
                                                 </span>
                                             </td>
 
                                             {/* Stats */}
-                                            <td className="px-5 py-3.5 align-top">
+                                            <td className="px-5 py-3.5 align-top whitespace-nowrap">
                                                 <span className="font-bold text-emerald-700 text-xs bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
                                                     {study.stats}
                                                 </span>
                                             </td>
 
                                             {/* Client & Location */}
-                                            <td className="px-5 py-3.5 align-top text-xs text-slate-600 font-medium">
+                                            <td className="px-5 py-3.5 align-top text-xs text-slate-600 font-medium whitespace-nowrap">
                                                 <div>{study.client_type || "N/A"}</div>
                                                 <div className="text-slate-400">{study.location || "N/A"}</div>
                                             </td>
 
                                             {/* Actions */}
-                                            <td className="px-5 py-3.5 text-right align-top">
+                                            <td className="px-5 py-3.5 text-right align-top whitespace-nowrap">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <Link
                                                         href={route("admin.case-studies.edit", study.id)}
@@ -164,6 +165,7 @@ export default function Index({ caseStudies, filters = {} }) {
                                 )}
                             </tbody>
                         </table>
+</div>
                     </div>
                 </div>
             </div>

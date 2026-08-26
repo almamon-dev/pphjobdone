@@ -34,7 +34,7 @@ export default function PaymentSettings({ settings }) {
 
             <div className="space-y-4 max-w-[1200px] mx-auto pb-12">
                 {/* COMPACT TOP HEADER */}
-                <div className="bg-white rounded-md p-4 border border-slate-200/80 shadow-2xs flex items-center justify-between">
+                <div className="bg-white rounded-md p-4 border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
                         <CreditCard size={20} className="text-[#0a66c2]" />
                         <div>
@@ -56,7 +56,7 @@ export default function PaymentSettings({ settings }) {
                                 Stripe API Credentials
                             </h3>
                             
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div className="grid grid-cols-1 md:grid-cols-1 sm:grid-cols-2 gap-3">
                                 {/* Publishable Key */}
                                 <div className="space-y-1">
                                     <label className="block text-xs font-bold text-slate-700">

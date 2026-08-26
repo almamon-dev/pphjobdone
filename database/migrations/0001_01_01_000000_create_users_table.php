@@ -29,6 +29,10 @@ return new class extends Migration
             $t->timestamp('reset_password_token_expire_at')->nullable();
             $t->boolean('profile_setup')->default(false);
             $t->boolean('is_subscribed')->default(false);
+            $t->string('stripe_id')->nullable()->index();
+            $t->string('pm_type')->nullable();
+            $t->string('pm_last_four', 4)->nullable();
+            $t->timestamp('trial_ends_at')->nullable();
             $t->rememberToken();
             $t->timestamps();
         });

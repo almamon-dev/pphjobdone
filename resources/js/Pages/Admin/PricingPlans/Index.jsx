@@ -12,6 +12,9 @@ import {
     DollarSign,
     CircleDollarSign,
     Sparkles,
+    RefreshCw,
+    CheckCircle,
+    AlertCircle,
 } from "lucide-react";
 
 export default function Index({ pricing_plans, filters = {} }) {
@@ -44,23 +47,27 @@ export default function Index({ pricing_plans, filters = {} }) {
         }
     };
 
+    const handleResync = (id) => {
+        router.post(route("admin.pricing-plans.resync", id), {}, { preserveScroll: true });
+    };
+
     return (
         <AdminLayout>
             <Head title="Pricing Plans" />
 
             <div className="space-y-3 max-w-[1600px] mx-auto pb-8">
                 {/* COMPACT TOP HEADER */}
-                <div className="bg-white rounded-md p-3.5 border border-slate-200/80 shadow-2xs flex items-center justify-between">
+                <div className="bg-white rounded-md p-3.5 border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-2.5">
                         <div className="w-8 h-8 rounded-md bg-[#0a66c2]/10 text-[#0a66c2] flex items-center justify-center border border-[#0a66c2]/20 shrink-0">
                             <CircleDollarSign size={18} />
                         </div>
                         <div>
                             <h1 className="text-base font-bold text-slate-900 leading-tight">
-                                Pricing Plans
+                                Pricing Plans & Stripe Products
                             </h1>
                             <p className="text-xs text-slate-500 mt-0.5">
-                                Manage service packages, pricing tiers, and promotional features.
+                                Manage service packages, recurring billing rates, and Stripe product auto-sync.
                             </p>
                         </div>
                     </div>
@@ -96,15 +103,15 @@ export default function Index({ pricing_plans, filters = {} }) {
                     </div>
 
                     {/* SUPER COMPACT TABLE */}
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
+                    <div className="overflow-x-auto p-2">
+                        <table className="w-full min-w-[900px] text-left border-collapse">
                             <thead>
                                 <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-bold text-slate-700">
-                                    <th className="px-4 py-2">Plan Details</th>
-                                    <th className="px-4 py-2">Price</th>
-                                    <th className="px-4 py-2">Popular Tag</th>
-                                    <th className="px-4 py-2">Status</th>
-                                    <th className="px-4 py-2 text-right">Actions</th>
+                                    <th className="px-4 py-2.5 whitespace-nowrap">Plan Details</th>
+                                    <th className="px-4 py-2.5 whitespace-nowrap">Price & Interval</th>
+                                    <th className="px-4 py-2.5 whitespace-nowrap">Stripe Product & Price Sync</th>
+                                    <th className="px-4 py-2.5 whitespace-nowrap">Status</th>
+                                    <th className="px-4 py-2.5 text-right whitespace-nowrap">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 text-xs">
@@ -114,46 +121,64 @@ export default function Index({ pricing_plans, filters = {} }) {
                                             key={plan.id}
                                             className="hover:bg-slate-50/80 transition-colors group"
                                         >
-                                            <td className="px-4 py-2">
+                                            <td className="px-4 py-2.5 whitespace-nowrap">
                                                 <div className="flex items-center gap-2.5">
                                                     <div className="w-7 h-7 rounded-md bg-[#0a66c2]/10 text-[#0a66c2] flex items-center justify-center border border-[#0a66c2]/20 shrink-0">
                                                         <DollarSign size={15} />
                                                     </div>
                                                     <div className="min-w-0">
-                                                        <p className="font-bold text-slate-900 group-hover:text-[#0a66c2] transition-colors leading-tight text-xs">
-                                                            {plan.name}
-                                                        </p>
+                                                        <div className="flex items-center gap-1.5">
+                                                            <p className="font-bold text-slate-900 group-hover:text-[#0a66c2] transition-colors leading-tight text-xs">
+                                                                {plan.name}
+                                                            </p>
+                                                            {plan.is_popular && (
+                                                                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded bg-purple-50 text-purple-700 text-[9px] font-bold border border-purple-200">
+                                                                    <Sparkles size={9} /> Popular
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                         <div className="flex flex-wrap gap-1 mt-0.5">
                                                             {plan.services && plan.services.map((service) => (
                                                                 <span
                                                                     key={service.id}
-                                                                    className="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 font-medium"
+                                                                    className="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 font-medium capitalize"
                                                                 >
-                                                                    {service.title}
+                                                                    {service.title ? service.title.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase()) : ''}
                                                                 </span>
                                                             ))}
                                                         </div>
-                                                        {plan.subtitle && (
-                                                            <p className="text-[10px] text-slate-500 truncate mt-0.5 leading-tight">
-                                                                {plan.subtitle}
-                                                            </p>
-                                                        )}
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-4 py-2 font-bold text-slate-900 text-xs">
-                                                ${plan.price}
+                                            <td className="px-4 py-2.5 font-bold text-slate-900 text-xs whitespace-nowrap">
+                                                ${plan.price} <span className="text-[11px] text-slate-500 font-normal">/ {plan.billing_interval === 'year' ? 'year' : 'month'}</span>
                                             </td>
-                                            <td className="px-4 py-2">
-                                                {plan.is_popular ? (
-                                                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-purple-50 text-purple-700 text-[10px] font-bold border border-purple-200">
-                                                        <Sparkles size={10} /> Popular
-                                                    </span>
+                                            <td className="px-4 py-2.5 whitespace-nowrap">
+                                                {plan.stripe_product_id && plan.stripe_price_id ? (
+                                                    <div className="space-y-0.5">
+                                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 text-[10px] font-bold border border-emerald-200">
+                                                            <CheckCircle size={10} className="text-emerald-600" /> Stripe Synced
+                                                        </span>
+                                                        <p className="text-[10px] font-mono text-slate-400">
+                                                            Prod: {plan.stripe_product_id}
+                                                        </p>
+                                                    </div>
                                                 ) : (
-                                                    <span className="text-[11px] text-slate-400 font-medium">-</span>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 text-[10px] font-bold border border-amber-200">
+                                                            <AlertCircle size={10} className="text-amber-600" /> Not Synced
+                                                        </span>
+                                                        <button
+                                                            onClick={() => handleResync(plan.id)}
+                                                            className="p-1 text-[#0a66c2] hover:bg-[#0a66c2]/10 rounded border border-slate-200 text-[10px] font-semibold flex items-center gap-1"
+                                                            title="Sync Product with Stripe"
+                                                        >
+                                                            <RefreshCw size={10} /> Sync
+                                                        </button>
+                                                    </div>
                                                 )}
                                             </td>
-                                            <td className="px-4 py-2">
+                                            <td className="px-4 py-2.5 whitespace-nowrap">
                                                 <span
                                                     className={`inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-bold ${
                                                         plan.status
@@ -164,8 +189,15 @@ export default function Index({ pricing_plans, filters = {} }) {
                                                     {plan.status ? "Active" : "Draft"}
                                                 </span>
                                             </td>
-                                            <td className="px-4 py-2 text-right">
+                                            <td className="px-4 py-2.5 text-right whitespace-nowrap">
                                                 <div className="flex items-center justify-end gap-1.5">
+                                                    <button
+                                                        onClick={() => handleResync(plan.id)}
+                                                        className="w-7 h-7 flex items-center justify-center rounded-md text-slate-600 hover:bg-slate-100 border border-slate-200 transition-all"
+                                                        title="Re-sync with Stripe"
+                                                    >
+                                                        <RefreshCw size={13} />
+                                                    </button>
                                                     <Link
                                                         href={route("admin.pricing-plans.edit", plan.id)}
                                                         className="w-7 h-7 flex items-center justify-center rounded-md text-[#0a66c2] hover:bg-[#0a66c2]/10 border border-slate-200 hover:border-[#0a66c2]/20 transition-all"
@@ -186,8 +218,8 @@ export default function Index({ pricing_plans, filters = {} }) {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="5" className="px-4 py-10 text-center text-slate-400 text-xs">
-                                            No pricing plans found matching your query.
+                                        <td colSpan="5" className="px-4 py-8 text-center text-slate-400 text-xs">
+                                            No pricing plans found.
                                         </td>
                                     </tr>
                                 )}

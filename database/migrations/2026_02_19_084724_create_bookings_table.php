@@ -21,6 +21,13 @@ return new class extends Migration
             $table->string('status')->default('pending'); // pending, ongoing, completed, cancelled
             $table->string('payment_status')->default('pending'); // pending, paid, failed, refunded
             $table->json('campaign_details')->nullable();
+            $table->string('website_url')->nullable();
+            $table->text('target_keywords')->nullable();
+            $table->string('stripe_subscription_id')->nullable();
+            $table->string('stripe_customer_id')->nullable();
+            $table->string('stripe_status')->nullable()->default('active');
+            $table->timestamp('current_period_end')->nullable();
+            $table->boolean('cancel_at_period_end')->default(false);
             $table->timestamps();
         });
     }

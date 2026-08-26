@@ -22,6 +22,23 @@ class ContactApiController extends Controller
 
         $message = \App\Models\ContactMessage::create($validatedData);
 
+        // Auto Sync Lead to CRM Database
+        try {
+            \App\Models\Lead::updateOrCreate(
+                ['email' => $validatedData['email']],
+                [
+                    'name' => trim(($validatedData['first_name'] ?? '') . ' ' . ($validatedData['last_name'] ?? '')),
+                    'phone' => $validatedData['phone_number'] ?? null,
+                    'service_interest' => 'Contact Form Inquiry',
+                    'qualification_status' => 'Warm',
+                    'qualification_summary' => $validatedData['message'],
+                    'status' => 'new',
+                ]
+            );
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('Contact Lead Sync Warning: ' . $e->getMessage());
+        }
+
         // Notify all admins
         $admins = \App\Models\User::where('is_admin', true)->get();
         \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\NewContactMessageNotification($message));

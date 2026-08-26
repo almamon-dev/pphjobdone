@@ -43,23 +43,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Services
         Route::resource('services', \App\Http\Controllers\Admin\ServiceController::class);
         // Pricing Plans
+        Route::post('pricing-plans/{pricingPlan}/resync', [\App\Http\Controllers\Admin\PricingPlanController::class, 'resync'])->name('pricing-plans.resync');
         Route::resource('pricing-plans', \App\Http\Controllers\Admin\PricingPlanController::class);
         // Campaigns & Case Studies
         Route::post('campaigns/{campaign}/duplicate', [\App\Http\Controllers\Admin\CampaignController::class, 'duplicate'])->name('campaigns.duplicate');
         Route::resource('campaigns', \App\Http\Controllers\Admin\CampaignController::class);
         Route::resource('case-studies', \App\Http\Controllers\Admin\CaseStudyController::class);
-        // Contacts & AI Leads
+        // Contacts, AI Leads & Live Messages
         Route::resource('contacts', \App\Http\Controllers\Admin\ContactController::class)->only(['index', 'destroy']);
         Route::get('leads', [\App\Http\Controllers\Admin\LeadController::class, 'index'])->name('leads.index');
         Route::patch('leads/{lead}/status', [\App\Http\Controllers\Admin\LeadController::class, 'updateStatus'])->name('leads.status');
         Route::delete('leads/{lead}', [\App\Http\Controllers\Admin\LeadController::class, 'destroy'])->name('leads.destroy');
-        
+        Route::get('messages', [\App\Http\Controllers\Admin\AdminMessageController::class, 'index'])->name('messages.index');
+        Route::post('messages/send', [\App\Http\Controllers\Admin\AdminMessageController::class, 'store'])->name('messages.store');
+        Route::put('messages/{id}', [\App\Http\Controllers\Admin\AdminMessageController::class, 'update'])->name('messages.update');
+        Route::delete('messages/{id}', [\App\Http\Controllers\Admin\AdminMessageController::class, 'destroy'])->name('messages.destroy');
+
         // Bookings & Tasks
+        Route::post('bookings/{booking}/toggle-auto-renew', [\App\Http\Controllers\Admin\BookingController::class, 'toggleAutoRenew'])->name('bookings.toggle-auto-renew');
         Route::resource('bookings', \App\Http\Controllers\Admin\BookingController::class)->only(['index', 'show']);
         Route::post('bookings/{booking}/tasks', [\App\Http\Controllers\Admin\BookingController::class, 'storeTask'])->name('bookings.tasks.store');
         Route::put('bookings/{booking}/tasks/{task}', [\App\Http\Controllers\Admin\BookingController::class, 'updateTask'])->name('bookings.tasks.update');
         Route::delete('bookings/{booking}/tasks/{task}', [\App\Http\Controllers\Admin\BookingController::class, 'destroyTask'])->name('bookings.tasks.destroy');
-        
+
         // Notifications
         Route::post('notifications/{id}/read', function ($id) {
             $notification = auth()->user()->notifications()->findOrFail($id);
@@ -69,4 +75,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

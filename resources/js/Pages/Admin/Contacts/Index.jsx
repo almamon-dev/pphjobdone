@@ -50,7 +50,7 @@ export default function Index({ contacts, filters = {} }) {
 
             <div className="space-y-4 max-w-[1600px] mx-auto pb-12">
                 {/* COMPACT TOP HEADER */}
-                <div className="bg-white rounded-md p-5 border border-slate-200/80 shadow-2xs flex items-center justify-between">
+                <div className="bg-white rounded-md p-5 border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-md bg-[#0a66c2]/10 text-[#0a66c2] flex items-center justify-center border border-[#0a66c2]/20">
                             <Mail size={22} />
@@ -94,13 +94,14 @@ export default function Index({ contacts, filters = {} }) {
 
                     {/* CONTACT MESSAGES TABLE WITH HIGH LEGIBILITY */}
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
+<div className="w-full overflow-x-auto overflow-y-hidden touch-pan-x border border-slate-200/80 rounded-xl shadow-2xs mb-4">
+                        <table className="w-full min-w-[850px] text-left border-collapse">
                             <thead>
                                 <tr className="border-b border-slate-200 bg-slate-50 text-xs font-bold text-slate-700">
-                                    <th className="px-5 py-3">Requester Info</th>
-                                    <th className="px-5 py-3">Message Content</th>
-                                    <th className="px-5 py-3">Received Date</th>
-                                    <th className="px-5 py-3 text-right">Actions</th>
+                                    <th className="px-5 py-3 whitespace-nowrap">Requester Info</th>
+                                    <th className="px-5 py-3 whitespace-nowrap">Message Content</th>
+                                    <th className="px-5 py-3 whitespace-nowrap">Received Date</th>
+                                    <th className="px-5 py-3 text-right whitespace-nowrap">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 text-sm">
@@ -111,7 +112,7 @@ export default function Index({ contacts, filters = {} }) {
                                             className="hover:bg-slate-50/80 transition-colors group"
                                         >
                                             {/* Requester Info */}
-                                            <td className="px-5 py-3.5 align-top">
+                                            <td className="px-5 py-3.5 align-top whitespace-nowrap">
                                                 <div className="flex items-start gap-3">
                                                     <div className="w-9 h-9 rounded-md bg-[#0a66c2]/10 text-[#0a66c2] flex items-center justify-center border border-[#0a66c2]/20 font-bold shrink-0">
                                                         <UserIcon size={18} />
@@ -137,7 +138,7 @@ export default function Index({ contacts, filters = {} }) {
                                             </td>
 
                                             {/* Message */}
-                                            <td className="px-5 py-3.5 align-top max-w-[450px]">
+                                            <td className="px-5 py-3.5 align-top max-w-[450px] whitespace-nowrap">
                                                 <div className="flex items-start gap-2">
                                                     <MessageSquare size={16} className="text-slate-400 shrink-0 mt-0.5" />
                                                     <p className="text-sm text-slate-800 leading-relaxed whitespace-pre-wrap font-normal">
@@ -147,7 +148,7 @@ export default function Index({ contacts, filters = {} }) {
                                             </td>
 
                                             {/* Date */}
-                                            <td className="px-5 py-3.5 align-top text-slate-700">
+                                            <td className="px-5 py-3.5 align-top text-slate-700 whitespace-nowrap">
                                                 <div className="flex items-center gap-1.5 text-xs font-medium">
                                                     <Calendar size={14} className="text-slate-400 shrink-0" />
                                                     {contact.created_at
@@ -161,7 +162,7 @@ export default function Index({ contacts, filters = {} }) {
                                             </td>
 
                                             {/* Action */}
-                                            <td className="px-5 py-3.5 text-right align-top">
+                                            <td className="px-5 py-3.5 text-right align-top whitespace-nowrap">
                                                 <button
                                                     onClick={() => handleDelete(contact.id)}
                                                     className="w-8 h-8 flex items-center justify-center rounded-md text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 transition-all ml-auto"
@@ -181,6 +182,7 @@ export default function Index({ contacts, filters = {} }) {
                                 )}
                             </tbody>
                         </table>
+</div>
                     </div>
 
                     {/* COMPACT PAGINATION FOOTER */}

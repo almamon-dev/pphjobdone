@@ -49,7 +49,7 @@ export default function Index({ categories, filters = {}, auth }) {
 
             <div className="space-y-6 max-w-[1240px] mx-auto pb-20">
                 {/* Top Header */}
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-4">
                         <h1 className="text-[24px] font-bold text-[#2f3344] tracking-tight">
                             Category Management
@@ -89,20 +89,21 @@ export default function Index({ categories, filters = {}, auth }) {
 
                     {/* Table Area */}
                     <div className="overflow-x-auto">
-                        <table className="w-full">
+<div className="w-full overflow-x-auto overflow-y-hidden touch-pan-x border border-slate-200/80 rounded-xl shadow-2xs mb-4">
+                        <table className="w-full min-w-[850px]">
                             <thead>
                                 <tr className="border-b border-[#e3e4e8]">
-                                    <th className="text-left px-7 py-4 text-[13px] font-bold text-[#2f3344] uppercase tracking-wider">
+                                    <th className="text-left px-7 py-4 text-[13px] font-bold text-[#2f3344] uppercase tracking-wider whitespace-nowrap">
                                         Category Name
                                     </th>
-                                    <th className="text-left px-5 py-4 text-[13px] font-bold text-[#2f3344] uppercase tracking-wider">
+                                    <th className="text-left px-5 py-4 text-[13px] font-bold text-[#2f3344] uppercase tracking-wider whitespace-nowrap">
                                         Slug
                                     </th>
 
-                                    <th className="text-left px-5 py-4 text-[13px] font-bold text-[#2f3344] uppercase tracking-wider">
+                                    <th className="text-left px-5 py-4 text-[13px] font-bold text-[#2f3344] uppercase tracking-wider whitespace-nowrap">
                                         Status
                                     </th>
-                                    <th className="px-7 py-4 text-right">
+                                    <th className="px-7 py-4 text-right whitespace-nowrap">
                                         Actions
                                     </th>
                                 </tr>
@@ -114,7 +115,7 @@ export default function Index({ categories, filters = {}, auth }) {
                                             key={category.id}
                                             className="hover:bg-[#fafbfc] transition-colors group"
                                         >
-                                            <td className="px-7 py-5">
+                                            <td className="px-7 py-5 whitespace-nowrap">
                                                 <div className="flex items-center gap-4">
                                                     <div className="w-10 h-10 rounded-full bg-[#f4f0ff] flex items-center justify-center text-[#673ab7] border border-[#e9e3ff] overflow-hidden">
                                                         {category.icon ? (
@@ -136,13 +137,13 @@ export default function Index({ categories, filters = {}, auth }) {
                                                     </p>
                                                 </div>
                                             </td>
-                                            <td className="px-5 py-5">
+                                            <td className="px-5 py-5 whitespace-nowrap">
                                                 <span className="text-[13px] text-[#727586] font-medium">
                                                     /{category.slug}
                                                 </span>
                                             </td>
 
-                                            <td className="px-5 py-5">
+                                            <td className="px-5 py-5 whitespace-nowrap">
                                                 <span
                                                     className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${
                                                         category.status
@@ -155,7 +156,7 @@ export default function Index({ categories, filters = {}, auth }) {
                                                         : "Draft"}
                                                 </span>
                                             </td>
-                                            <td className="px-7 py-5 text-right">
+                                            <td className="px-7 py-5 text-right whitespace-nowrap">
                                                 <div className="flex items-center justify-end gap-2">
                                                     <Link
                                                         href={route(
@@ -208,6 +209,7 @@ export default function Index({ categories, filters = {}, auth }) {
                                 )}
                             </tbody>
                         </table>
+</div>
                     </div>
 
                     {/* Pagination */}
